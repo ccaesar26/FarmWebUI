@@ -1,14 +1,17 @@
-import { Component } from '@angular/core';
+import {Component} from '@angular/core';
 import {FormControl, ReactiveFormsModule} from '@angular/forms';
 
 import {Checkbox} from 'primeng/checkbox';
 import {InputText} from 'primeng/inputtext';
 import {Button} from 'primeng/button';
 import {FormsModule} from '@angular/forms';
-import {Password} from 'primeng/password';
+import {PasswordDirective} from 'primeng/password';
 import {FloatLabel} from 'primeng/floatlabel';
 import {Fluid} from 'primeng/fluid';
-import { InputIconModule } from 'primeng/inputicon';
+import {InputIconModule} from 'primeng/inputicon';
+import {InputGroup} from 'primeng/inputgroup';
+import {InputGroupAddon} from 'primeng/inputgroupaddon';
+import {Divider} from 'primeng/divider';
 
 @Component({
   selector: 'app-login',
@@ -16,12 +19,15 @@ import { InputIconModule } from 'primeng/inputicon';
     Checkbox,
     InputText,
     FormsModule,
-    Password,
     Button,
     FloatLabel,
     Fluid,
     ReactiveFormsModule,
-    InputIconModule
+    InputIconModule,
+    InputGroup,
+    InputGroupAddon,
+    PasswordDirective,
+    Divider
   ],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css'

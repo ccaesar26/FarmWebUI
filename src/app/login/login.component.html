@@ -5,17 +5,27 @@
       Welcome to Farm Management
     </h1>
 
-    <p-fluid class="space-y-4">
+    <p-fluid class="mt-8 space-y-4">
 
-      <p-floatlabel variant="on" class="block w-full">
-        <input id="username" pInputText [formControl]="username" class="w-full"/>
-        <label for="username">Username</label>
-      </p-floatlabel>
+      <p-inputgroup>
+        <p-inputgroup-addon>
+          <i class="pi pi-user"></i>
+        </p-inputgroup-addon>
+        <p-floatlabel variant="on" class="block w-full">
+          <input id="username" pInputText [formControl]="username" class="w-full"/>
+          <label for="username">Username</label>
+        </p-floatlabel>
+      </p-inputgroup>
 
-      <p-floatlabel variant="on" class="block w-full">
-        <p-password id="password" [formControl]="password" [toggleMask]="true" class="w-full"/>
-        <label for="password">Password</label>
-      </p-floatlabel>
+      <p-inputgroup>
+        <p-inputgroup-addon>
+          <i class="pi pi-lock"></i>
+        </p-inputgroup-addon>
+        <p-floatlabel variant="on">
+          <input pPassword type="password" id="password" [formControl]="password"/>
+          <label for="password">Password</label>
+        </p-floatlabel>
+      </p-inputgroup>
 
       <div class="flex items-center space-x-2">
         <p-checkbox id="rememberMe" [(ngModel)]="rememberMe" binary="true"></p-checkbox>

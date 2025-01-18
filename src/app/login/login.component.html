@@ -1,41 +1,46 @@
-<div class="min-h-screen flex items-center justify-center p-4">
-  <div class="w-full max-w-md p-6 rounded-lg shadow-md">
+<div class="min-h-screen flex items-center justify-center p-4 bg-landing bg-cover bg-center">
+  <div class="absolute top-0 left-0 w-full h-full bg-surface-950 opacity-80"></div>
+  <div class="w-full max-w-2xl p-6 rounded-lg shadow-md backdrop-blur-lg backdrop-brightness-50">
 
-    <h1 class="text-2xl font-semibold text-center text-primary mb-8">
+    <h1 class="text-3xl font-semibold text-center text-primary m-8">
       Welcome to Farm Management
     </h1>
 
-    <p-fluid class="mt-8 space-y-4">
+    <p-card>
 
-      <p-inputgroup>
-        <p-inputgroup-addon>
-          <i class="pi pi-user"></i>
-        </p-inputgroup-addon>
-        <p-floatlabel variant="on" class="block w-full">
-          <input id="username" pInputText [formControl]="username" class="w-full"/>
-          <label for="username">Username</label>
-        </p-floatlabel>
-      </p-inputgroup>
+      <p-fluid class="space-y-4">
 
-      <p-inputgroup>
-        <p-inputgroup-addon>
-          <i class="pi pi-lock"></i>
-        </p-inputgroup-addon>
-        <p-floatlabel variant="on">
-          <input pPassword type="password" id="password" [formControl]="password"/>
-          <label for="password">Password</label>
-        </p-floatlabel>
-      </p-inputgroup>
+        <p-inputgroup>
+          <p-inputgroup-addon>
+            <i class="pi pi-user"></i>
+          </p-inputgroup-addon>
+          <p-floatlabel variant="on" class="block w-full">
+            <input id="username" pInputText [formControl]="username" class="w-full"/>
+            <label for="username">Username</label>
+          </p-floatlabel>
+        </p-inputgroup>
 
-      <div class="flex items-center space-x-2">
-        <p-checkbox id="rememberMe" [(ngModel)]="rememberMe" binary="true"></p-checkbox>
-        <label for="rememberMe" class="text-sm">Remember Me</label>
-      </div>
+        <p-inputgroup>
+          <p-inputgroup-addon>
+            <i class="pi pi-lock"></i>
+          </p-inputgroup-addon>
+          <p-floatlabel variant="on">
+            <input pPassword type="password" id="password" [formControl]="password"/>
+            <label for="password">Password</label>
+          </p-floatlabel>
+        </p-inputgroup>
 
-      <div class="block w-full">
-        <p-button icon="pi pi-user" label="Login" class="py-2"></p-button>
-      </div>
+        <div class="flex items-center space-x-2">
+          <p-checkbox id="rememberMe" [(ngModel)]="rememberMe" binary="true"></p-checkbox>
+          <label for="rememberMe" class="text-sm">Remember Me</label>
+        </div>
 
-    </p-fluid>
+        <div class="block w-full">
+          <p-button icon="pi pi-user" label="Login" class="py-2"></p-button>
+        </div>
+
+      </p-fluid>
+    </p-card>
+
   </div>
 </div>

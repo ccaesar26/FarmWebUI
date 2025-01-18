@@ -7,7 +7,11 @@ module.exports = {
     preflight: true,
   },
   theme: {
-    extend: {},
+    extend: {
+      backgroundImage: {
+        'landing': "url('../src/assets/images/landgreen.jpg')",
+      }
+    },
   },
   plugins: [require('tailwindcss-primeui')],
 }

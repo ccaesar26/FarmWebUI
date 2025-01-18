@@ -11,7 +11,7 @@ import {Fluid} from 'primeng/fluid';
 import {InputIconModule} from 'primeng/inputicon';
 import {InputGroup} from 'primeng/inputgroup';
 import {InputGroupAddon} from 'primeng/inputgroupaddon';
-import {Divider} from 'primeng/divider';
+import {Card} from 'primeng/card';
 
 @Component({
   selector: 'app-login',
@@ -27,7 +27,7 @@ import {Divider} from 'primeng/divider';
     InputGroup,
     InputGroupAddon,
     PasswordDirective,
-    Divider
+    Card
   ],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css'

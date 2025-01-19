@@ -13,6 +13,7 @@ import {InputGroup} from 'primeng/inputgroup';
 import {InputGroupAddon} from 'primeng/inputgroupaddon';
 import {Card} from 'primeng/card';
 import {Tab, TabList, TabPanel, TabPanels, Tabs} from 'primeng/tabs';
+import {RegisterComponent} from '../register/register.component';
 
 @Component({
   selector: 'app-login',
@@ -33,7 +34,8 @@ import {Tab, TabList, TabPanel, TabPanels, Tabs} from 'primeng/tabs';
     Tab,
     TabList,
     TabPanels,
-    TabPanel
+    TabPanel,
+    RegisterComponent
   ],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css'
@@ -42,9 +44,4 @@ export class LoginComponent {
   username = new FormControl('');
   password = new FormControl('');
   rememberMe: boolean = false;
-  registerUsername = new FormControl('');
-  registerPassword = new FormControl('');
-  registerEmail = new FormControl('');
-  registerConfirmPassword = new FormControl('');
-  isRegistering: boolean = false;
 }

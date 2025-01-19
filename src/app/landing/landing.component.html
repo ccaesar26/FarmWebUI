@@ -1,0 +1,27 @@
+<div class="min-h-screen flex items-center justify-center p-4 bg-landing bg-cover bg-center">
+  <div class="absolute top-0 left-0 w-full h-full bg-surface-950 opacity-80"></div>
+  <div class="w-full max-w-2xl p-6 rounded-lg shadow-md backdrop-blur-lg backdrop-brightness-50">
+
+    <h1 class="text-3xl font-semibold text-center text-primary m-8">
+      Welcome to Farm Management
+    </h1>
+
+    <p-card>
+      <p-tabs value="0">
+        <p-tablist class="w-full px-4">
+          <p-tab value="0" class="w-1/2 justify-center">Login</p-tab>
+          <p-tab value="1" class="w-1/2 justify-center">Register</p-tab>
+        </p-tablist>
+        <p-tabpanels>
+          <p-tabpanel value="0">
+            <app-login></app-login>
+          </p-tabpanel>
+          <p-tabpanel value="1">
+            <app-register></app-register>
+          </p-tabpanel>
+        </p-tabpanels>
+      </p-tabs>
+    </p-card>
+
+  </div>
+</div>

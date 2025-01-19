@@ -7,39 +7,98 @@
     </h1>
 
     <p-card>
+      <p-tabs value="0">
+        <p-tablist class="w-full px-4">
+          <p-tab value="0" class="w-1/2 justify-center">Login</p-tab>
+          <p-tab value="1" class="w-1/2 justify-center">Register</p-tab>
+        </p-tablist>
+        <p-tabpanels>
+          <p-tabpanel value="0">
+            <p-fluid class="m-4 space-y-6">
 
-      <p-fluid class="space-y-4">
+              <p-inputgroup>
+                <p-inputgroup-addon>
+                  <i class="pi pi-user"></i>
+                </p-inputgroup-addon>
+                <p-floatlabel variant="on" class="block w-full">
+                  <input id="username" pInputText [formControl]="username" class="w-full"/>
+                  <label for="username">Username</label>
+                </p-floatlabel>
+              </p-inputgroup>
 
-        <p-inputgroup>
-          <p-inputgroup-addon>
-            <i class="pi pi-user"></i>
-          </p-inputgroup-addon>
-          <p-floatlabel variant="on" class="block w-full">
-            <input id="username" pInputText [formControl]="username" class="w-full"/>
-            <label for="username">Username</label>
-          </p-floatlabel>
-        </p-inputgroup>
+              <p-inputgroup>
+                <p-inputgroup-addon>
+                  <i class="pi pi-lock"></i>
+                </p-inputgroup-addon>
+                <p-floatlabel variant="on">
+                  <input pPassword type="password" id="password" [formControl]="password"/>
+                  <label for="password">Password</label>
+                </p-floatlabel>
+              </p-inputgroup>
 
-        <p-inputgroup>
-          <p-inputgroup-addon>
-            <i class="pi pi-lock"></i>
-          </p-inputgroup-addon>
-          <p-floatlabel variant="on">
-            <input pPassword type="password" id="password" [formControl]="password"/>
-            <label for="password">Password</label>
-          </p-floatlabel>
-        </p-inputgroup>
+              <div class="flex items-center space-x-2">
+                <p-checkbox id="rememberMe" [(ngModel)]="rememberMe" binary="true"></p-checkbox>
+                <label for="rememberMe" class="text-sm">Remember Me</label>
+              </div>
 
-        <div class="flex items-center space-x-2">
-          <p-checkbox id="rememberMe" [(ngModel)]="rememberMe" binary="true"></p-checkbox>
-          <label for="rememberMe" class="text-sm">Remember Me</label>
-        </div>
+              <div class="block w-full">
+                <p-button icon="pi pi-user" label="Login" class="py-2"></p-button>
+              </div>
 
-        <div class="block w-full">
-          <p-button icon="pi pi-user" label="Login" class="py-2"></p-button>
-        </div>
+            </p-fluid>
+          </p-tabpanel>
 
-      </p-fluid>
+          <p-tabpanel value="1">
+            <p-fluid class="m-4 space-y-6">
+
+              <p-inputgroup>
+                <p-inputgroup-addon>
+                  <i class="pi pi-user"></i>
+                </p-inputgroup-addon>
+                <p-floatlabel variant="on" class="block w-full">
+                  <input id="register-username" pInputText [formControl]="registerUsername" class="w-full"/>
+                  <label for="register-username">Username</label>
+                </p-floatlabel>
+              </p-inputgroup>
+
+              <p-inputgroup>
+                <p-inputgroup-addon>
+                  <i class="pi pi-envelope"></i>
+                </p-inputgroup-addon>
+                <p-floatlabel variant="on" class="block w-full">
+                  <input id="register-email" pInputText [formControl]="registerEmail" class="w-full"/>
+                  <label for="register-email">Email</label>
+                </p-floatlabel>
+              </p-inputgroup>
+
+              <p-inputgroup>
+                <p-inputgroup-addon>
+                  <i class="pi pi-lock"></i>
+                </p-inputgroup-addon>
+                <p-floatlabel variant="on" class="block w-full">
+                  <input pPassword type="password" id="register-password" [formControl]="registerPassword"/>
+                  <label for="register-password">Password</label>
+                </p-floatlabel>
+              </p-inputgroup>
+
+              <p-inputgroup>
+                <p-inputgroup-addon>
+                  <i class="pi pi-lock"></i>
+                </p-inputgroup-addon>
+                <p-floatlabel variant="on" class="block w-full">
+                  <input pPassword type="password" id="confirm-password" [formControl]="registerConfirmPassword" [feedback]="false"/>
+                  <label for="confirm-password">Repeat Password</label>
+                </p-floatlabel>
+              </p-inputgroup>
+
+              <div class="block w-full">
+                <p-button icon="pi pi-user-plus" iconPos="left" [loading]="isRegistering" label="Register" class="py-2"></p-button>
+              </div>
+
+            </p-fluid>
+          </p-tabpanel>
+        </p-tabpanels>
+      </p-tabs>
     </p-card>
 
   </div>

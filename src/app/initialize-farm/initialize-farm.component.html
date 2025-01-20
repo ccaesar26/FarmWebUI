@@ -1,0 +1,125 @@
+<div class="min-h-screen flex items-center justify-center p-4 bg-landing bg-cover bg-center">
+  <div class="absolute top-0 left-0 w-full h-full bg-surface-950 opacity-80"></div>
+  <div class="w-full max-w-5xl p-6 rounded-lg shadow-md backdrop-blur-lg backdrop-brightness-50">
+
+    <h1 class="text-3xl font-semibold text-center text-primary m-8">
+      Let's configure your farm
+    </h1>
+
+    <p-card>
+      <p-stepper [(value)]="activeStep" class="basis-[40rem]">
+        <p-step-list>
+          <p-step [value]="1" class="flex flex-row flex-auto gap-2">
+            <ng-template #content let-activateCallback="activateCallback" let-value="value">
+              <button class="bg-transparent border-0 inline-flex flex-col gap-2" (click)="activateCallback()">
+                    <span
+                      class="rounded-full border-2 w-12 h-12 inline-flex items-center justify-center"
+                      [ngClass]="{
+                            'bg-primary text-primary-contrast border-primary': value <= activeStep,
+                            'border-surface': value > activeStep
+                        }"
+                    >
+                        <i class="pi pi-user"></i>
+                    </span>
+              </button>
+            </ng-template>
+          </p-step>
+
+          <p-step [value]="2" class="flex flex-row flex-auto gap-2">
+            <ng-template #content let-activateCallback="activateCallback" let-value="value">
+              <button class="bg-transparent border-0 inline-flex flex-col gap-2" (click)="activateCallback()">
+                    <span
+                      class="rounded-full border-2 w-12 h-12 inline-flex items-center justify-center"
+                      [ngClass]="{
+                            'bg-primary text-primary-contrast border-primary': value <= activeStep,
+                            'border-surface': value > activeStep
+                        }"
+                    >
+                        <i class="pi pi-map"></i>
+                    </span>
+              </button>
+            </ng-template>
+          </p-step>
+
+          <p-step [value]="3" class="flex flex-row flex-auto gap-2">
+            <ng-template #content let-activateCallback="activateCallback" let-value="value">
+              <button class="bg-transparent border-0 inline-flex flex-col gap-2" (click)="activateCallback()">
+                    <span
+                      class="rounded-full border-2 w-12 h-12 inline-flex items-center justify-center"
+                      [ngClass]="{
+                            'bg-primary text-primary-contrast border-primary': value <= activeStep,
+                            'border-surface': value > activeStep
+                        }"
+                    >
+                        <i class="pi pi-id-card"></i>
+                    </span>
+              </button>
+            </ng-template>
+          </p-step>
+        </p-step-list>
+
+        <p-step-panels>
+          <p-step-panel [value]="1">
+            <ng-template #content let-activateCallback="activateCallback">
+              <div class="flex flex-col gap-2 mx-auto max-w-lg min-h-64">
+                <div class="text-center mt-4 mb-8 text-2xl font-semibold">
+                  Complete your profile
+                </div>
+
+                <p-fluid class="flex flex-col gap-4">
+                  <p-floatlabel variant="on" class="block w-full">
+                    <input id="name" pInputText [formControl]="name" class="w-full"/>
+                    <label for="name">Name</label>
+                  </p-floatlabel>
+
+                  <p-floatlabel variant="on" class="block w-full">
+                    <p-date-picker id="birthdate" [formControl]="birthdate" showIcon iconDisplay="input"/>
+                    <label for="birthdate">Birthdate</label>
+                  </p-floatlabel>
+
+                  <p-floatlabel variant="on" class="block w-full">
+                    <p-select id="gender" [options]="genders" [formControl]="gender"/>
+                    <label for="gender">Gender</label>
+                  </p-floatlabel>
+                </p-fluid>
+
+              </div>
+              <div class="flex pt-6 justify-end">
+                <p-button (onClick)="activateCallback(2)" label="Next" icon="pi pi-arrow-right" iconPos="right"/>
+              </div>
+            </ng-template>
+          </p-step-panel>
+
+          <p-step-panel [value]="2">
+            <ng-template #content let-activateCallback="activateCallback">
+              <div class="flex flex-col gap-2 mx-auto" style="min-height: 16rem; max-width: 24rem">
+                <div class="text-center mt-4 mb-4 text-xl font-semibold">Choose your interests</div>
+                <div class="flex flex-wrap justify-center gap-4">
+                </div>
+              </div>
+              <div class="flex pt-6 justify-between">
+                <p-button (onClick)="activateCallback(1)" label="Back" severity="secondary" icon="pi pi-arrow-left"/>
+                <p-button (onClick)="activateCallback(3)" label="Next" icon="pi pi-arrow-right" iconPos="right"/>
+              </div>
+            </ng-template>
+          </p-step-panel>
+
+          <p-step-panel [value]="3">
+            <ng-template #content let-activateCallback="activateCallback">
+              <div class="flex flex-col gap-2 mx-auto" style="min-height: 16rem; max-width: 24rem">
+                <div class="text-center mt-4 mb-4 text-xl font-semibold">Account created successfully</div>
+                <div class="text-center">
+                  <img alt="logo" src="https://primefaces.org/cdn/primeng/images/stepper/content.svg"/>
+                </div>
+              </div>
+              <div class="flex pt-6 justify-start">
+                <p-button (onClick)="activateCallback(2)" label="Back" severity="secondary" icon="pi pi-arrow-left"/>
+              </div>
+            </ng-template>
+          </p-step-panel>
+        </p-step-panels>
+      </p-stepper>
+    </p-card>
+
+  </div>
+</div>

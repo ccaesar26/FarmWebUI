@@ -11,9 +11,6 @@ import {Fluid} from 'primeng/fluid';
 import {InputIconModule} from 'primeng/inputicon';
 import {InputGroup} from 'primeng/inputgroup';
 import {InputGroupAddon} from 'primeng/inputgroupaddon';
-import {Card} from 'primeng/card';
-import {Tab, TabList, TabPanel, TabPanels, Tabs} from 'primeng/tabs';
-import {RegisterComponent} from '../register/register.component';
 
 @Component({
   selector: 'app-login',
@@ -28,14 +25,7 @@ import {RegisterComponent} from '../register/register.component';
     InputIconModule,
     InputGroup,
     InputGroupAddon,
-    PasswordDirective,
-    Card,
-    Tabs,
-    Tab,
-    TabList,
-    TabPanels,
-    TabPanel,
-    RegisterComponent
+    PasswordDirective
   ],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css'

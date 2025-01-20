@@ -35,13 +35,15 @@
       <i class="pi pi-lock"></i>
     </p-inputgroup-addon>
     <p-floatlabel variant="on" class="block w-full">
-      <input pPassword type="password" id="confirm-password" [formControl]="registerConfirmPassword" [feedback]="false"/>
+      <input pPassword type="password" id="confirm-password" [formControl]="registerConfirmPassword"
+             [feedback]="false"/>
       <label for="confirm-password">Repeat Password</label>
     </p-floatlabel>
   </p-inputgroup>
 
   <div class="block w-full">
-    <p-button icon="pi pi-user-plus" iconPos="left" [loading]="isRegistering" label="Register" class="py-2"></p-button>
+      <p-button icon="pi pi-user-plus" iconPos="left" [loading]="isRegistering" label="Register"
+                class="py-2" [routerLink]="['/initialize-farm']"></p-button>
   </div>
 
 </p-fluid>

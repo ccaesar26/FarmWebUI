@@ -2,19 +2,16 @@ import {Component} from '@angular/core';
 import {Card} from "primeng/card";
 import {Button} from 'primeng/button';
 import {Step, StepList, StepPanel, StepPanels, Stepper} from 'primeng/stepper';
-import {NgClass} from '@angular/common';
+import {NgClass, NgStyle} from '@angular/common';
 import {InputText} from 'primeng/inputtext';
 import {FloatLabel} from 'primeng/floatlabel';
 import {FormControl, FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {InputGroup} from 'primeng/inputgroup';
-import {InputGroupAddon} from 'primeng/inputgroupaddon';
 import {DatePicker} from 'primeng/datepicker';
-import {StyleClass} from 'primeng/styleclass';
 import {Fluid} from 'primeng/fluid';
 import {Select} from 'primeng/select';
-import {FileUpload, FileUploadEvent} from 'primeng/fileupload';
-import {PrimeTemplate} from 'primeng/api';
-import {Toast} from 'primeng/toast';
+import {NgxMapboxGLModule} from 'ngx-mapbox-gl';
+import {StyleClass} from 'primeng/styleclass';
+import mapboxgl from 'mapbox-gl';
 
 @Component({
   selector: 'app-initialize-farm',
@@ -30,16 +27,11 @@ import {Toast} from 'primeng/toast';
     InputText,
     FloatLabel,
     FormsModule,
-    InputGroup,
-    InputGroupAddon,
     ReactiveFormsModule,
     DatePicker,
-    StyleClass,
     Fluid,
     Select,
-    FileUpload,
-    PrimeTemplate,
-    Toast
+    NgxMapboxGLModule
   ],
   templateUrl: './initialize-farm.component.html',
   styleUrl: './initialize-farm.component.css'
@@ -51,7 +43,7 @@ export class InitializeFarmComponent {
   gender: FormControl<string | null> = new FormControl();
   genders: string[] = ['Male', 'Female'];
 
-  onUpload($event: FileUploadEvent) {
-    console.log($event.files);
+  constructor() {
+    mapboxgl.accessToken = 'pk.eyJ1IjoiY2NhZXNhciIsImEiOiJjbHFxbDJxY280MjJuMm5tazZwYWZ6cjBhIn0.Si8HxzoWgI0n5VF5_FqyFQ';
   }
 }

@@ -1,13 +1,13 @@
-import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import {Component} from '@angular/core';
+import {RouterOutlet} from '@angular/router';
 
 @Component({
   selector: 'app-root',
-  imports: [
-    RouterOutlet
-  ], // Add Button Module to imports
   templateUrl: './app.component.html',
-  styleUrl: './app.component.css'
+  styleUrl: './app.component.css',
+  imports: [
+    RouterOutlet,
+  ], // Add Button Module to imports
 })
 export class AppComponent {
   title = 'FarmWebUI';

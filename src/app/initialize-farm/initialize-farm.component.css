@@ -1,0 +1,6 @@
+mgl-map {
+  position: relative;
+  height: 180px;
+  width: 500px;
+  border: black 1px solid;
+}

@@ -12,6 +12,9 @@ import {Select} from 'primeng/select';
 import {NgxMapboxGLModule} from 'ngx-mapbox-gl';
 import {StyleClass} from 'primeng/styleclass';
 import mapboxgl from 'mapbox-gl';
+import {PolygonComponent} from '../polygon/polygon.component';
+import {Avatar} from 'primeng/avatar';
+import {AutoFocus} from 'primeng/autofocus';
 
 @Component({
   selector: 'app-initialize-farm',
@@ -31,19 +34,54 @@ import mapboxgl from 'mapbox-gl';
     DatePicker,
     Fluid,
     Select,
-    NgxMapboxGLModule
+    NgxMapboxGLModule,
+    PolygonComponent,
+    Avatar,
+    AutoFocus
   ],
   templateUrl: './initialize-farm.component.html',
   styleUrl: './initialize-farm.component.css'
 })
 export class InitializeFarmComponent {
   activeStep: number = 1;
+  countries: any[] | undefined;
+
   name: FormControl<string | null> = new FormControl();
   birthdate: FormControl<string | null> = new FormControl();
   gender: FormControl<string | null> = new FormControl();
   genders: string[] = ['Male', 'Female'];
+  selectedCountry: any;
 
-  constructor() {
-    mapboxgl.accessToken = 'pk.eyJ1IjoiY2NhZXNhciIsImEiOiJjbHFxbDJxY280MjJuMm5tazZwYWZ6cjBhIn0.Si8HxzoWgI0n5VF5_FqyFQ';
+  ngOnInit() {
+    this.countries = [
+      { name: 'Austria', code: '🇦🇹' },
+      { name: 'Belgium', code: '🇧🇪' },
+      { name: 'Bulgaria', code: '🇧🇬' },
+      { name: 'Croatia', code: '🇭🇷' },
+      { name: 'Cyprus', code: '🇨🇾' },
+      { name: 'Czech Republic', code: '🇨🇿' },
+      { name: 'Denmark', code: '🇩🇰' },
+      { name: 'Estonia', code: '🇪🇪' },
+      { name: 'Finland', code: '🇫🇮' },
+      { name: 'France', code: '🇫🇷' },
+      { name: 'Germany', code: '🇩🇪' },
+      { name: 'Greece', code: '🇬🇷' },
+      { name: 'Hungary', code: '🇭🇺' },
+      { name: 'Ireland', code: '🇮🇪' },
+      { name: 'Italy', code: '🇮🇹' },
+      { name: 'Latvia', code: '🇱🇻' },
+      { name: 'Lithuania', code: '🇱🇹' },
+      { name: 'Luxembourg', code: '🇱🇺' },
+      { name: 'Malta', code: '🇲🇹' },
+      { name: 'Netherlands', code: '🇳🇱' },
+      { name: 'Poland', code: '🇵🇱' },
+      { name: 'Portugal', code: '🇵🇹' },
+      { name: 'Romania', code: '🇷🇴' },
+      { name: 'Slovakia', code: '🇸🇰' },
+      { name: 'Slovenia', code: '🇸🇮' },
+      { name: 'Spain', code: '🇪🇸' },
+      { name: 'Sweden', code: '🇸🇪' },
+    ];
+
   }
 }

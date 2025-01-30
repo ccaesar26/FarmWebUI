@@ -7,7 +7,7 @@ import {InputText} from 'primeng/inputtext';
 import {FormControl, ReactiveFormsModule} from '@angular/forms';
 import {PasswordDirective} from 'primeng/password';
 import {Button} from 'primeng/button';
-import {RouterLink, RouterLinkActive} from '@angular/router';
+import {RouterLink} from '@angular/router';
 
 @Component({
   selector: 'app-register',
@@ -20,8 +20,7 @@ import {RouterLink, RouterLinkActive} from '@angular/router';
     ReactiveFormsModule,
     PasswordDirective,
     Button,
-    RouterLink,
-    RouterLinkActive
+    RouterLink
   ],
   templateUrl: './register.component.html',
   styleUrl: './register.component.css'

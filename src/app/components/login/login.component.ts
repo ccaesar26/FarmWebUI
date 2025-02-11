@@ -31,7 +31,7 @@ import {InputGroupAddon} from 'primeng/inputgroupaddon';
   styleUrl: './login.component.css'
 })
 export class LoginComponent {
-  username = new FormControl('');
-  password = new FormControl('');
+  email = new FormControl();
+  password = new FormControl();
   rememberMe: boolean = false;
 }

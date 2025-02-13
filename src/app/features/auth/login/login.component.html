@@ -1,0 +1,44 @@
+<p-fluid>
+  <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="m-4 space-y-6">
+    <p-inputgroup>
+      <p-inputgroup-addon>
+        <i class="pi pi-envelope"></i>
+      </p-inputgroup-addon>
+      <p-floatlabel variant="on" class="block w-full">
+        <input id="email" pInputText type="email" formControlName="email" class="w-full"/>
+        <label for="email">Email</label>
+      </p-floatlabel>
+    </p-inputgroup>
+    <small class="text-red-500" *ngIf="loginForm.controls.email.invalid && loginForm.controls.email.touched">
+      Please enter a valid email.
+    </small>
+
+    <p-inputgroup>
+      <p-inputgroup-addon>
+        <i class="pi pi-lock"></i>
+      </p-inputgroup-addon>
+      <p-floatlabel variant="on">
+        <input pPassword type="password" id="password" formControlName="password" [feedback]="false"
+               [showPassword]="showPassword"/>
+        <label for="password">Password</label>
+      </p-floatlabel>
+      <p-inputgroup-addon class="cursor-pointer">
+        <button *ngIf="showPassword" class="pi pi-eye-slash" (click)="showPassword = !showPassword"></button>
+        <i *ngIf="!showPassword" class="pi pi-eye" (click)="showPassword = !showPassword"></i>
+      </p-inputgroup-addon>
+    </p-inputgroup>
+    <small class="text-red-500" *ngIf="loginForm.controls.password.invalid && loginForm.controls.password.touched">
+      Password must be at least 8 characters.
+    </small>
+
+    <!-- Error Message -->
+    <div class="text-red-500 mt-2" *ngIf="errorMessage">
+      {{ errorMessage }}
+    </div>
+
+
+    <div class="block w-full">
+      <p-button icon="pi pi-user" label="Login" type="submit" class="py-2" [loading]="isSubmitting"></p-button>
+    </div>
+  </form>
+</p-fluid>

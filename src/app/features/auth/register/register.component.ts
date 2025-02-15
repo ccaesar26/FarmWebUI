@@ -7,7 +7,7 @@ import { InputText } from 'primeng/inputtext';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { PasswordDirective } from 'primeng/password';
 import { Button } from 'primeng/button';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { NgIf } from '@angular/common';
 import { RegisterService } from '../../../core/services/register.service';
 
@@ -22,7 +22,6 @@ import { RegisterService } from '../../../core/services/register.service';
     ReactiveFormsModule,
     PasswordDirective,
     Button,
-    RouterLink,
     NgIf
   ],
   templateUrl: './register.component.html',
@@ -65,7 +64,7 @@ export class RegisterComponent {
     this.registerService.register({ username, email, password, role }).subscribe({
       next: () => {
         this.isRegistering = false;
-        this.router.navigate(['/login']);
+        this.router.navigate(['/register/success']);
       },
       error: (error) => {
         this.isRegistering = false;

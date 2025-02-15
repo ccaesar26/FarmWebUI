@@ -1,0 +1,12 @@
+<h1 class="text-3xl font-semibold text-center text-primary m-8">
+  Welcome to Farm Management
+</h1>
+<p-tabs [value]="activeTab">
+  <p-tablist class="w-full p-4">
+    <p-tab [value]="0" (click)="navigateTo('login')" class="w-1/2 justify-center">Login</p-tab>
+    <p-tab [value]="1" (click)="navigateTo('register')" class="w-1/2 justify-center">Register</p-tab>
+  </p-tablist>
+</p-tabs>
+
+<!-- Dynamic Content via Router -->
+<router-outlet></router-outlet>

@@ -1,19 +1,45 @@
 import { Routes } from '@angular/router';
 import { InitializeFarmComponent } from './features/initialize-farm/initialize-farm.component';
-import { LandingComponent } from './features/landing/landing.component';
+import { AuthTabsComponent } from './features/auth/auth-tabs/auth-tabs.component';
 import { DashboardComponent } from './features/dashboard/dashboard.component';
 import { UnauthorizedComponent } from './features/unauthorized/unauthorized.component';
 import { LandingLayoutComponent } from './core/layouts/landing-layout/landing-layout.component';
 import { MainLayoutComponent } from './core/layouts/main-layout/main-layout.component';
 import { managerAuthGuard } from './core/guards/manager-auth.guard';
 import { authGuard } from './core/guards/auth.guard';
+import { LoginComponent } from './features/auth/login/login.component';
+import { RegisterComponent } from './features/auth/register/register.component';
+import { RegisterSuccessComponent } from './core/components/register-success/register-success.component';
 
 export const routes: Routes = [
   {
     path: 'login',
     component: LandingLayoutComponent,
     children: [
-      { path: '', component: LandingComponent },
+      {
+        path: '',
+        component: AuthTabsComponent,
+        children: [
+          { path: '', component: LoginComponent }
+        ]
+      },
+    ]
+  },
+  {
+    path: 'register',
+    component: LandingLayoutComponent,
+    children: [
+      {
+        path: '',
+        component: AuthTabsComponent,
+        children: [
+          { path: '', component: RegisterComponent }
+        ]
+      },
+      {
+        path: 'success',
+        component: RegisterSuccessComponent
+      }
     ]
   },
   {

@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { LandingComponent } from './landing.component';
+import { AuthTabsComponent } from './auth-tabs.component';
 
 describe('LandingComponent', () => {
-  let component: LandingComponent;
-  let fixture: ComponentFixture<LandingComponent>;
+  let component: AuthTabsComponent;
+  let fixture: ComponentFixture<AuthTabsComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [LandingComponent]
+      imports: [AuthTabsComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(LandingComponent);
+    fixture = TestBed.createComponent(AuthTabsComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

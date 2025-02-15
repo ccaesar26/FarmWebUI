@@ -3,7 +3,7 @@ import { Card } from "primeng/card";
 import { RouterOutlet } from '@angular/router';
 
 @Component({
-  selector: 'app-landing-layout',
+  selector: 'app-auth-tabs-layout',
   imports: [
     Card,
     RouterOutlet

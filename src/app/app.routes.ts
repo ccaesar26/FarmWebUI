@@ -5,13 +5,17 @@ import { DashboardComponent } from './features/dashboard/dashboard.component';
 import { UnauthorizedComponent } from './features/unauthorized/unauthorized.component';
 import { LandingLayoutComponent } from './core/layouts/landing-layout/landing-layout.component';
 import { MainLayoutComponent } from './core/layouts/main-layout/main-layout.component';
-import { managerAuthGuard } from './core/guards/manager-auth.guard';
 import { authGuard } from './core/guards/auth.guard';
 import { LoginComponent } from './features/auth/login/login.component';
 import { RegisterComponent } from './features/auth/register/register.component';
 import { RegisterSuccessComponent } from './core/components/register-success/register-success.component';
 
 export const routes: Routes = [
+  {
+    path: '',
+    redirectTo: 'login',
+    pathMatch: 'full'
+  },
   {
     path: 'login',
     component: LandingLayoutComponent,
@@ -61,8 +65,8 @@ export const routes: Routes = [
     path: 'dashboard',
     component: MainLayoutComponent,
     children: [
-      { path: '', component: DashboardComponent, canActivate: [ authGuard, managerAuthGuard ] },
+      { path: '', component: DashboardComponent, canActivate: [ authGuard ] },
     ]
   },
-  { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
+  { path: '**', redirectTo: 'login', pathMatch: 'full' }
 ];

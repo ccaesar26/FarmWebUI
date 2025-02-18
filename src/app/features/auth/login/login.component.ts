@@ -12,6 +12,7 @@ import { InputGroupAddon } from 'primeng/inputgroupaddon';
 import { AuthService } from '../../../core/services/auth.service';
 import { Router } from '@angular/router';
 import { NgIf } from '@angular/common';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-login',
@@ -39,15 +40,13 @@ export class LoginComponent {
 
   showPassword: boolean = false;
   errorMessage: string | null = null;
-  isSubmitting = false;
+  isSubmitting: boolean = false;
 
   constructor(private authService: AuthService, private router: Router) {
   }
 
   onSubmit() {
-    if (this.loginForm.invalid) {
-      return;
-    }
+    if (this.loginForm.invalid) return;
 
     this.isSubmitting = true;
     this.errorMessage = null;
@@ -60,15 +59,11 @@ export class LoginComponent {
       return;
     }
 
-    this.authService.login({ email, password }).subscribe({
-      next: () => {
-        this.isSubmitting = false;
-        this.router.navigate([ '/dashboard' ]); // Navigate to the dashboard
-      },
-      error: (err) => {
-        this.errorMessage = err.message;
-        this.isSubmitting = false;
-      }
+    this.authService.login({ email, password }).pipe(
+      finalize(() => this.isSubmitting = false)
+    ).subscribe({
+      next: () => this.router.navigate([ '/dashboard' ]),
+      error: (err) => this.errorMessage = err.message
     });
   }
 }

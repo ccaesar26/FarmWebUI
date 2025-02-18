@@ -1,77 +1,73 @@
 import { Injectable, signal, computed, effect } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { catchError, map, Observable, throwError } from 'rxjs';
 import { Router } from '@angular/router';
+import { catchError, lastValueFrom, map, Observable, switchMap, throwError } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { LoginRequest, LoginResponse } from '../models/auth.model';
+import { LoginRequest, RegisterRequest } from '../models/auth.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  private apiUrl = `${environment.apiUrl}/identity/login`;
+  private apiUrl = `${environment.apiUrl}/identity`;
 
-  private token = signal<string | null>(this.getStoredToken()); // Signal for token
-  private role = signal<string | null>(this.getStoredRole());   // Signal for role
-
-  // Computed signal for authentication status
-  isAuthenticated = computed(() => !!this.token());
-
-  // Computed signal for user role
-  userRole = computed(() => this.role());
+  private role = signal<string | null>(null);
+  public userRole = computed(() => this.role());
+  public isAuthenticated = computed(() => this.role() !== null);
 
   constructor(private http: HttpClient, private router: Router) {
-    // Effect to watch token changes and store it in localStorage/sessionStorage
-    effect(() => {
-      if (this.token()) {
-        localStorage.setItem('token', this.token()!);
-      } else {
-        localStorage.removeItem('token');
-      }
-    });
-
-    effect(() => {
-      if (this.role()) {
-        localStorage.setItem('role', this.role()!);
-      } else {
-        localStorage.removeItem('role');
-      }
-    });
+    this.restoreSession();
   }
 
-  login(data: LoginRequest): Observable<LoginResponse> {
-    return this.http.post<LoginResponse>(this.apiUrl, data).pipe(
+  login(data: LoginRequest): Observable<void> {
+    return this.http.post<void>(`${this.apiUrl}/login`, data, { withCredentials: true }).pipe(
+      switchMap(() => this.fetchUserRole()), // 🔥 Ensures role is fetched before proceeding
+      catchError(this.handleAuthError)
+    );
+  }
+
+  register(data: RegisterRequest): Observable<boolean> {
+    return this.http.post(`${this.apiUrl}/register`, data, { observe: 'response' }).pipe(
+      map(response => response.status === 200),
+      catchError(this.handleAuthError)
+    );
+  }
+
+  fetchUserRole(): Observable<void> {
+    return this.http.get<{ role: string }>(`${this.apiUrl}/me`, { withCredentials: true }).pipe(
       map(response => {
-        this.token.set(response.token); // Set token in signal
-        this.role.set(response.role);   // Set role in signal
-        return response;
+        this.role.set(response.role);
       }),
-      catchError((error: HttpErrorResponse) => {
-        let errorMessage = 'An unknown error occurred';
-        if (error.status === 401) {
-          errorMessage = 'Invalid email or password';
-        } else if (error.status === 403) {
-          errorMessage = 'You are not authorized to access this resource';
-        } else if (error.status === 0) {
-          errorMessage = 'Could not connect to the server';
-        }
-        return throwError(() => new Error(errorMessage));
+      catchError(() => {
+        this.role.set(null);
+        this.router.navigate(['/login']);
+        return throwError(() => new Error('Failed to fetch user role'));
       })
     );
   }
 
-  logout() {
-    this.token.set(null);
-    this.role.set(null);
+  logout(): void {
+    this.http.post(`${this.apiUrl}/logout`, {}, { withCredentials: true }).subscribe({
+      next: () => {
+        this.role.set(null);
+        this.router.navigate(['/login']);
+      },
+      error: () => console.error('Logout failed')
+    });
+  }
 
+  restoreSession(): void {
+    this.fetchUserRole().subscribe();
+  }
+
+  private handleAuthError(error: HttpErrorResponse): Observable<never> {
+    let errorMessage = 'An unknown error occurred';
+    if (error.status === 400) errorMessage = 'Invalid request';
+    else if (error.status === 401) errorMessage = 'Invalid credentials';
+    else if (error.status === 403) errorMessage = 'Not authorized';
+    else if (error.status === 409) errorMessage = 'User already exists';
+    else if (error.status === 0) errorMessage = 'Cannot connect to server';
     this.router.navigate(['/login']);
-  }
-
-  private getStoredToken(): string | null {
-    return localStorage.getItem('token') || sessionStorage.getItem('token');
-  }
-
-  private getStoredRole(): string | null {
-    return localStorage.getItem('role') || sessionStorage.getItem('role');
+    return throwError(() => new Error(errorMessage));
   }
 }

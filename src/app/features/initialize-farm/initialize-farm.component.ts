@@ -12,8 +12,17 @@ import { NgxMapboxGLModule } from 'ngx-mapbox-gl';
 import { PolygonComponent } from '../polygon/polygon.component';
 import { AutoFocus } from 'primeng/autofocus';
 import { Divider } from 'primeng/divider';
-import { Polygon } from '../../core/models/polygon.model';
-import { RouterLink } from '@angular/router';
+import { convertToGeoJson, Polygon } from '../../core/models/polygon.model';
+import { Router, RouterLink } from '@angular/router';
+import { UserProfileService } from '../../core/services/user-profile.service';
+import { FarmProfileService } from '../../core/services/farm-profile.service';
+import { FieldService } from '../../core/services/field.service';
+import { AuthService } from '../../core/services/auth.service';
+import { CreateUserProfileRequest } from '../../core/models/user-profile.model';
+import { CreateFarmProfileRequest } from '../../core/models/farm-profile.model';
+import { CreateFieldRequest } from '../../core/models/field.model';
+import { COUNTRIES } from './countries.constants';
+import { forkJoin, switchMap } from 'rxjs';
 
 @Component({
   selector: 'app-initialize-farm',
@@ -54,7 +63,13 @@ export class InitializeFarmComponent implements OnInit {
   selectedCountry: FormControl<string | null> = new FormControl();
   fields: FormControl<Array<Polygon> | null> = new FormControl();
 
-  constructor() {
+  constructor(
+    private router: Router,
+    private userProfileService: UserProfileService,
+    private farmProfileService: FarmProfileService,
+    private fieldService: FieldService,
+    private authService: AuthService
+  ) {
     // Initialize the form group with form controls
     this.form = new FormGroup({
       farmerName: this.farmerName,
@@ -67,40 +82,51 @@ export class InitializeFarmComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.countries = [
-      { name: 'Austria', code: 'AT' },
-      { name: 'Belgium', code: 'BE' },
-      { name: 'Bulgaria', code: 'BG' },
-      { name: 'Croatia', code: 'HR' },
-      { name: 'Cyprus', code: 'CY' },
-      { name: 'Czech Republic', code: 'CZ' },
-      { name: 'Denmark', code: 'DK' },
-      { name: 'Estonia', code: 'EE' },
-      { name: 'Finland', code: 'FI' },
-      { name: 'France', code: 'FR' },
-      { name: 'Germany', code: 'DE' },
-      { name: 'Greece', code: 'GR' },
-      { name: 'Hungary', code: 'HU' },
-      { name: 'Ireland', code: 'IE' },
-      { name: 'Italy', code: 'IT' },
-      { name: 'Latvia', code: 'LV' },
-      { name: 'Lithuania', code: 'LT' },
-      { name: 'Luxembourg', code: 'LU' },
-      { name: 'Malta', code: 'MT' },
-      { name: 'Netherlands', code: 'NL' },
-      { name: 'Poland', code: 'PL' },
-      { name: 'Portugal', code: 'PT' },
-      { name: 'Romania', code: 'RO' },
-      { name: 'Slovakia', code: 'SK' },
-      { name: 'Slovenia', code: 'SI' },
-      { name: 'Spain', code: 'ES' },
-      { name: 'Sweden', code: 'SE' }
-    ];
+    this.countries = COUNTRIES;
   }
 
-  // Method to log form control values
   onFinish() {
-    // Show a popup with the form values
-    alert(JSON.stringify(this.form.value, null, 2));
+    if (this.form.valid) {
+      const userProfile: CreateUserProfileRequest = {
+        name: this.farmerName.value!,
+        dateOfBirth: this.birthdate.value!,
+        gender: this.gender.value!,
+      };
+
+      const farmProfile: CreateFarmProfileRequest = {
+        name: this.farmName.value!,
+        country: this.selectedCountry.value!,
+      };
+
+      const polygons: Polygon[] = this.fields.value ?? [];
+
+      this.initializeFarm(userProfile, farmProfile, polygons).subscribe(() => {
+        this.router.navigate([ '/dashboard' ]);
+      });
+    }
   }
+
+  initializeFarm(userProfile: CreateUserProfileRequest, farmProfile: CreateFarmProfileRequest, polygons: Polygon[]) {
+    return this.userProfileService.createUserProfile(userProfile).pipe(
+      switchMap(() => this.farmProfileService.createFarmProfile(farmProfile)),
+      switchMap(farmResponse => {
+        const farmId = farmResponse.id;
+
+        return this.authService.refreshToken().pipe(
+          switchMap(() => {
+            const fieldRequests: CreateFieldRequest[] = polygons.map(polygon => ({
+              farmId,
+              fieldName: polygon.name,
+              fieldBoundary: convertToGeoJson(polygon),
+            }));
+
+            return fieldRequests.length > 0
+              ? forkJoin(fieldRequests.map(field => this.fieldService.createField(field)))
+              : [];
+          })
+        );
+      })
+    );
+  }
+
 }

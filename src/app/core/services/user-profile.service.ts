@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, catchError, of, map } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { CreateUserProfileRequest } from '../models/user-profile.model';
+import { CreateUserProfileRequest, UserProfile } from '../models/user-profile.model';
 
 @Injectable({
   providedIn: 'root'
@@ -26,5 +26,9 @@ export class UserProfileService {
 
   createUserProfile(request: CreateUserProfileRequest): Observable<any> {
     return this.http.post(this.apiUrl + '/create', request);
+  }
+
+  getUserProfile(): Observable<UserProfile> {
+    return this.http.get<UserProfile>(this.apiUrl);
   }
 }

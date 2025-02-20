@@ -1,4 +1,4 @@
-<div class="w-full h-full px-6">
+<form [formGroup]="form" (ngSubmit)="onFinish()" class="w-full h-full px-6">
   <h1 class="text-3xl font-semibold text-center text-primary m-8">
     Let's configure your farm
   </h1>
@@ -67,29 +67,29 @@
             <p-fluid class="flex flex-col gap-4">
 
               <p-floatlabel variant="on" class="block w-full">
-                <input id="name" pInputText [formControl]="farmerName" class="w-full" [pAutoFocus]="true"/>
+                <input id="name" pInputText formControlName="farmerName" class="w-full" [pAutoFocus]="true"/>
                 <label for="name">Your name</label>
               </p-floatlabel>
 
               <p-floatlabel variant="on" class="block w-full">
-                <p-date-picker id="birthdate" [formControl]="birthdate" showIcon iconDisplay="input"/>
+                <p-date-picker id="birthdate" formControlName="birthdate" showIcon iconDisplay="input"/>
                 <label for="birthdate">Birthdate</label>
               </p-floatlabel>
 
               <p-floatlabel variant="on" class="block w-full">
-                <p-select id="gender" [options]="genders" [formControl]="gender"/>
+                <p-select id="gender" [options]="genders" formControlName="gender"/>
                 <label for="gender">Gender</label>
               </p-floatlabel>
 
               <p-divider></p-divider>
 
               <p-floatlabel variant="on" class="block w-full">
-                <input id="fname" pInputText [formControl]="farmName" class="w-full"/>
+                <input id="fname" pInputText formControlName="farmName" class="w-full"/>
                 <label for="fname">Your farm's name</label>
               </p-floatlabel>
 
               <p-floatlabel variant="on" class="block w-full">
-                <p-select id="country" [options]="countries" [formControl]="selectedCountry" optionLabel="name"
+                <p-select id="country" [options]="countries" formControlName="selectedCountry" optionLabel="name"
                           [filter]="true"
                           filterBy="name" [showClear]="true" class="w-full">
                   <ng-template #selectedItem let-selectedOption>
@@ -126,13 +126,13 @@
               Configure your farm
             </div>
             <div class="block w-full">
-              <app-polygon [formControl]="fields"></app-polygon>
+              <app-polygon formControlName="fields"></app-polygon>
             </div>
           </div>
           <div class="flex justify-between mt-6">
             <p-button (onClick)="activateCallback(1)" label="Back" severity="secondary" icon="pi pi-arrow-left"/>
-            <p-button (onClick)="activateCallback(3); onFinish()" label="Finish" icon="pi pi-check"
-                      iconPos="right"/>
+            <p-button label="Finish" icon="pi pi-check"
+                      iconPos="right" type="submit" [loading]="isSubmitting"/>
           </div>
         </ng-template>
       </p-step-panel>
@@ -153,4 +153,4 @@
       </p-step-panel>
     </p-step-panels>
   </p-stepper>
-</div>
+</form>

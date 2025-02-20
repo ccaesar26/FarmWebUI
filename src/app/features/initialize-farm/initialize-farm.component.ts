@@ -4,7 +4,7 @@ import { Step, StepList, StepPanel, StepPanels, Stepper } from 'primeng/stepper'
 import { NgClass } from '@angular/common';
 import { InputText } from 'primeng/inputtext';
 import { FloatLabel } from 'primeng/floatlabel';
-import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { DatePicker } from 'primeng/datepicker';
 import { Fluid } from 'primeng/fluid';
 import { Select } from 'primeng/select';
@@ -50,18 +50,20 @@ import { forkJoin, switchMap } from 'rxjs';
   templateUrl: './initialize-farm.component.html',
   styleUrl: './initialize-farm.component.css'
 })
-export class InitializeFarmComponent implements OnInit {
-  form: FormGroup;
-  activeStep: number = 1;
-  countries: any[] | undefined;
+export class InitializeFarmComponent {
+  form: FormGroup = new FormGroup({
+    farmerName: new FormControl('', [ Validators.required ]),
+    birthdate: new FormControl('', [ Validators.required ]),
+    gender: new FormControl(null, [ Validators.required ]),
+    farmName: new FormControl('', [ Validators.required ]),
+    selectedCountry: new FormControl<{ name: string, code: string } | null>(null, [ Validators.required ]),
+    fields: new FormControl([]),
+  });
 
-  farmerName: FormControl<string | null> = new FormControl();
-  birthdate: FormControl<string | null> = new FormControl();
-  gender: FormControl<string | null> = new FormControl();
-  farmName: FormControl<string | null> = new FormControl();
+  activeStep: number = 1;
+  countries = COUNTRIES;
+  isSubmitting: boolean = false;
   genders: string[] = [ 'Male', 'Female' ];
-  selectedCountry: FormControl<string | null> = new FormControl();
-  fields: FormControl<Array<Polygon> | null> = new FormControl();
 
   constructor(
     private router: Router,
@@ -70,56 +72,55 @@ export class InitializeFarmComponent implements OnInit {
     private fieldService: FieldService,
     private authService: AuthService
   ) {
-    // Initialize the form group with form controls
-    this.form = new FormGroup({
-      farmerName: this.farmerName,
-      birthdate: this.birthdate,
-      gender: this.gender,
-      farmName: this.farmName,
-      selectedCountry: this.selectedCountry,
-      fields: this.fields
-    });
-  }
-
-  ngOnInit() {
-    this.countries = COUNTRIES;
   }
 
   onFinish() {
-    if (this.form.valid) {
-      const userProfile: CreateUserProfileRequest = {
-        name: this.farmerName.value!,
-        dateOfBirth: this.birthdate.value!,
-        gender: this.gender.value!,
-      };
+    if (this.form.invalid) return;
 
-      const farmProfile: CreateFarmProfileRequest = {
-        name: this.farmName.value!,
-        country: this.selectedCountry.value!,
-      };
+    this.isSubmitting = true;
 
-      const polygons: Polygon[] = this.fields.value ?? [];
+    const {
+      farmerName,
+      birthdate,
+      gender,
+      farmName,
+      selectedCountry,
+      fields
+    } = this.form.controls;
 
-      this.initializeFarm(userProfile, farmProfile, polygons).subscribe(() => {
-        this.router.navigate([ '/dashboard' ]);
-      });
-    }
+    const userProfile: CreateUserProfileRequest = {
+      name: farmerName.value,
+      dateOfBirth: this.formatDate(birthdate.value),
+      gender: gender.value,
+    };
+
+    const farmProfile: CreateFarmProfileRequest = {
+      name: farmName.value,
+      country: selectedCountry.value.name,
+    };
+
+    const polygons: Polygon[] = fields.value;
+    const fieldRequests: CreateFieldRequest[] = polygons.map(polygon => ({
+      fieldName: polygon.name,
+      fieldBoundary: convertToGeoJson(polygon),
+    }));
+
+    this.initializeFarm(userProfile, farmProfile, fieldRequests).subscribe(() => {
+      this.isSubmitting = false;
+      this.router.navigate([ '/dashboard' ]);
+    });
   }
 
-  initializeFarm(userProfile: CreateUserProfileRequest, farmProfile: CreateFarmProfileRequest, polygons: Polygon[]) {
+  initializeFarm(
+    userProfile: CreateUserProfileRequest,
+    farmProfile: CreateFarmProfileRequest,
+    fieldRequests: CreateFieldRequest[]
+  ) {
     return this.userProfileService.createUserProfile(userProfile).pipe(
       switchMap(() => this.farmProfileService.createFarmProfile(farmProfile)),
-      switchMap(farmResponse => {
-        const farmId = farmResponse.id;
-
+      switchMap(() => {
         return this.authService.refreshToken().pipe(
           switchMap(() => {
-            const fieldRequests: CreateFieldRequest[] = polygons.map(polygon => ({
-              farmId,
-              fieldName: polygon.name,
-              fieldBoundary: convertToGeoJson(polygon),
-            }));
-
             return fieldRequests.length > 0
               ? forkJoin(fieldRequests.map(field => this.fieldService.createField(field)))
               : [];
@@ -129,4 +130,8 @@ export class InitializeFarmComponent implements OnInit {
     );
   }
 
+  private formatDate(date: Date | string): string {
+    if (!date) return '';
+    return new Date(date).toISOString().split('T')[0]; // Extracts YYYY-MM-DD
+  }
 }

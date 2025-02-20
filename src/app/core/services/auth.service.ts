@@ -60,6 +60,10 @@ export class AuthService {
     return this.fetchUserRole().pipe(catchError(() => of(undefined)));
   }
 
+  refreshToken(): Observable<void> {
+    return this.http.post<void>(`${this.apiUrl}/refresh-token`, {}); // Call the backend refresh endpoint
+  }
+
   private handleAuthError(error: HttpErrorResponse): Observable<never> {
     let errorMessage = 'An unknown error occurred';
     if (error.status === 400) errorMessage = 'Invalid request';

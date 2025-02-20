@@ -1,7 +1,5 @@
-export interface UserProfile {
-  id: string;
+export interface CreateUserProfileRequest {
   name: string;
   dateOfBirth: string;
   gender: string;
-  userId: string;
 }

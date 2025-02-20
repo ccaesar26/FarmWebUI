@@ -2,12 +2,13 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, catchError, of, map } from 'rxjs';
 import { environment } from '../../../environments/environment';
+import { CreateUserProfileRequest } from '../models/user-profile.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UserProfileService {
-  private apiUrl = `${environment.apiUrl}/user-profile`; // Adjust if needed
+  private apiUrl = `${environment.apiUrl}/user-profile`;
 
   constructor(private http: HttpClient) {}
 
@@ -21,5 +22,9 @@ export class UserProfileService {
         throw error; // Other errors (e.g., 401 Unauthorized)
       })
     );
+  }
+
+  createUserProfile(request: CreateUserProfileRequest): Observable<any> {
+    return this.http.post(this.apiUrl + '/create', request);
   }
 }

@@ -1,7 +1,7 @@
 import { Injectable, signal, computed, effect } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { catchError, lastValueFrom, map, Observable, switchMap, throwError } from 'rxjs';
+import { catchError, lastValueFrom, map, Observable, of, switchMap, throwError } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { LoginRequest, RegisterRequest } from '../models/auth.model';
 
@@ -9,7 +9,7 @@ import { LoginRequest, RegisterRequest } from '../models/auth.model';
   providedIn: 'root'
 })
 export class AuthService {
-  private apiUrl = `${environment.apiUrl}/identity`;
+  private apiUrl = `${ environment.apiUrl }/identity`;
 
   private role = signal<string | null>(null);
   public userRole = computed(() => this.role());
@@ -20,44 +20,44 @@ export class AuthService {
   }
 
   login(data: LoginRequest): Observable<void> {
-    return this.http.post<void>(`${this.apiUrl}/login`, data, { withCredentials: true }).pipe(
+    return this.http.post<void>(`${ this.apiUrl }/login`, data).pipe(
       switchMap(() => this.fetchUserRole()), // 🔥 Ensures role is fetched before proceeding
       catchError(this.handleAuthError)
     );
   }
 
   register(data: RegisterRequest): Observable<boolean> {
-    return this.http.post(`${this.apiUrl}/register`, data, { observe: 'response' }).pipe(
+    return this.http.post(`${ this.apiUrl }/register`, data, { observe: 'response' }).pipe(
       map(response => response.status === 200),
       catchError(this.handleAuthError)
     );
   }
 
   fetchUserRole(): Observable<void> {
-    return this.http.get<{ role: string }>(`${this.apiUrl}/me`, { withCredentials: true }).pipe(
+    return this.http.get<{ role: string }>(`${ this.apiUrl }/me`).pipe(
       map(response => {
         this.role.set(response.role);
       }),
       catchError(() => {
         this.role.set(null);
-        this.router.navigate(['/login']);
+        // this.router.navigate(['/login']);
         return throwError(() => new Error('Failed to fetch user role'));
       })
     );
   }
 
   logout(): void {
-    this.http.post(`${this.apiUrl}/logout`, {}, { withCredentials: true }).subscribe({
+    this.http.post(`${ this.apiUrl }/logout`, {}).subscribe({
       next: () => {
         this.role.set(null);
-        this.router.navigate(['/login']);
+        // this.router.navigate(['/login']);
       },
       error: () => console.error('Logout failed')
     });
   }
 
-  restoreSession(): void {
-    this.fetchUserRole().subscribe();
+  restoreSession(): Observable<void> {
+    return this.fetchUserRole().pipe(catchError(() => of(undefined)));
   }
 
   private handleAuthError(error: HttpErrorResponse): Observable<never> {
@@ -67,7 +67,7 @@ export class AuthService {
     else if (error.status === 403) errorMessage = 'Not authorized';
     else if (error.status === 409) errorMessage = 'User already exists';
     else if (error.status === 0) errorMessage = 'Cannot connect to server';
-    this.router.navigate(['/login']);
+    // this.router.navigate(['/login']);
     return throwError(() => new Error(errorMessage));
   }
 }

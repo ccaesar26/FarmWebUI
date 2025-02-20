@@ -10,7 +10,7 @@ import {Ripple} from 'primeng/ripple';
 import {InputText} from 'primeng/inputtext';
 import {mapDrawUtils, updatePolygonLabels} from './map-draw-utils';
 import {Tooltip} from 'primeng/tooltip';
-import {Polygon} from '../../core/models/polygon';
+import {Polygon} from '../../core/models/polygon.model';
 import {OnChangeFn, OnTouch} from '../../core/models/control-value-accessor';
 
 @Component({
@@ -60,7 +60,29 @@ export class PolygonComponent implements OnInit, ControlValueAccessor {
     this.map.on('draw.create', (event) => this.handleDrawEvent(event));
     this.map.on('draw.update', (event) => this.handleDrawEvent(event));
     this.map.on('draw.delete', (event) => this.handleDeleteEvent(event));
+    this.map.on('load', () => {
+      if (this.polygons.length > 0) {
+        this.restorePolygonsOnMap();
+      }
+    });
   }
+
+  private restorePolygonsOnMap() {
+    this.polygons.forEach(polygon => {
+      this.draw.add({
+        type: 'Feature',
+        properties: {},
+        geometry: {
+          type: 'Polygon',
+          coordinates: [polygon.coordinates]
+        }
+      });
+    });
+    setTimeout(() => {
+      updatePolygonLabels(this.map, this.polygons);
+    }, 500); // Small delay to ensure polygons are drawn before updating labels
+  }
+
 
   private handleDrawEvent(event: any) {
     const features = event.features;

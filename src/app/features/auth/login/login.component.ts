@@ -13,6 +13,7 @@ import { AuthService } from '../../../core/services/auth.service';
 import { Router } from '@angular/router';
 import { NgIf } from '@angular/common';
 import { finalize } from 'rxjs';
+import { UserProfileService } from '../../../core/services/user-profile.service';
 
 @Component({
   selector: 'app-login',
@@ -42,7 +43,11 @@ export class LoginComponent {
   errorMessage: string | null = null;
   isSubmitting: boolean = false;
 
-  constructor(private authService: AuthService, private router: Router) {
+  constructor(
+    private authService: AuthService,
+    private userProfileService: UserProfileService,
+    private router: Router
+  ) {
   }
 
   onSubmit() {
@@ -62,7 +67,21 @@ export class LoginComponent {
     this.authService.login({ email, password }).pipe(
       finalize(() => this.isSubmitting = false)
     ).subscribe({
-      next: () => this.router.navigate([ '/dashboard' ]),
+      next: () => {
+        this.router.navigate([ '/dashboard' ]);
+        // this.userProfileService.getUserProfile().subscribe({
+        //   next: (hasProfile) => {
+        //     if (hasProfile) {
+        //     } else {
+        //       this.router.navigate([ '/initialize-farm' ]);
+        //     }
+        //   },
+        //   error: (err) => {
+        //     this.errorMessage = err.message;
+        //     this.router.navigate([ '/login' ]);
+        //   }
+        // });
+      },
       error: (err) => this.errorMessage = err.message
     });
   }

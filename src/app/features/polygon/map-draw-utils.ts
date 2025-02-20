@@ -1,6 +1,6 @@
 import {AuraPreset} from '../../theme';
 import mapboxgl from 'mapbox-gl';
-import {Polygon} from '../../core/models/polygon';
+import {Polygon} from '../../core/models/polygon.model';
 
 export function updatePolygonLabels(map: mapboxgl.Map, polygons: Array<Polygon>) {
   const labelFeatures: GeoJSON.Feature<GeoJSON.Point>[] = polygons.map(polygon => ({

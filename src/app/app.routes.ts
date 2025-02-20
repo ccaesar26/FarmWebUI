@@ -5,15 +5,16 @@ import { DashboardComponent } from './features/dashboard/dashboard.component';
 import { UnauthorizedComponent } from './features/unauthorized/unauthorized.component';
 import { LandingLayoutComponent } from './core/layouts/landing-layout/landing-layout.component';
 import { MainLayoutComponent } from './core/layouts/main-layout/main-layout.component';
-import { authGuard } from './core/guards/auth.guard';
 import { LoginComponent } from './features/auth/login/login.component';
 import { RegisterComponent } from './features/auth/register/register.component';
 import { RegisterSuccessComponent } from './core/components/register-success/register-success.component';
+import { dashboardGuardFn } from './core/guards/dashboard.guard';
+import { initializeFarmGuardFn } from './core/guards/initialize-farm.guard';
 
 export const routes: Routes = [
   {
     path: '',
-    redirectTo: 'login',
+    redirectTo: 'dashboard',
     pathMatch: 'full'
   },
   {
@@ -51,7 +52,7 @@ export const routes: Routes = [
     component: LandingLayoutComponent,
     children:
       [
-        { path: '', component: InitializeFarmComponent },
+        { path: '', component: InitializeFarmComponent, canActivate: [ initializeFarmGuardFn ] }
       ]
   },
   {
@@ -65,7 +66,7 @@ export const routes: Routes = [
     path: 'dashboard',
     component: MainLayoutComponent,
     children: [
-      { path: '', component: DashboardComponent, canActivate: [ authGuard ] },
+      { path: '', component: DashboardComponent, canActivate: [ dashboardGuardFn ] },
     ]
   },
   { path: '**', redirectTo: 'login', pathMatch: 'full' }

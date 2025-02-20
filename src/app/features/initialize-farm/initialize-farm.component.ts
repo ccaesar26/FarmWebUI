@@ -12,7 +12,7 @@ import { NgxMapboxGLModule } from 'ngx-mapbox-gl';
 import { PolygonComponent } from '../polygon/polygon.component';
 import { AutoFocus } from 'primeng/autofocus';
 import { Divider } from 'primeng/divider';
-import { Polygon } from '../../core/models/polygon';
+import { Polygon } from '../../core/models/polygon.model';
 import { RouterLink } from '@angular/router';
 
 @Component({
@@ -50,9 +50,9 @@ export class InitializeFarmComponent implements OnInit {
   birthdate: FormControl<string | null> = new FormControl();
   gender: FormControl<string | null> = new FormControl();
   farmName: FormControl<string | null> = new FormControl();
-  fields: FormControl<Array<Polygon> | null> = new FormControl();
   genders: string[] = [ 'Male', 'Female' ];
   selectedCountry: FormControl<string | null> = new FormControl();
+  fields: FormControl<Array<Polygon> | null> = new FormControl();
 
   constructor() {
     // Initialize the form group with form controls

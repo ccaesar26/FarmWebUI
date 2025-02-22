@@ -1,24 +1,25 @@
-import {Component, HostListener, OnInit} from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import mapboxgl from 'mapbox-gl';
 import MapboxDraw from '@mapbox/mapbox-gl-draw';
-import {NgForOf, NgIf} from '@angular/common';
-import {ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR} from '@angular/forms';
-import {Button, ButtonDirective} from 'primeng/button';
-import {Dialog} from 'primeng/dialog';
-import {TableModule} from 'primeng/table';
-import {Ripple} from 'primeng/ripple';
-import {InputText} from 'primeng/inputtext';
-import {mapDrawUtils, updatePolygonLabels} from './map-draw-utils';
-import {Tooltip} from 'primeng/tooltip';
-import {Polygon} from '../../core/models/polygon.model';
-import {OnChangeFn, OnTouch} from '../../core/models/control-value-accessor';
+import { NgForOf, NgIf } from '@angular/common';
+import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { Button, ButtonDirective } from 'primeng/button';
+import { Dialog } from 'primeng/dialog';
+import { TableModule } from 'primeng/table';
+import { Ripple } from 'primeng/ripple';
+import { InputText } from 'primeng/inputtext';
+import { mapDrawUtils, updatePolygonLabels } from './map-draw-utils';
+import { Tooltip } from 'primeng/tooltip';
+import { Polygon } from '../../core/models/polygon.model';
+import { OnChangeFn, OnTouch } from '../../core/models/control-value-accessor';
+import { ConfigService } from '../../core/services/config.service';
 
 @Component({
   selector: 'app-polygon',
   standalone: true,
-  imports: [NgIf, FormsModule, Button, Dialog, TableModule, NgForOf, ButtonDirective, Ripple, InputText, Tooltip],
+  imports: [ NgIf, FormsModule, Button, Dialog, TableModule, NgForOf, ButtonDirective, Ripple, InputText, Tooltip ],
   templateUrl: './polygon.component.html',
-  styleUrls: ['./polygon.component.css'],
+  styleUrls: [ './polygon.component.css' ],
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
@@ -30,8 +31,10 @@ import {OnChangeFn, OnTouch} from '../../core/models/control-value-accessor';
 export class PolygonComponent implements OnInit, ControlValueAccessor {
   polygons: Array<Polygon> = [];
 
-  onChange: OnChangeFn<Array<Polygon>> = () => {};
-  onTouch: OnTouch = () => {};
+  onChange: OnChangeFn<Array<Polygon>> = () => {
+  };
+  onTouch: OnTouch = () => {
+  };
 
   map!: mapboxgl.Map;
   draw!: MapboxDraw;
@@ -39,31 +42,39 @@ export class PolygonComponent implements OnInit, ControlValueAccessor {
 
   _originalName: string = '';
 
+  constructor(private configService: ConfigService) {
+  }
+
   ngOnInit() {
-    mapboxgl.accessToken = 'pk.eyJ1IjoiY2NhZXNhciIsImEiOiJjbHFxbDJxY280MjJuMm5tazZwYWZ6cjBhIn0.Si8HxzoWgI0n5VF5_FqyFQ';
-    this.map = new mapboxgl.Map({
-      container: 'map',
-      style: 'mapbox://styles/mapbox/satellite-streets-v12',
-      center: [25.60, 45.66],
-      zoom: 11
-    });
+    this.configService.retrieveMapboxToken().subscribe((token) => {
+      mapboxgl.accessToken = token;
 
-    this.draw = new MapboxDraw({
-      displayControlsDefault: false,
-      defaultMode: 'draw_polygon',
-      styles: mapDrawUtils
-    });
+      this.map = new mapboxgl.Map({
+        container: 'map',
+        style: 'mapbox://styles/mapbox/satellite-streets-v12',
+        center: [ 25.60, 45.66 ],
+        zoom: 11
+      });
 
-    this.map.addControl(this.draw);
+      this.draw = new MapboxDraw({
+        displayControlsDefault: false,
+        defaultMode: 'draw_polygon',
+        styles: mapDrawUtils
+      });
 
-    // Listen for draw events
-    this.map.on('draw.create', (event) => this.handleDrawEvent(event));
-    this.map.on('draw.update', (event) => this.handleDrawEvent(event));
-    this.map.on('draw.delete', (event) => this.handleDeleteEvent(event));
-    this.map.on('load', () => {
-      if (this.polygons.length > 0) {
-        this.restorePolygonsOnMap();
-      }
+      this.map.addControl(this.draw);
+
+      // Listen for draw events
+      this.map.on('draw.create', (event) => this.handleDrawEvent(event));
+      this.map.on('draw.update', (event) => this.handleDrawEvent(event));
+      this.map.on('draw.delete', (event) => this.handleDeleteEvent(event));
+      this.map.on('load', () => {
+        if (this.polygons.length > 0) {
+          this.restorePolygonsOnMap();
+        }
+      });
+
+
     });
   }
 
@@ -74,7 +85,7 @@ export class PolygonComponent implements OnInit, ControlValueAccessor {
         properties: {},
         geometry: {
           type: 'Polygon',
-          coordinates: [polygon.coordinates]
+          coordinates: [ polygon.coordinates ]
         }
       });
     });
@@ -111,7 +122,6 @@ export class PolygonComponent implements OnInit, ControlValueAccessor {
     updatePolygonLabels(this.map, this.polygons);
     this.onChange(this.polygons); // Emit changes
   }
-
 
 
   private handleDeleteEvent(event: any) {

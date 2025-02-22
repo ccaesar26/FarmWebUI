@@ -12,5 +12,4 @@ import { SideMenuComponent } from '../../components/side-menu/side-menu.componen
   styleUrl: './main-layout.component.css'
 })
 export class MainLayoutComponent {
-
 }

@@ -1,5 +1,20 @@
-<app-side-menu></app-side-menu>
+<div class="flex flex-col h-screen">
+  <!-- Sidebar -->
+  <div class="flex flex-row items-center">
+    <app-side-menu class="p-8"></app-side-menu>
+    <div class="flex items-center justify-between">
+      <span class="flex flex-row items-center gap-2">
+        <h1 class="text-4xl font-semibold">
+          Farm<span class="text-primary-500">Forge</span>
+          <span class="font-normal italic"> &ndash; Craft the future of your farm</span>
+        </h1>
+      </span>
 
-<div class="main-content">
-  <router-outlet></router-outlet>
+    </div>
+
+  </div>
+
+  <div class="flex-1 flex flex-col p-8">
+    <router-outlet></router-outlet>
+  </div>
 </div>

@@ -5,6 +5,7 @@ import { Drawer } from 'primeng/drawer';
 import { Avatar } from 'primeng/avatar';
 import { AuthService } from '../../services/auth.service';
 import { Router } from '@angular/router';
+import { UserProfileService } from '../../services/user-profile.service';
 
 @Component({
   selector: 'app-side-menu',
@@ -19,12 +20,22 @@ import { Router } from '@angular/router';
 })
 export class SideMenuComponent {
   visible: boolean = false;
+  initial: string | undefined;
+  name: string | undefined;
 
-  constructor(protected authService: AuthService, protected router: Router) {
+  constructor(
+    protected router: Router,
+    protected authService: AuthService,
+    private userProfileService: UserProfileService
+  ) {
+    this.userProfileService.getUserProfile().subscribe((userProfile) => {
+      this.name = userProfile?.name;
+      this.initial = userProfile?.name?.charAt(0);
+    });
   }
 
   logout() {
     this.authService.logout();
-    this.router.navigate(['/login']);
+    this.router.navigate([ '/login' ]);
   }
 }

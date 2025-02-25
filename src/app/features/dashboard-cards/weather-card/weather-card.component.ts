@@ -10,14 +10,6 @@ import { DropdownModule } from 'primeng/dropdown';
 import { ProgressSpinner } from 'primeng/progressspinner';
 import { Card } from 'primeng/card';
 
-interface WeatherData {
-  temperature: number;
-  description: string;
-  humidity: number;
-  pressure: number;
-  windSpeed: number;
-}
-
 @Component({
   selector: 'app-weather-card',
   templateUrl: './weather-card.component.html',
@@ -35,7 +27,8 @@ export class WeatherCardComponent implements OnInit {
   selectedCity = signal<CityOption | null>(null);
   weatherData = signal<WeatherResponse | null>(null);
   loading = signal(false);
-  debugText = signal('DEBUG\n');
+  debugText = signal('No updates yet');
+  debugCounter = 0;
   animationOptions: AnimationOptions = {
     animationData: {},
     loop: true,
@@ -48,12 +41,22 @@ export class WeatherCardComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.debugText.update((text) => text + 'Initializing WeatherCardComponent\n');
     this.fetchCities();
+
+    this.weatherService.onDebugUpdate = (msg) => {
+      this.debugText.set(`Debug update received: ${msg}`);
+    }
+
+    this.weatherService.onWeatherUpdate = () => {
+      this.fetchWeather(this.selectedCity());
+      this.debugCounter++;
+      this.debugText.set(`Weather update received: ${this.debugCounter}`);
+    }
+
+    this.weatherService.startConnection();
   }
 
   fetchCities(): void {
-    this.debugText.update((text) => text + 'Fetching cities\n');
     this.fieldService.getFieldsCities().subscribe({
       next: (response) => {
         this.cities.set(response.map(city => city));
@@ -81,7 +84,6 @@ export class WeatherCardComponent implements OnInit {
       },
       error: (error) => {
         console.error('Error fetching weather:', error);
-        this.debugText.update((text) => text + `Error fetching weather: ${error}\n`);
         this.loading.set(false);
       },
     });

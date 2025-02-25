@@ -19,6 +19,7 @@
     "@angular/platform-browser-dynamic": "^19.1.0",
     "@angular/router": "^19.1.0",
     "@mapbox/mapbox-gl-draw": "^1.5.0",
+    "@microsoft/signalr": "^8.0.7",
     "@primeng/themes": "^19.0.5",
     "@turf/turf": "^7.2.0",
     "@types/mapbox": "^1.6.45",

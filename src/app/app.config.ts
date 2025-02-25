@@ -8,6 +8,10 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 import { AuraPreset } from './theme';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { authInterceptorFn } from './core/interceptors/auth.interceptor';
+import { provideCacheableAnimationLoader, provideLottieOptions } from 'ngx-lottie';
+
+import player from 'lottie-web';
+import { provideAnimations } from '@angular/platform-browser/animations';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -19,6 +23,8 @@ export const appConfig: ApplicationConfig = {
         preset: AuraPreset
       }
     }),
-    provideHttpClient(withInterceptors([authInterceptorFn]))
+    provideHttpClient(withInterceptors([authInterceptorFn])),
+    provideLottieOptions({ player: () => player }),
+    provideAnimations()
   ]
 };

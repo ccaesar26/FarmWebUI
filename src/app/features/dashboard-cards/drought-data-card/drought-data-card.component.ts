@@ -59,13 +59,13 @@ export class DroughtDataCardComponent implements OnInit {
     }
 
     const displayData: { [key: number]: DroughtLevelDisplay } = {
-      0: { icon: "pi pi-circle", color: "green-600" },
-      1: { icon: "pi pi-info-circle", color: "yellow-600" },
-      2: { icon: "pi pi-exclamation-circle", color: "amber-600" },
-      3: { icon: "pi pi-exclamation-triangle", color: "red-600" },
-      4: { icon: "pi pi-circle", color: "emerald-600" },
-      5: { icon: "pi pi-circle", color: "cyan-600" },
-      6: { icon: "pi pi-circle", color: "teal-600" },
+      0: { icon: "pi pi-circle", color: "text-green-600" },
+      1: { icon: "pi pi-info-circle", color: "text-yellow-600" },
+      2: { icon: "pi pi-exclamation-circle", color: "text-amber-600" },
+      3: { icon: "pi pi-exclamation-triangle", color: "text-red-600" },
+      4: { icon: "pi pi-circle", color: "text-emerald-600" },
+      5: { icon: "pi pi-circle", color: "text-cyan-600" },
+      6: { icon: "pi pi-circle", color: "text-teal-600" },
     };
 
     return displayData[levelInfo.level] || null;

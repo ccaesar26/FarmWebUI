@@ -4,23 +4,6 @@
   <ng-template pTemplate="header">
     <div class="flex justify-between items-center px-4 pt-4">
       <h3 class="text-lg font-bold mr-4">Drought Data</h3>
-      <p-dropdown
-        [options]="availableDates"
-        [ngModel]="selectedDate()"
-        (ngModelChange)="onDateChange($event)"
-        placeholder="Select a date"
-        class="max-w-full w-72"
-        [showClear]="false">
-        <ng-template pTemplate="selectedItem">
-          <div *ngIf="selectedDate()">
-            {{ selectedDate() | date:'yyyy-MM-dd' }}
-          </div>
-        </ng-template>
-
-        <ng-template let-date pTemplate="item">
-          {{ date.label }}
-        </ng-template>
-      </p-dropdown>
     </div>
   </ng-template>
 
@@ -34,8 +17,8 @@
     <!-- Drought Content (Most Alarming State) -->
     <div *ngIf="maxDroughtLevel() && !loading()" class="flex items-center justify-center gap-8 p-4">
       <!-- Drought Icon (Left) -->
-      <div *ngIf="droughtDisplay()" [ngClass]="'text-center text-' + droughtDisplay()?.color">
-        <i [class]="droughtDisplay()?.icon + ' text-7xl'"></i>
+      <div *ngIf="droughtDisplay()" [class]="droughtDisplay()?.color">
+          <i [class]="droughtDisplay()?.icon"  style="font-size: 2rem"></i>
       </div>
 
       <!-- Drought Details (Right) -->
@@ -43,12 +26,12 @@
         <p class="text-4xl font-extrabold leading-tight">
           {{ maxDroughtLevel()?.meaning }}
         </p>
-        <p class="text-lg font-medium my-2">
-          {{ maxDroughtLevel()?.description }}
-        </p>
-        <p>Level: {{maxDroughtLevel()?.level}}</p>
       </div>
     </div>
+    <p class="text-lg font-medium my-2">
+      {{ maxDroughtLevel()?.description }}
+    </p>
+    <p>Level: {{ maxDroughtLevel()?.level }}</p>
 
     <!-- Drought Summary Table -->
     <div *ngIf="droughtSummary().length > 0 && !loading()" class="mt-4 overflow-x-auto">

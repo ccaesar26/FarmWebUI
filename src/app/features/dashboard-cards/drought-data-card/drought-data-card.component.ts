@@ -4,15 +4,14 @@ import { CommonModule } from '@angular/common';
 import { CardModule } from 'primeng/card';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { DroughtDataService } from '../../../core/services/drought-data.service';
-import { FieldService } from '../../../core/services/field.service'; // Import FieldService
-import { DropdownModule } from 'primeng/dropdown';
+import { FieldService } from '../../../core/services/field.service';
+import { DropdownModule } from 'primeng/dropdown'; // Import DropdownModule
 import { FormsModule } from '@angular/forms';
-import { TableModule } from 'primeng/table'; // Import TableModule
+import { TableModule } from 'primeng/table';
 import { forkJoin, of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
 import { DroughtLevelInfo } from '../../../core/models/drought-data.model';
 import { GetFieldCoordinatesResponse } from '../../../core/models/field.model';
-
 
 interface DroughtLevelDisplay {
   icon: string;
@@ -23,37 +22,34 @@ interface DroughtSummary {
   level: number;
   meaning: string;
   description: string;
-  fields: string[]; // Array of field names
+  fields: string[];
 }
 
 @Component({
   selector: 'app-drought-data-card',
   standalone: true,
-  imports: [CommonModule, CardModule, ProgressSpinnerModule, DropdownModule, FormsModule, TableModule], // Add TableModule
+  imports: [CommonModule, CardModule, ProgressSpinnerModule, DropdownModule, FormsModule, TableModule], // Include DropdownModule
   templateUrl: './drought-data-card.component.html',
   styleUrls: ['./drought-data-card.component.css']
 })
 export class DroughtDataCardComponent implements OnInit {
 
-  droughtLevelInfo = signal<DroughtLevelInfo | null>(null);
   loading = signal(false);
   errorMessage = signal<string | null>(null);
-  selectedDate = signal<Date | null>(new Date());
-  availableDates: { label: string, value: Date }[] = [];
+  droughtSummary = signal<DroughtSummary[]>([]);
+  selectedDroughtCondition = signal<DroughtSummary | null>(null); // Add selected condition
 
-  droughtSummary = signal<DroughtSummary[]>([]); // Signal for the summary table data
-  maxDroughtLevel = computed(() => {  //most alarming state signal
-    let maxLevel = -1; // Start with a value lower than any valid level
-    this.droughtSummary().forEach(summary => {
-      if (summary.level > maxLevel) {
-        maxLevel = summary.level;
-      }
-    });
-    return this.droughtLevelInfo()?.level === maxLevel ? this.droughtLevelInfo() : null; //return droughtLevelInfo signal
+  // Options for the dropdown
+  droughtConditionOptions = computed(() => {
+    return this.droughtSummary().map(summary => ({
+      label: `${summary.meaning}`,
+      value: summary
+    }));
   });
+
   // Computed signal for display properties (icon and color)
   droughtDisplay = computed<DroughtLevelDisplay | null>(() => {
-    const levelInfo = this.maxDroughtLevel(); //use maxDroughtLevel
+    const levelInfo = this.selectedDroughtCondition();
     if (!levelInfo) {
       return null;
     }
@@ -68,58 +64,50 @@ export class DroughtDataCardComponent implements OnInit {
       6: { icon: "pi pi-circle", color: "text-teal-600" },
     };
 
-    return displayData[levelInfo.level] || null;
+    // Default to level 0 if the selected level isn't in displayData
+    return displayData[levelInfo.level] || displayData[0];
   });
+
+
 
   constructor(private droughtService: DroughtDataService, private fieldService: FieldService) { }
 
   ngOnInit(): void {
-    this.fetchDroughtData(this.selectedDate());
+    this.fetchDroughtData(); // No date parameter
   }
 
-  fetchDroughtData(date: Date | null): void {
-    if (!date) {
-      this.errorMessage.set("Please provide a valid date.");
-      this.loading.set(false);
-      return;
-    }
-
+  fetchDroughtData(): void {
     this.loading.set(true);
     this.errorMessage.set(null);
-    this.droughtSummary.set([]); // Clear previous summary data
-    this.droughtLevelInfo.set(null);
+    this.droughtSummary.set([]);
+    this.selectedDroughtCondition.set(null); // Reset selected condition
 
     this.fieldService.getFieldsCoordinates().pipe(
       switchMap((fieldCoordinates: GetFieldCoordinatesResponse) => {
         if (fieldCoordinates.coordinates.length === 0) {
-          return of([]); // Return an empty array if there are no coordinates
+          return of([]);
         }
-        // Create an array of observables, one for each coordinate pair
         const droughtRequests = fieldCoordinates.coordinates.map(coord =>
-          this.droughtService.getDroughtLevel(coord.x, coord.y, date).pipe(
+          this.droughtService.getDroughtLevel(coord.x, coord.y).pipe( // Pass null for date
             catchError(err => {
-              console.error("Error fetching drought level for coordinate:", coord, err);
-              return of(null);  // Return null for this specific coordinate on error
+              console.error("Error fetching drought level:", err);
+              return of(null);
             })
           )
         );
-        // Use forkJoin to execute all requests in parallel
         return forkJoin(droughtRequests);
       }),
-      switchMap((droughtLevels: (DroughtLevelInfo | null)[]) => { //array of (DroughtLevelInfo | null)[]
-        // Filter out null values (failed requests) and create a summary
+      switchMap((droughtLevels: (DroughtLevelInfo | null)[]) => {
         const validDroughtLevels = droughtLevels.filter((level): level is DroughtLevelInfo => level !== null);
-        if (validDroughtLevels.length === 0)
-        {
+        if (validDroughtLevels.length === 0) {
           this.loading.set(false);
-          return of([]);//if no valid drought data
+          return of([]);
         }
 
-        return this.fieldService.getFields().pipe( //get fields
+        return this.fieldService.getFields().pipe(
           map(fields => {
             const summaryMap = new Map<number, { meaning: string, description: string, fields: string[] }>();
 
-            // Populate the summaryMap
             validDroughtLevels.forEach(levelInfo => {
               if (!summaryMap.has(levelInfo.level)) {
                 summaryMap.set(levelInfo.level, {
@@ -130,28 +118,20 @@ export class DroughtDataCardComponent implements OnInit {
               }
             });
 
-
-            // Get fields coordinates
+            // Get fields coordinates (Consider making this a separate signal if used elsewhere)
             this.fieldService.getFieldsCoordinates().subscribe(coordResponse => {
-
-              // Associate fields with drought levels.  This requires another nested loop.
+              // Associate fields with drought levels
               coordResponse.coordinates.forEach((coord, index) => {
-                const droughtLevel = validDroughtLevels[index]; //get droughtLevel
-                if (droughtLevel) { //if droughtLevel exists
-                  const matchingField = fields.find(field => {  //find field
-                    // Check if the coordinate is within the field boundary
-                    return this.isPointInPolygon(coord, field.boundary);
-                  });
-
-                  if (matchingField) { //if field found, add to fields array
+                const droughtLevel = validDroughtLevels[index];
+                if (droughtLevel) {
+                  const matchingField = fields.find(field => this.isPointInPolygon(coord, field.boundary));
+                  if (matchingField) {
                     summaryMap.get(droughtLevel.level)!.fields.push(matchingField.name);
                   }
                 }
               });
-
             });
 
-            // Convert the map to an array and set droughtSummary signal
             const summaryArray: DroughtSummary[] = Array.from(summaryMap.entries()).map(([level, data]) => ({
               level,
               meaning: data.meaning,
@@ -159,52 +139,51 @@ export class DroughtDataCardComponent implements OnInit {
               fields: data.fields
             }));
 
-            this.droughtSummary.set(summaryArray); //summary data
+            this.droughtSummary.set(summaryArray);
 
-            let maxLevel = -1;
-            let maxLevelInfo: DroughtLevelInfo | null = null;
-            summaryArray.forEach(summary => { //find most alarming state.
-              if (summary.level > maxLevel) {
-                maxLevel = summary.level;
-                maxLevelInfo = {level: summary.level, meaning: summary.meaning, description: summary.description}
+            // Determine the highest urgency level for default selection
+            const priorityOrder = [3, 2, 1, 0, 4, 5, 6];
+            let defaultCondition: DroughtSummary | null = null;
+            for (const level of priorityOrder) {
+              const foundCondition = summaryArray.find(s => s.level === level);
+              if (foundCondition) {
+                defaultCondition = foundCondition;
+                break; // Stop as soon as we find a match
               }
-            });
-            this.droughtLevelInfo.set(maxLevelInfo); //most alarming state data
+            }
+
+            this.selectedDroughtCondition.set(defaultCondition || null); // Set default or null if none found
 
             return summaryArray;
           })
         );
       }),
-      catchError(err => { //catch errors in switchMap
-        this.errorMessage.set(err.message); //global error handling
+      catchError(err => {
+        this.errorMessage.set("Error fetching drought data: " + err.message);
         this.loading.set(false);
-        return of([]); // Return an empty array to prevent the stream from breaking
+        return of([]);
       })
-    ).subscribe({ //subscribe and set loading false.
-      next: () => {this.loading.set(false)},
-      error: () => {this.loading.set(false)} //ensure loading false
+    ).subscribe({
+      next: () => { this.loading.set(false); },
+      error: () => { this.loading.set(false); }
     });
   }
 
-  onDateChange(newDate: Date | null) {
-    this.selectedDate.set(newDate);
-    this.fetchDroughtData(newDate);
+  onConditionChange(newCondition: DroughtSummary | null): void{
+    this.selectedDroughtCondition.set(newCondition);
   }
 
-  // Helper function to check if a point is inside a polygon (simplified for demonstration)
+  // Helper function (remains the same)
   isPointInPolygon(point: { x: number, y: number }, polygon: any): boolean {
-    // Basic check: if polygon is not defined, consider point is not inside
     if (!polygon || !polygon.coordinates || !Array.isArray(polygon.coordinates)) {
       return false;
     }
-    // Ensure polygon is a 3D array
     if (!Array.isArray(polygon.coordinates[0][0])) {
       return false;
     }
 
     const x = point.x, y = point.y;
     let inside = false;
-    // Get first element of polygon.coordinates
     const polyPoints = polygon.coordinates[0];
 
     for (let i = 0, j = polyPoints.length - 1; i < polyPoints.length; j = i++) {

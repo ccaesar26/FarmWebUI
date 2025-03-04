@@ -3,6 +3,12 @@ export interface CreateFieldRequest {
   fieldBoundary: any; // GeoJSON Polygon
 }
 
+export interface Field {
+  id: string;
+  name: string;
+  boundary: any; // GeoJSON Polygon
+}
+
 export interface Coordinate {
   x: number;
   y: number;

@@ -64,8 +64,8 @@ export class LoginComponent {
 
     this.authService.login({ email, password }).subscribe({
       next: () => {
-        this.isSubmitting = false;
         this.router.navigate([ '/dashboard' ]);
+        this.isSubmitting = false;
       },
       error: (err) => this.errorMessage = err.message
     });

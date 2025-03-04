@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { CreateFieldRequest, GetFieldCoordinatesResponse, GetFieldsCitiesResponse } from '../models/field.model';
+import { CreateFieldRequest, Field, GetFieldCoordinatesResponse, GetFieldsCitiesResponse } from '../models/field.model';
 
 @Injectable({
   providedIn: 'root',
@@ -14,6 +14,10 @@ export class FieldService {
 
   createField(request: CreateFieldRequest): Observable<any> {
     return this.http.post(this.apiUrl + '/create', request);
+  }
+
+  getFields(): Observable<Field[]> {
+    return this.http.get<Field[]>(`${this.apiUrl}/all`);
   }
 
   getFieldsCoordinates(): Observable<GetFieldCoordinatesResponse> {

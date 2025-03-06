@@ -92,6 +92,7 @@ export class InitializeFarmComponent {
       name: farmerName.value,
       dateOfBirth: this.formatDate(birthdate.value),
       gender: gender.value,
+      role: 'Manager'
     };
 
     const farmProfile: CreateFarmProfileRequest = {

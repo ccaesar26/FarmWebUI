@@ -9,7 +9,8 @@ import { LoginRequest, RegisterRequest } from '../models/auth.model';
   providedIn: 'root'
 })
 export class AuthService {
-  private apiUrl = `${ environment.apiUrl }/identity`;
+  private identityApiUrl = `${ environment.apiUrl }/identity`;
+  private usersApiUrl = `${ environment.apiUrl }/users`;
 
   private role = signal<string | null>(null);
   public userRole = computed(() => this.role());
@@ -20,21 +21,21 @@ export class AuthService {
   }
 
   login(data: LoginRequest): Observable<void> {
-    return this.http.post<void>(`${ this.apiUrl }/login`, data).pipe(
+    return this.http.post<void>(`${ this.identityApiUrl }/login`, data).pipe(
       switchMap(() => this.fetchUserRole()), // 🔥 Ensures role is fetched before proceeding
       catchError(this.handleAuthError)
     );
   }
 
   register(data: RegisterRequest): Observable<boolean> {
-    return this.http.post(`${ this.apiUrl }/register`, data, { observe: 'response' }).pipe(
+    return this.http.post(`${ this.identityApiUrl }/register`, data, { observe: 'response' }).pipe(
       map(response => response.status === 200),
       catchError(this.handleAuthError)
     );
   }
 
   fetchUserRole(): Observable<void> {
-    return this.http.get<{ role: string }>(`${ this.apiUrl }/me`).pipe(
+    return this.http.get<{ role: string }>(`${ this.usersApiUrl }/me`).pipe(
       map(response => {
         this.role.set(response.role);
       }),
@@ -47,7 +48,7 @@ export class AuthService {
   }
 
   logout(): void {
-    this.http.post(`${ this.apiUrl }/logout`, {}).subscribe({
+    this.http.post(`${ this.identityApiUrl }/logout`, {}).subscribe({
       next: () => {
         this.role.set(null);
         // this.router.navigate(['/login']);
@@ -61,7 +62,7 @@ export class AuthService {
   }
 
   refreshToken(): Observable<void> {
-    return this.http.post<void>(`${this.apiUrl}/refresh-token`, {}); // Call the backend refresh endpoint
+    return this.http.post<void>(`${this.identityApiUrl}/refresh-token`, {}); // Call the backend refresh endpoint
   }
 
   private handleAuthError(error: HttpErrorResponse): Observable<never> {

@@ -4,7 +4,7 @@ import { Ripple } from 'primeng/ripple';
 import { Drawer } from 'primeng/drawer';
 import { Avatar } from 'primeng/avatar';
 import { AuthService } from '../../services/auth.service';
-import { Router } from '@angular/router';
+import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { UserProfileService } from '../../services/user-profile.service';
 
 @Component({
@@ -14,7 +14,9 @@ import { UserProfileService } from '../../services/user-profile.service';
     Ripple,
     Drawer,
     Button,
-    Avatar
+    Avatar,
+    RouterLink,
+    RouterLinkActive
   ],
   styleUrls: [ './side-menu.component.scss' ]
 })

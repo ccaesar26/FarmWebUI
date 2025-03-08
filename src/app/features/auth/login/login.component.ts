@@ -63,10 +63,9 @@ export class LoginComponent {
     }
 
     this.authService.login({ email, password }).subscribe({
-      next: () => {
-        this.router.navigate([ '/dashboard' ]);
-        this.isSubmitting = false;
-      },
+      next: () => this.router
+        .navigate([ '/dashboard' ])
+        .then(() => this.isSubmitting = false),
       error: (err) => this.errorMessage = err.message
     });
   }

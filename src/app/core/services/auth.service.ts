@@ -3,7 +3,7 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { catchError, lastValueFrom, map, Observable, of, switchMap, throwError } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { LoginRequest, RegisterRequest } from '../models/auth.model';
+import { LoginRequest, RegisterRequest, RegisterResponse } from '../models/auth.model';
 
 @Injectable({
   providedIn: 'root'
@@ -45,6 +45,10 @@ export class AuthService {
         return throwError(() => new Error('Failed to fetch user role'));
       })
     );
+  }
+
+  createUser(request: RegisterRequest): Observable<RegisterResponse> {
+    return this.http.post<RegisterResponse>(`${ this.usersApiUrl }/create`, request);
   }
 
   logout(): void {

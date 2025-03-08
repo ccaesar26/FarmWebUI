@@ -89,6 +89,7 @@ export class InitializeFarmComponent {
     } = this.form.controls;
 
     const userProfile: CreateUserProfileRequest = {
+      userId: null,
       name: farmerName.value,
       dateOfBirth: this.formatDate(birthdate.value),
       gender: gender.value,

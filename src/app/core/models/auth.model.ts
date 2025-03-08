@@ -9,3 +9,7 @@ export interface RegisterRequest {
   password: string;
   role: string;
 }
+
+export interface RegisterResponse {
+  userId: string;
+}

@@ -1,8 +1,13 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, catchError, of, map } from 'rxjs';
+import { catchError, map, Observable, of } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { CreateUserProfileRequest, UserProfile } from '../models/user-profile.model';
+import {
+  AssignAttributesRequest,
+  AttributeMap,
+  CreateUserProfileRequest, CreateUserProfileResponse,
+  UserProfile
+} from '../models/user-profile.model';
 
 @Injectable({
   providedIn: 'root'
@@ -24,11 +29,20 @@ export class UserProfileService {
     );
   }
 
-  createUserProfile(request: CreateUserProfileRequest): Observable<any> {
-    return this.http.post(this.apiUrl + '/create', request);
+  createUserProfile(request: CreateUserProfileRequest): Observable<CreateUserProfileResponse> {
+    return this.http.post<CreateUserProfileResponse>(`${this.apiUrl}/create`, request);
   }
 
   getUserProfile(): Observable<UserProfile> {
     return this.http.get<UserProfile>(this.apiUrl);
+  }
+
+  assignAttributes(request: AssignAttributesRequest): Observable<void> {
+    return this.http.post<void>(`${this.apiUrl}/attributes/assign`, request);
+  }
+
+  // returns a map of available attributes grouped by category
+  getAvailableAttributes(): Observable<AttributeMap> {
+    return this.http.get<AttributeMap>(`${this.apiUrl}/attributes`);
   }
 }

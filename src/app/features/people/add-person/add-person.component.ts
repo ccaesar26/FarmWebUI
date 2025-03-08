@@ -24,6 +24,7 @@ import {
 import { RegisterRequest } from '../../../core/models/auth.model';
 import { AuthService } from '../../../core/services/auth.service';
 import { UserProfileService } from '../../../core/services/user-profile.service';
+import { UserService } from '../../../core/services/user.service';
 
 interface AttributeItem {
   label: string;
@@ -76,36 +77,11 @@ export class AddPersonComponent implements OnInit {
   showPassword: boolean = false;
 
   availableAttributes: AttributeCategory[] = [];
-  // availableAttributes = [
-  //   {
-  //     label: 'Administrative',
-  //     value: 'administrative',
-  //     items: [
-  //       { label: 'Manager', value: 'Manager' },
-  //     ],
-  //   },
-  //   {
-  //     label: 'Technical',
-  //     value: 'technical',
-  //     items: [
-  //       { label: 'Software Engineer', value: 'Software Engineer' },
-  //       { label: 'DevOps Engineer', value: 'DevOps Engineer' },
-  //       { label: 'Data Scientist', value: 'Data Scientist' },
-  //     ],
-  //   },
-  //   {
-  //     label: 'Other',
-  //     value: 'other',
-  //     items: [
-  //       { label: 'Intern', value: 'Intern' },
-  //       { label: 'Contractor', value: 'Contractor' },
-  //     ],
-  //   },
-  // ];
 
   constructor(
     private router: Router,
     private authService: AuthService,
+    private userService: UserService,
     private userProfileService: UserProfileService,
   ) {
   }
@@ -175,7 +151,7 @@ export class AddPersonComponent implements OnInit {
     userProfile: CreateUserProfileRequest,
     attributes: AssignAttributesRequest
   ) {
-    this.authService.createUser(registerRequest).subscribe({
+    this.userService.createUser(registerRequest).subscribe({
       next: (response) => {
         userProfile.userId = response.userId;
         this.userProfileService.createUserProfile(userProfile).subscribe({

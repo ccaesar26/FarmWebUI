@@ -11,9 +11,11 @@ export interface CreateUserProfileResponse {
 }
 
 export interface UserProfile {
+  id: string;
   name: string;
   dateOfBirth: string;
   gender: string;
+  attributeNames: string[];
 }
 
 export interface AssignAttributesRequest {

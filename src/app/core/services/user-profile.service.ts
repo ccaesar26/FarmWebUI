@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { catchError, map, Observable, of } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import {
@@ -33,7 +33,7 @@ export class UserProfileService {
     return this.http.post<CreateUserProfileResponse>(`${this.apiUrl}/create`, request);
   }
 
-  getUserProfile(): Observable<UserProfile> {
+  getManagerProfile(): Observable<UserProfile> {
     return this.http.get<UserProfile>(this.apiUrl);
   }
 
@@ -44,5 +44,11 @@ export class UserProfileService {
   // returns a map of available attributes grouped by category
   getAvailableAttributes(): Observable<AttributeMap> {
     return this.http.get<AttributeMap>(`${this.apiUrl}/attributes`);
+  }
+
+  getProfileByUserId(userId: string) {
+    let params = new HttpParams();
+    params = params.append('userId', userId);
+    return this.http.get<UserProfile>(`${this.apiUrl}/user`, { params });
   }
 }

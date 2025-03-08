@@ -1,7 +1,7 @@
 import { Injectable, signal, computed, effect } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { catchError, lastValueFrom, map, Observable, of, switchMap, throwError } from 'rxjs';
+import { catchError, map, Observable, of, switchMap, throwError } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { LoginRequest, RegisterRequest, RegisterResponse } from '../models/auth.model';
 
@@ -13,7 +13,6 @@ export class AuthService {
   private usersApiUrl = `${ environment.apiUrl }/users`;
 
   private role = signal<string | null>(null);
-  public userRole = computed(() => this.role());
   public isAuthenticated = computed(() => this.role() !== null);
 
   constructor(private http: HttpClient, private router: Router) {
@@ -45,10 +44,6 @@ export class AuthService {
         return throwError(() => new Error('Failed to fetch user role'));
       })
     );
-  }
-
-  createUser(request: RegisterRequest): Observable<RegisterResponse> {
-    return this.http.post<RegisterResponse>(`${ this.usersApiUrl }/create`, request);
   }
 
   logout(): void {

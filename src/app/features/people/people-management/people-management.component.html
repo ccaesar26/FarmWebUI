@@ -3,3 +3,19 @@
 </div>
 <p-speeddial [model]="items" direction="up" class="absolute right-8 bottom-8"
              [tooltipOptions]="{ tooltipPosition: 'right' }"/>
+
+<div *ngIf="workers.length > 0">
+  <ul>
+    <li *ngFor="let worker of workers">
+      ID: {{ worker.id }}, Username: {{ worker.username }}, Name: {{ worker.name }}, Email: {{ worker.email }}
+      <!-- , Attributes: {{ worker.profileAttributes | json }} -->
+      Attributes:
+      <span *ngFor="let attr of worker.attributeNames; let last = last">
+            {{ attr }}<span *ngIf="!last">, </span>
+        </span>
+    </li>
+  </ul>
+</div>
+<div *ngIf="workers.length === 0">
+  No workers found.
+</div>

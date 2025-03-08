@@ -30,7 +30,7 @@ export class SideMenuComponent {
     protected authService: AuthService,
     private userProfileService: UserProfileService
   ) {
-    this.userProfileService.getUserProfile().subscribe((userProfile) => {
+    this.userProfileService.getManagerProfile().subscribe((userProfile) => {
       this.name = userProfile?.name;
       this.initial = userProfile?.name?.charAt(0);
     });

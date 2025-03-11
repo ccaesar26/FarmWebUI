@@ -3,6 +3,9 @@ import { Tab, TabList, Tabs } from 'primeng/tabs';
 import { Card } from 'primeng/card';
 import { TabPanel, TabView } from 'primeng/tabview';
 import { PrimeTemplate } from 'primeng/api';
+import { TaskMonitorBoardComponent } from '../task-monitor-board/task-monitor-board.component';
+import { ScrollPanel } from 'primeng/scrollpanel';
+import { TaskMonitorCalendarComponent } from '../task-monitor-calendar/task-monitor-calendar.component';
 
 @Component({
   selector: 'app-task-monitor-tabs-menu',
@@ -13,7 +16,10 @@ import { PrimeTemplate } from 'primeng/api';
     Card,
     TabPanel,
     TabView,
-    PrimeTemplate
+    PrimeTemplate,
+    TaskMonitorBoardComponent,
+    ScrollPanel,
+    TaskMonitorCalendarComponent
   ],
   templateUrl: './task-monitor-tabs-menu.component.html',
   styleUrl: './task-monitor-tabs-menu.component.css'

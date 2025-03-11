@@ -1,0 +1,18 @@
+<p-card class="!w-full !h-full flex flex-col">
+  <p-tabView [scrollable]="true">
+    <p-tabPanel header="All Tasks" leftIcon="pi pi-list">
+      <ng-template pTemplate="content" class="!h-full">
+        <div class="flex flex-row" [style]="{ height: '588px' }">
+          Board View Content (replace with your actual content)
+        </div>
+      </ng-template>
+    </p-tabPanel>
+    <p-tabPanel header="Active Tasks" leftIcon="pi pi-play">
+      <ng-template pTemplate="content">
+        <div class="flex flex-grow flex-row border">
+          Card View Content (replace with your actual content)
+        </div>
+      </ng-template>
+    </p-tabPanel>
+  </p-tabView>
+</p-card>

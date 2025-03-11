@@ -1,4 +1,4 @@
-<p-card class="p-4 w-full">
+<p-card class="w-full h-full flex flex-col">
   <!-- Header with Dropdown -->
   <ng-template pTemplate="header">
     <div class="flex justify-between items-center px-4 pt-4">
@@ -10,51 +10,50 @@
         optionLabel="name"
         placeholder="Select a location"
         (onChange)="fetchWeather(selectedCity())"
-        class="max-w-full w-72">
+        class="max-w-full w-48">
       </p-dropdown>
     </div>
   </ng-template>
 
   <!-- Content Section -->
-  <ng-template pTemplate="content" class="border">
-    <!-- Loading Spinner -->
-    <div *ngIf="loading()" class="text-center">
-      <p-progressSpinner></p-progressSpinner>
-    </div>
-
-    <!-- Weather Content -->
-    <div
-      *ngIf="weatherData() && !loading()"
-      class="flex flex-wrap items-center justify-center gap-8 p-4"
-    >
-      <!-- Weather Animation (Left) -->
-      <div class="w-40 h-40 flex-shrink-0">
-        <ng-lottie [options]="animationOptions" class="w-full h-full"></ng-lottie>
+  <ng-template pTemplate="content">
+    <p-scroll-panel [style]="{ height: '256px' }" class="flex flex-col h-full">
+      <!-- Loading Spinner -->
+      <div *ngIf="loading()" class="text-center">
+        <p-progressSpinner></p-progressSpinner>
       </div>
 
-      <!-- Weather Details (Right) - Stacks below animation on small screens -->
-      <div class="flex flex-col text-left sm:w-auto w-full">
-        <!-- Large Temperature -->
-        <p class="text-6xl font-extrabold leading-tight">
-          {{ weatherData()?.temperature }}°C
-        </p>
+      <!-- Weather Content -->
+      <div *ngIf="weatherData() && !loading()" class="flex flex-wrap items-center justify-center gap-8 p-4 flex-grow">
+        <!-- Weather Animation (Left) -->
+        <div class="w-40 h-40 flex-shrink-0">
+          <ng-lottie [options]="animationOptions" class="w-full h-full"></ng-lottie>
+        </div>
 
-        <!-- Weather Description -->
-        <p class="text-2xl font-medium my-2">
-          {{ weatherData()?.description }}
-        </p>
+        <!-- Weather Details (Right) - Stacks below animation on small screens -->
+        <div class="flex flex-col text-left sm:w-auto w-full">
+          <!-- Large Temperature -->
+          <p class="text-6xl font-extrabold leading-tight">
+            {{ weatherData()?.temperature }}°C
+          </p>
 
-        <!-- Additional Weather Data -->
-        <p><strong>Humidity:</strong> {{ weatherData()?.humidity }}%</p>
-        <p><strong>Pressure:</strong> {{ weatherData()?.pressure }} hPa</p>
-        <p><strong>Wind:</strong> {{ weatherData()?.windSpeed }} km/h</p>
+          <!-- Weather Description -->
+          <p class="text-2xl font-medium my-2">
+            {{ weatherData()?.description }}
+          </p>
+
+          <!-- Additional Weather Data -->
+          <p><strong>Humidity:</strong> {{ weatherData()?.humidity }}%</p>
+          <p><strong>Pressure:</strong> {{ weatherData()?.pressure }} hPa</p>
+          <p><strong>Wind:</strong> {{ weatherData()?.windSpeed }} km/h</p>
+        </div>
       </div>
-    </div>
 
-    <!-- Placeholder Text -->
-    <div *ngIf="!loading() && !weatherData()" class="text-center text-gray-500">
-      <p>Select a city to view the weather</p>
-    </div>
+      <!-- Placeholder Text -->
+      <div *ngIf="!loading() && !weatherData()" class="text-center text-gray-500">
+        <p>Select a city to view the weather</p>
+      </div>
+    </p-scroll-panel>
   </ng-template>
 
 </p-card>

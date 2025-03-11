@@ -1,16 +1,16 @@
 import { Component } from '@angular/core';
-import { Card } from 'primeng/card';
-import { PrimeTemplate } from 'primeng/api';
 import { WeatherCardComponent } from '../dashboard-cards/weather-card/weather-card.component';
 import { DroughtDataCardComponent } from '../dashboard-cards/drought-data-card/drought-data-card.component';
+import {
+  TaskMonitorTabsMenuComponent
+} from '../dashboard-cards/task-monitor-card/task-monitor-tabs-menu/task-monitor-tabs-menu.component';
 
 @Component({
   selector: 'app-dashboard',
   imports: [
-    Card,
-    PrimeTemplate,
     WeatherCardComponent,
-    DroughtDataCardComponent
+    DroughtDataCardComponent,
+    TaskMonitorTabsMenuComponent
   ],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css'

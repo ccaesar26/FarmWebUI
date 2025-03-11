@@ -1,19 +1,13 @@
-<div class="w-full p-4 grid grid-cols-12 grid-rows-2 gap-2">
+<div class="w-full p-4 grid grid-cols-12 grid-rows-2 gap-2 h-full">
 
   <!-- Farm's Tasks Monitor (2/3 width, 2 height) -->
-  <p-card class="col-span-8 row-span-2 flex flex-col justify-center items-center">
-    <ng-template pTemplate="header">
-      <div class="text-lg font-bold">Farm's Tasks Monitor</div>
-    </ng-template>
-    <ng-template pTemplate="content">
-      <p>Overview of farm tasks and activities.</p>
-    </ng-template>
-  </p-card>
+  <app-task-monitor-tabs-menu
+    class="col-span-8 row-span-2 flex flex-col h-full w-full"></app-task-monitor-tabs-menu>
 
   <!-- Meteo (1/3 width, 1 height) -->
-  <app-weather-card class="col-span-4 row-span-1 flex flex-col justify-center items-center"></app-weather-card>
+  <app-weather-card class="col-span-4 row-span-1 flex flex-col h-full w-full"></app-weather-card>
 
   <app-drought-data-card
-    class="col-span-4 row-span-1 flex flex-col justify-center items-center"></app-drought-data-card>
+    class="col-span-4 row-span-1 flex flex-col h-full w-full"></app-drought-data-card>
 
 </div>

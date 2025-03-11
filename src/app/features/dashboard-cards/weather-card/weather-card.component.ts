@@ -9,6 +9,7 @@ import { FormsModule } from '@angular/forms';
 import { DropdownModule } from 'primeng/dropdown';
 import { ProgressSpinner } from 'primeng/progressspinner';
 import { Card } from 'primeng/card';
+import { ScrollPanel } from 'primeng/scrollpanel';
 
 @Component({
   selector: 'app-weather-card',
@@ -19,7 +20,8 @@ import { Card } from 'primeng/card';
     FormsModule,
     ProgressSpinner,
     NgIf,
-    LottieComponent
+    LottieComponent,
+    ScrollPanel
   ]
 })
 export class WeatherCardComponent implements OnInit {

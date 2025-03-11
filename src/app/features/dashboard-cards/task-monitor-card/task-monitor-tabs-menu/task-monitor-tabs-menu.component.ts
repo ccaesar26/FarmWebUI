@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { Tab, TabList, Tabs } from 'primeng/tabs';
 import { Card } from 'primeng/card';
 import { TabPanel, TabView } from 'primeng/tabview';
 import { PrimeTemplate } from 'primeng/api';
@@ -10,9 +9,6 @@ import { TaskMonitorCalendarComponent } from '../task-monitor-calendar/task-moni
 @Component({
   selector: 'app-task-monitor-tabs-menu',
   imports: [
-    Tabs,
-    TabList,
-    Tab,
     Card,
     TabPanel,
     TabView,

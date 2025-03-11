@@ -4,7 +4,6 @@ import { CommonModule } from '@angular/common';
 import { CardModule } from 'primeng/card';
 import { TagModule } from 'primeng/tag';
 import { ScrollPanelModule } from 'primeng/scrollpanel';
-import { Avatar } from 'primeng/avatar'; // Import ScrollPanelModule
 
 interface Task {
   id: string;
@@ -36,7 +35,7 @@ enum TaskPriority {
 @Component({
   selector: 'app-task-monitor-board',
   standalone: true,
-  imports: [ CommonModule, CardModule, TagModule, ScrollPanelModule, Avatar ], // Add ScrollPanelModule
+  imports: [ CommonModule, CardModule, TagModule, ScrollPanelModule ], // Add ScrollPanelModule
   templateUrl: './task-monitor-board.component.html',
   styleUrls: [ './task-monitor-board.component.css' ]
 })

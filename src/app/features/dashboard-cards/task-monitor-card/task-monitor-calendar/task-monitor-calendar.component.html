@@ -1,1 +1,47 @@
-<p>task-monitor-calendar works!</p>
+<!-- task-monitor-calendar.component.html -->
+<full-calendar #calendar [options]="calendarOptions" class="p-card"></full-calendar>
+
+<p-dialog header="Task Details" [(visible)]="displayDialog" [modal]="true" [style]="{width: '50vw'}" styleClass="p-fluid">
+  <ng-template pTemplate="content">
+    <div *ngIf="selectedTask" class="grid formgrid">
+      <div class="field col-12">
+        <label [for]="'title-' + selectedTask.id">Title</label> <!-- Use [for] and generated ID -->
+        <input pInputText [id]="'title-' + selectedTask.id" [(ngModel)]="selectedTask.title" required autofocus />
+      </div>
+      <div class="field col-12">
+        <label [for]="'assigned-' + selectedTask.id">Assigned to</label> <!-- Use [for] and generated ID -->
+        <input pInputText [id]="'assigned-' + selectedTask.id" [(ngModel)]="selectedTask.assignedWorker" [disabled]="true" />
+      </div>
+      <div class="field col-12 md:col-6">
+        <label [for]="'dueDate-' + selectedTask.id">Due Date</label> <!-- Use [for] and generated ID -->
+        <p-calendar [id]="'dueDate-' + selectedTask.id" [(ngModel)]="selectedTask.dueDate" [showIcon]="true"></p-calendar>
+      </div>
+
+      <div class="field col-12 md:col-6">
+        <label [for]="'created-' + selectedTask.id">Created</label> <!-- Use [for] and generated ID -->
+        <input pInputText [id]="'created-' + selectedTask.id" [ngModel]="selectedTask.creationDate | date:'yyyy-MM-dd'" [disabled]="true" />
+      </div>
+
+      <div class="field col-12">
+        <label [for]="'status-' + selectedTask.id">Status</label>
+        <p-tag [id]="'status-' + selectedTask.id" [value]="selectedTask.taskStatus" [severity]="getStatusSeverity(selectedTask.taskStatus)"></p-tag>
+      </div>
+
+      <div class="field col-12">
+        <label [for]="'priority-' + selectedTask.id">Priority</label>
+        <p-tag [id]="'priority-' + selectedTask.id" [value]="selectedTask.taskPriority" [severity]="getPrioritySeverity(selectedTask.taskPriority)"></p-tag>
+      </div>
+
+      <div class="field col-12">
+        <label [for]="'description-' + selectedTask.id">Description</label> <!-- Use [for] and generated ID -->
+        <textarea [id]="'description-' + selectedTask.id" pInputTextarea [(ngModel)]="selectedTask.description" rows="3" cols="30"></textarea>
+      </div>
+
+    </div>
+  </ng-template>
+
+  <ng-template pTemplate="footer">
+    <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text" (click)="closeDialog()"></button>
+    <button pButton pRipple label="Update" icon="pi pi-check" class="p-button-text" (click)="updateTask()" [disabled]="!selectedTask?.title"></button>
+  </ng-template>
+</p-dialog>

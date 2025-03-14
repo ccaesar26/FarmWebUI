@@ -96,7 +96,7 @@
 
     <p-card header="Attributes">
       <p-floatlabel variant="on" class="block w-full mt-2">
-        <p-multiselect id="attributes" [options]="availableAttributes" [group]="true" filterPlaceHolder="Search"
+        <p-multiSelect id="attributes" [options]="availableAttributes" [group]="true" filterPlaceHolder="Search"
                        [formControl]="personForm.controls.attributes" display="chip"
                        showToggleAll="false" showClear="true">
           <ng-template let-group #group>
@@ -119,7 +119,7 @@
                         (onClick)="personForm.controls.attributes.reset()"/>
             </div>
           </ng-template>
-        </p-multiselect>
+        </p-multiSelect>
         <label for="attributes">Attributes</label>
       </p-floatlabel>
     </p-card>

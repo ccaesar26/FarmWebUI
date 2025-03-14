@@ -6,7 +6,7 @@ import {
   AssignAttributesRequest,
   AttributeMap,
   CreateUserProfileRequest, CreateUserProfileResponse,
-  UserProfile
+  UserProfileDto
 } from '../models/user-profile.model';
 
 @Injectable({
@@ -33,8 +33,8 @@ export class UserProfileService {
     return this.http.post<CreateUserProfileResponse>(`${this.apiUrl}/create`, request);
   }
 
-  getManagerProfile(): Observable<UserProfile> {
-    return this.http.get<UserProfile>(this.apiUrl);
+  getManagerProfile(): Observable<UserProfileDto> {
+    return this.http.get<UserProfileDto>(this.apiUrl);
   }
 
   assignAttributes(request: AssignAttributesRequest): Observable<void> {
@@ -49,6 +49,6 @@ export class UserProfileService {
   getProfileByUserId(userId: string) {
     let params = new HttpParams();
     params = params.append('userId', userId);
-    return this.http.get<UserProfile>(`${this.apiUrl}/user`, { params });
+    return this.http.get<UserProfileDto>(`${this.apiUrl}/user`, { params });
   }
 }

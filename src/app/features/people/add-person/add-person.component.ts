@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { NgIf } from '@angular/common';
-import { FormGroup, Validators, ReactiveFormsModule, FormArray, FormControl } from '@angular/forms';
+import { FormGroup, Validators, ReactiveFormsModule, FormControl } from '@angular/forms';
 import { Button, ButtonDirective } from 'primeng/button';
 import { Card } from 'primeng/card';
 import { InputText } from 'primeng/inputtext';
@@ -22,7 +22,6 @@ import {
   CreateUserProfileRequest
 } from '../../../core/models/user-profile.model';
 import { RegisterRequest } from '../../../core/models/auth.model';
-import { AuthService } from '../../../core/services/auth.service';
 import { UserProfileService } from '../../../core/services/user-profile.service';
 import { UserService } from '../../../core/services/user.service';
 
@@ -80,7 +79,6 @@ export class AddPersonComponent implements OnInit {
 
   constructor(
     private router: Router,
-    private authService: AuthService,
     private userService: UserService,
     private userProfileService: UserProfileService,
   ) {
@@ -100,11 +98,6 @@ export class AddPersonComponent implements OnInit {
         console.error('Failed to get attribute map', error);
       }
     });
-  }
-
-  // Helper function to get the attributes FormArray
-  get attributes(): FormArray {
-    return this.personForm.get('attributes') as FormArray;
   }
 
   onSubmit() {
@@ -183,7 +176,9 @@ export class AddPersonComponent implements OnInit {
   }
 
   onCancel() {
-    this.router.navigate([ '/dashboard/people' ], { replaceUrl: true });
+    this.router.navigate([ '/dashboard/people' ], { replaceUrl: true }).then(
+      () => this.submitting = false
+    )
   }
 
   private formatDate(date: Date | string): string {

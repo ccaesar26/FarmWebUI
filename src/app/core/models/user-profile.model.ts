@@ -10,7 +10,7 @@ export interface CreateUserProfileResponse {
   userProfileId: string;
 }
 
-export interface UserProfile {
+export interface UserProfileDto {
   id: string;
   name: string;
   dateOfBirth: string;

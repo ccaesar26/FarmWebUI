@@ -61,7 +61,6 @@ export class PeopleManagementComponent implements OnInit {
       .pipe(
         switchMap(users => {
           if (users.length === 0) {
-            alert('No workers found');
             return of([]); // Return an empty array if no users
           }
           // Create an array of observables for fetching each user's profile

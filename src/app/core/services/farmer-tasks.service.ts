@@ -3,7 +3,7 @@ import { environment } from '../../../environments/environment';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import {
   CreateTaskCommentDto,
-  CreateTaskDto,
+  CreateTaskDto, TaskCategoryDto,
   TaskDto,
   TaskFilterDto,
   TaskStatus,
@@ -73,8 +73,8 @@ export class FarmerTasksService {
     );
   }
 
-  assignTask(taskId: string, userId: string): Observable<void> {
-    return this.http.post<void>(`${this.apiUrl}/${taskId}/assign/${userId}`, {}).pipe(
+  assignTask(taskId: string, userIds: string[]): Observable<void> {
+    return this.http.post<void>(`${this.apiUrl}/${taskId}/assign`, { userIds }).pipe(
       catchError(this.handleError)
     );
   }
@@ -96,7 +96,7 @@ export class FarmerTasksService {
     );
   }
 
-  getTaskCategories(): Observable<any[]> { // Replace 'any[]' with a proper interface if you have one
+  getTaskCategories(): Observable<TaskCategoryDto[]> { // Replace 'any[]' with a proper interface if you have one
     return this.http.get<any[]>(`${this.apiUrl}/categories`).pipe(
       catchError(this.handleError)
     );

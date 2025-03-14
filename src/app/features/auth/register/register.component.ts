@@ -66,7 +66,10 @@ export class RegisterComponent {
       finalize(() => this.isRegistering = false)
     ).subscribe({
       next: () => this.router.navigate(['/register/success']),
-      error: (error) => this.errorMessage = error.message
+      error: (error) => {
+        this.errorMessage = error.message;
+        alert(error.message);
+      }
     });
   }
 }

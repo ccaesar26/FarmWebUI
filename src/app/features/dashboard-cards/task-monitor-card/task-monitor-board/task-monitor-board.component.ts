@@ -1,35 +1,21 @@
 // task-monitor-board.component.ts
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CardModule } from 'primeng/card';
 import { TagModule } from 'primeng/tag';
 import { ScrollPanelModule } from 'primeng/scrollpanel';
+import { TaskDto, TaskPriority, TaskStatus } from '../../../../core/models/task.model';
+import { FarmerTasksService } from '../../../../core/services/farmer-tasks.service';
+import { UserProfileService } from '../../../../core/services/user-profile.service';
+import { catchError, forkJoin, map, of, switchMap } from 'rxjs';
 
 interface Task {
   id: string;
   title: string;
-  assignedWorker: string; // Could be a User object later
-  dueDate: Date;
-  commentsCount: number;
-  taskStatus: TaskStatus;
-  taskPriority: TaskPriority;
-  creationDate: Date;
-}
-
-enum TaskStatus {
-  ToDo = 'To Do',
-  InProgress = 'In Progress',
-  OnHold = 'On Hold',
-  Completed = 'Completed',
-  Blocked = 'Blocked',
-  Cancelled = 'Cancelled',
-}
-
-enum TaskPriority {
-  Low = 'Low',
-  Medium = 'Medium',
-  High = 'High',
-  Urgent = 'Urgent',
+  description: string | null | undefined;
+  assignedUserName: string | null | undefined;
+  status: TaskStatus;
+  priority: TaskPriority;
 }
 
 @Component({
@@ -41,158 +27,75 @@ enum TaskPriority {
 })
 export class TaskMonitorBoardComponent implements OnInit {
 
-  tasks: Task[] = [];
+  tasks = signal<Task[]>([]);
   taskStatuses: TaskStatus[] = Object.values(TaskStatus);
 
-  constructor() {
+  statusMap: Map<number, TaskStatus> = new Map();
+  priorityMap: Map<number, TaskPriority> = new Map();
+
+  constructor(
+    private taskService: FarmerTasksService,
+    private userProfileService: UserProfileService
+  ) {
+    this.statusMap.set(0, TaskStatus.ToDo);
+    this.statusMap.set(1, TaskStatus.InProgress);
+    this.statusMap.set(2, TaskStatus.Completed);
+    this.statusMap.set(3, TaskStatus.Blocked);
+    this.statusMap.set(4, TaskStatus.Cancelled);
+    this.statusMap.set(5, TaskStatus.OnHold);
+
+    this.priorityMap.set(0, TaskPriority.Low);
+    this.priorityMap.set(1, TaskPriority.Medium);
+    this.priorityMap.set(2, TaskPriority.High);
+    this.priorityMap.set(3, TaskPriority.Urgent);
   }
 
   ngOnInit() {
-    // Mock data - replace with actual data fetching
-    this.tasks = [
-      {
-        id: '1',
-        title: 'Configure farm',
-        assignedWorker: 'John Doe',
-        dueDate: new Date(2024, 2, 28),
-        commentsCount: 2,
-        taskStatus: TaskStatus.ToDo,
-        taskPriority: TaskPriority.Medium,
-        creationDate: new Date(2024, 2, 1)
-      },
-      {
-        id: '2',
-        title: 'Email unique at register',
-        assignedWorker: 'Jane Smith',
-        dueDate: new Date(2024, 3, 5),
-        commentsCount: 5,
-        taskStatus: TaskStatus.ToDo,
-        taskPriority: TaskPriority.High,
-        creationDate: new Date(2024, 2, 5)
-      },
-      {
-        id: '3',
-        title: 'Edit Selection',
-        assignedWorker: 'Peter Jones',
-        dueDate: new Date(2024, 3, 10),
-        commentsCount: 0,
-        taskStatus: TaskStatus.ToDo,
-        taskPriority: TaskPriority.Low,
-        creationDate: new Date(2024, 2, 10)
-      },
-      {
-        id: '4',
-        title: 'Validare email',
-        assignedWorker: 'Cezar Const',
-        dueDate: new Date(2024, 3, 12),
-        commentsCount: 12,
-        taskStatus: TaskStatus.ToDo,
-        taskPriority: TaskPriority.Urgent,
-        creationDate: new Date(2024, 1, 22)
-      },
-      {
-        id: '5',
-        title: 'Titlu de test',
-        assignedWorker: 'Cezar Const',
-        dueDate: new Date(2024, 4, 1),
-        commentsCount: 1,
-        taskStatus: TaskStatus.ToDo,
-        taskPriority: TaskPriority.Low,
-        creationDate: new Date(2024, 1, 25)
-      },
+    this.loadTasks();
+  }
 
-      {
-        id: '6',
-        title: 'Baza de date cu date despre plante',
-        assignedWorker: 'John Doe',
-        dueDate: new Date(2024, 2, 20),
-        commentsCount: 3,
-        taskStatus: TaskStatus.InProgress,
-        taskPriority: TaskPriority.Medium,
-        creationDate: new Date(2024, 1, 15)
-      },
-      {
-        id: '7',
-        title: 'Relatii intre microservicii',
-        assignedWorker: 'Jane Smith',
-        dueDate: new Date(2024, 2, 25),
-        commentsCount: 8,
-        taskStatus: TaskStatus.InProgress,
-        taskPriority: TaskPriority.High,
-        creationDate: new Date(2024, 1, 16)
-      },
-      {
-        id: '8',
-        title: 'Comparat OpenWeatherMap, CLMS',
-        assignedWorker: 'Peter Jones',
-        dueDate: new Date(2024, 3, 2),
-        commentsCount: 1,
-        taskStatus: TaskStatus.InProgress,
-        taskPriority: TaskPriority.Low,
-        creationDate: new Date(2024, 2, 1)
-      },
-      {
-        id: '9',
-        title: 'API Remedii Culturi',
-        assignedWorker: 'Cezar Const',
-        dueDate: new Date(2024, 3, 5),
-        commentsCount: 0,
-        taskStatus: TaskStatus.InProgress,
-        taskPriority: TaskPriority.Medium,
-        creationDate: new Date(2024, 1, 25)
-      },
+  loadTasks() {
+    this.taskService.getTasks({}) // Fetch all tasks (empty filter)
+      .pipe(
+        switchMap(tasks => {
+          // Map tasks to observables that include user profile data
+          const taskObservables = tasks.map(task => {
+            return this.userProfileService.getProfileByUserId(task.assignedUserId).pipe( // Assuming task has assignedUserId
+              map(profile => ({
+                id: task.id,
+                title: task.title,
+                description: task.description,
+                assignedUserName: profile.name,
+                status: this.statusMap.get(task.status as unknown as number) ?? TaskStatus.ToDo,
+                priority: this.priorityMap.get(task.priority as unknown as number) ?? TaskPriority.Low
+              })),
+              catchError(error => {
+                console.error(`Error fetching profile for task ${task.id}:`, error);
+                // Return the task without assignedUserName if there's an error
+                return of({
+                  id: task.id,
+                  title: task.title,
+                  description: task.description,
+                  assignedUserName: "", // or "Unknown"
+                  status: this.statusMap.get(task.status as unknown as number) ?? TaskStatus.ToDo,
+                  priority: this.priorityMap.get(task.priority as unknown as number) ?? TaskPriority.Low
+                });
+              })
+            );
+          });
 
-      {
-        id: '10',
-        title: 'API Recunoasterea bolilor',
-        assignedWorker: 'John Doe',
-        dueDate: new Date(2024, 2, 15),
-        commentsCount: 7,
-        taskStatus: TaskStatus.Completed,
-        taskPriority: TaskPriority.Medium,
-        creationDate: new Date(2024, 0, 1)
-      },
-      {
-        id: '11',
-        title: 'Diagrame arhitecturale',
-        assignedWorker: 'Jane Smith',
-        dueDate: new Date(2024, 2, 18),
-        commentsCount: 2,
-        taskStatus: TaskStatus.Completed,
-        taskPriority: TaskPriority.High,
-        creationDate: new Date(2024, 1, 12)
-      },
-      {
-        id: '12',
-        title: 'Sequence Diagrams',
-        assignedWorker: 'Peter Jones',
-        dueDate: new Date(2024, 2, 22),
-        commentsCount: 0,
-        taskStatus: TaskStatus.Completed,
-        taskPriority: TaskPriority.Low,
-        creationDate: new Date(2024, 0, 15)
-      },
-      {
-        id: '13',
-        title: 'Drought prediction',
-        assignedWorker: 'Cezar Const',
-        dueDate: new Date(2024, 2, 28),
-        commentsCount: 5,
-        taskStatus: TaskStatus.Completed,
-        taskPriority: TaskPriority.Medium,
-        creationDate: new Date(2024, 1, 5)
-      },
-      {
-        id: '14',
-        title: 'Dashboard Wireframe',
-        assignedWorker: 'Cezar Const',
-        dueDate: new Date(2024, 3, 5),
-        commentsCount: 10,
-        taskStatus: TaskStatus.Completed,
-        taskPriority: TaskPriority.Urgent,
-        creationDate: new Date(2024, 0, 13)
-      },
-    ];
+          // Wait for all tasks to have their user profiles fetched
+          return forkJoin(taskObservables);
+        })
+      )
+      .subscribe({
+        next: (tasks) => {
+          this.tasks.set(tasks); // Assuming this.tasks.set() accepts an array
+        },
+        error: (error) => {
+          console.error('Error loading tasks:', error);
+        }
+      });
   }
 
   getPriorityIcon(priority: TaskPriority): string {
@@ -211,6 +114,6 @@ export class TaskMonitorBoardComponent implements OnInit {
   }
 
   getTasksByStatus(status: TaskStatus): Task[] {
-    return this.tasks.filter(task => task.taskStatus === status);
+    return this.tasks().filter(task => task.status === status);
   }
 }

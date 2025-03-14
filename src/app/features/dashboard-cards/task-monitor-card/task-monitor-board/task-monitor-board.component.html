@@ -6,27 +6,27 @@
         <p-card *ngFor="let task of getTasksByStatus(status)">
           <!-- Individual task card -->
           <div class="flex items-center gap-2">
-            <i [class]="getPriorityIcon(task.taskPriority)"></i>
+            <i [class]="getPriorityIcon(task.priority)"></i>
             <span class="font-bold">{{ task.title }}</span>
           </div>
 
           <div class="flex flex-col gap-2 my-4">
             <div class="flex flex-row gap-2">
               <i class="pi pi-user"></i>
-              <p class="text-sm">{{ task.assignedWorker }}</p>
+              <p class="text-sm">{{ task.assignedUserName }}</p>
             </div>
             <div class="flex flex-row gap-2">
               <i class="pi pi-calendar-clock"></i>
-              <p class="text-sm">Due at {{ task.dueDate | date: 'yyyy-MM-dd' }}</p>
+<!--              <p class="text-sm">Due at {{ task.dueDate | date: 'yyyy-MM-dd' }}</p>-->
             </div>
           </div>
 
           <div class="flex flex-row justify-between">
             <div class="flex items-center gap-2 text-sm">
               <i class="pi pi-comments"></i>
-              <span>{{ task.commentsCount }}</span>
+<!--              <span>{{ task.commentsCount }}</span>-->
             </div>
-            <p class="text-sm">{{ task.creationDate | date: 'yyyy-MM-dd' }}</p>
+<!--            <p class="text-sm">{{ task. | date: 'yyyy-MM-dd' }}</p>-->
           </div>
         </p-card>
       </div>

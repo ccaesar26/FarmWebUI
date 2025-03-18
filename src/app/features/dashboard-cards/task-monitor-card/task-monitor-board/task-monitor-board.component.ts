@@ -13,9 +13,12 @@ interface Task {
   id: string;
   title: string;
   description: string | null | undefined;
-  assignedUserName: string | null | undefined;
+  dueDate: string | null | undefined;
+  assignedUserNames: string | null | undefined;
   status: TaskStatus;
   priority: TaskPriority;
+  commentsCount?: number;
+  createdAt: string;
 }
 
 @Component({
@@ -40,9 +43,7 @@ export class TaskMonitorBoardComponent implements OnInit {
     this.statusMap.set(0, TaskStatus.ToDo);
     this.statusMap.set(1, TaskStatus.InProgress);
     this.statusMap.set(2, TaskStatus.Completed);
-    this.statusMap.set(3, TaskStatus.Blocked);
-    this.statusMap.set(4, TaskStatus.Cancelled);
-    this.statusMap.set(5, TaskStatus.OnHold);
+    this.statusMap.set(3, TaskStatus.OnHold);
 
     this.priorityMap.set(0, TaskPriority.Low);
     this.priorityMap.set(1, TaskPriority.Medium);
@@ -58,33 +59,48 @@ export class TaskMonitorBoardComponent implements OnInit {
     this.taskService.getTasks({}) // Fetch all tasks (empty filter)
       .pipe(
         switchMap(tasks => {
-          // Map tasks to observables that include user profile data
           const taskObservables = tasks.map(task => {
-            return this.userProfileService.getProfileByUserId(task.assignedUserId).pipe( // Assuming task has assignedUserId
-              map(profile => ({
+            if (task.assignedUserIds.length === 0) {
+              // No assigned users, return task as is
+              return of({
                 id: task.id,
                 title: task.title,
                 description: task.description,
-                assignedUserName: profile.name,
-                status: this.statusMap.get(task.status as unknown as number) ?? TaskStatus.ToDo,
-                priority: this.priorityMap.get(task.priority as unknown as number) ?? TaskPriority.Low
-              })),
-              catchError(error => {
-                console.error(`Error fetching profile for task ${task.id}:`, error);
-                // Return the task without assignedUserName if there's an error
-                return of({
-                  id: task.id,
-                  title: task.title,
-                  description: task.description,
-                  assignedUserName: "", // or "Unknown"
-                  status: this.statusMap.get(task.status as unknown as number) ?? TaskStatus.ToDo,
-                  priority: this.priorityMap.get(task.priority as unknown as number) ?? TaskPriority.Low
-                });
-              })
+                dueDate: task.dueDate,
+                assignedUserNames: "Unassigned",
+                status: this.statusMap.get(task.status) ?? TaskStatus.ToDo,
+                priority: this.priorityMap.get(task.priority) ?? TaskPriority.Low,
+                commentsCount: task.commentsCount,
+                createdAt: task.createdAt
+              });
+            }
+
+            // Fetch all user profiles for the assigned users
+            const profileObservables = task.assignedUserIds.map(userId =>
+              this.userProfileService.getProfileByUserId(userId).pipe(
+                map(profile => profile.name),
+                catchError(error => {
+                  console.error(`Error fetching profile for user ${userId}:`, error);
+                  return of("Unknown");
+                })
+              )
+            );
+
+            return forkJoin(profileObservables).pipe(
+              map(userNames => ({
+                id: task.id,
+                title: task.title,
+                description: task.description,
+                dueDate: task.dueDate,
+                assignedUserNames: userNames.join(", "), // Join names into a string
+                status: this.statusMap.get(task.status) ?? TaskStatus.ToDo,
+                priority: this.priorityMap.get(task.priority) ?? TaskPriority.Low,
+                commentsCount: task.commentsCount,
+                createdAt: task.createdAt
+              }))
             );
           });
 
-          // Wait for all tasks to have their user profiles fetched
           return forkJoin(taskObservables);
         })
       )
@@ -110,6 +126,21 @@ export class TaskMonitorBoardComponent implements OnInit {
         return 'pi pi-circle-fill text-red-500';
       default:
         return 'pi pi-circle-fill';
+    }
+  }
+
+  getStatusColor(taskStatus: TaskStatus): string {
+    switch (taskStatus) {
+      case TaskStatus.ToDo:
+        return 'bg-sky-400 text-white'; // Use Tailwind classes for color
+      case TaskStatus.InProgress:
+        return 'bg-amber-400 text-white';
+      case TaskStatus.Completed:
+        return 'bg-green-400 text-white';
+      case TaskStatus.OnHold:
+        return 'bg-purple-400 text-white';
+      default:
+        return '';
     }
   }
 

@@ -141,30 +141,40 @@ export class CreateTaskComponent implements OnInit {
       status: statusToNumber(TaskStatus.ToDo)
     }
 
-    const assignUsersToTaskDto = this.workers().filter(w => assignees?.includes(w.name)).map(w => w.id);
+    const userProfileIds = this.workers().filter(w => assignees?.includes(w.name)).map(w => w.id);
 
+    this.userService.getWorkerUsers().subscribe({
+      next: (users) => {
+        const assignUsersToTaskDto = users.filter(u => userProfileIds.includes(u.userProfileId)).map(u => u.id);
 
-    this.farmerTasksService.createTask(createTaskDto)
-      .subscribe({
-        next: (taskId) => {
-          this.farmerTasksService.assignTask(taskId, assignUsersToTaskDto)
-            .subscribe({
-              next: () => {
-                this.location.back();
-              },
-              error: () => {
-                this.submitting = false;
-                this.submitted = false;
-                alert('Failed to assign users to task');
-              }
-            });
-        },
-        error: () => {
-          this.submitting = false;
-          this.submitted = false;
-          alert('Failed to create task');
-        }
-      });
+        this.farmerTasksService.createTask(createTaskDto)
+          .subscribe({
+            next: (taskId) => {
+              this.farmerTasksService.assignTask(taskId, assignUsersToTaskDto)
+                .subscribe({
+                  next: () => {
+                    this.location.back();
+                  },
+                  error: () => {
+                    this.submitting = false;
+                    this.submitted = false;
+                    alert('Failed to assign users to task');
+                  }
+                });
+            },
+            error: () => {
+              this.submitting = false;
+              this.submitted = false;
+              alert('Failed to create task');
+            }
+          });
+      },
+      error: () => {
+        this.submitting = false;
+        this.submitted = false;
+        alert('Failed to get worker users');
+      }
+    });
   }
 
   isRecurring() {

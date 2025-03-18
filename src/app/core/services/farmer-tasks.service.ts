@@ -3,7 +3,7 @@ import { environment } from '../../../environments/environment';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import {
   CreateTaskCommentDto,
-  CreateTaskDto, TaskCategoryDto,
+  CreateTaskDto, TaskCategoryDto, TaskCommentDto,
   TaskDto,
   TaskFilterDto,
   TaskStatus,
@@ -108,8 +108,8 @@ export class FarmerTasksService {
     );
   }
 
-  getComments(taskId: string): Observable<any[]> { // Replace 'any[]' with a proper interface
-    return this.http.get<any[]>(`${this.apiUrl}/${taskId}/comments`).pipe(
+  getComments(taskId: string): Observable<TaskCommentDto[]> { // Replace 'any[]' with a proper interface
+    return this.http.get<TaskCommentDto[]>(`${this.apiUrl}/${taskId}/comments`).pipe(
       catchError(this.handleError)
     );
   }

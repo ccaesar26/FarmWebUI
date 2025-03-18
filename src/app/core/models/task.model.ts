@@ -3,8 +3,6 @@ export enum TaskStatus {
   InProgress = 'In Progress',
   OnHold = 'On Hold',
   Completed = 'Completed',
-  Blocked = 'Blocked',
-  Cancelled = 'Cancelled',
 }
 
 export function statusToNumber(status: TaskStatus) {
@@ -17,10 +15,6 @@ export function statusToNumber(status: TaskStatus) {
       return 2;
     case TaskStatus.Completed:
       return 3;
-    case TaskStatus.Blocked:
-      return 4;
-    case TaskStatus.Cancelled:
-      return 5;
   }
 }
 
@@ -40,7 +34,7 @@ export function priorityToNumber(priority: TaskPriority) {
     case TaskPriority.High:
       return 2;
     case TaskPriority.Urgent:
-      return 2;
+      return 3;
   }
 }
 
@@ -68,17 +62,20 @@ export function recurrenceToNumber(recurrence: RecurrenceType) {
 }
 
 export interface TaskDto {
-  id: string; // Use string for GUIDs from .NET
+  id: string;
   title: string;
-  description?: string | null; // Optional
-  dueDate: string | null;       // String, to be parsed as Date
-  priority: TaskPriority;
-  status: TaskStatus;
-  assignedUserId: string; // Use string for GUIDs
-  categoryId: string | null;    // Use string for GUIDs
-  categoryName?: string | null;  // Optional
-  recurrence: RecurrenceType;
-  recurrenceEndDate: string | null;  // String, to be parsed as date
+  description?: string | null;
+  dueDate: string | null;
+  priority: number;
+  status: number;
+  assignedUserIds: string[];
+  categoryId: string | null;
+  categoryName?: string | null;
+  recurrence: number;
+  recurrenceEndDate: string | null;
+  fieldId: string;
+  commentsCount: number;
+  createdAt: string;
 }
 
 export interface TaskCategoryDto {
@@ -128,4 +125,12 @@ export interface TaskFilterDto {
   dueDateStart?: string; // Use string and parse
   dueDateEnd?: string;
   title?: string
+}
+
+export interface TaskCommentDto {
+  id: string;
+  taskId: string;
+  comment: string;
+  createdAt: string;
+  createdBy: string;
 }

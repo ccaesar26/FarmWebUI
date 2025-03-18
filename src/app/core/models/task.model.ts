@@ -92,7 +92,7 @@ export interface CreateTaskDto {
   description?: string | null;
   dueDate?: string | null;      // Use Date or string, depending on API
   priority: number;
-  status: TaskStatus;
+  status: number;
   assignedUserId?: string | null;
   categoryId?: string | null;
   recurrence: number;

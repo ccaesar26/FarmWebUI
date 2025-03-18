@@ -12,7 +12,7 @@ import { Calendar } from 'primeng/calendar';
 import { DropdownModule } from 'primeng/dropdown';
 import {
   CreateTaskDto, priorityToNumber, recurrenceToNumber,
-  RecurrenceType,
+  RecurrenceType, statusToNumber,
   TaskCategoryDto,
   TaskPriority,
   TaskStatus
@@ -52,11 +52,11 @@ export class CreateTaskComponent implements OnInit {
   form = new FormGroup({
     title: new FormControl<string>('', [ Validators.required ]),
     description: new FormControl<string>('', [ Validators.maxLength(5000) ]),
-    dueDate: new FormControl<string>(''),
+    dueDate: new FormControl<string | null>(null),
     priority: new FormControl<TaskPriority | null>(null, [ Validators.required ]),
     category: new FormControl<string | null>(null),
     recurrenceType: new FormControl<RecurrenceType>(RecurrenceType.None, [ Validators.required ]),
-    recurrenceEndDate: new FormControl<string>(''),
+    recurrenceEndDate: new FormControl<string | null>(null),
     assignees: new FormControl<string[]>([]),
     location: new FormControl<string | null>(null, [ Validators.required ])
   });
@@ -129,20 +129,16 @@ export class CreateTaskComponent implements OnInit {
       return;
     }
 
-    const categoryId = this.categories().find(c => c.name === category)?.id;
-    const fieldId = this.fields().find(f => f.name === location)?.id;
-    const recurrenceTypeValue = RecurrenceType[recurrenceType as RecurrenceType];
-
     const createTaskDto: CreateTaskDto = {
       title,
       description,
-      dueDate,
+      dueDate: dueDate ? new Date(dueDate).toISOString() : null,
       priority: priorityToNumber(priority),
-      categoryId,
+      categoryId: this.categories().find(c => c.name === category)?.id ?? '',
       recurrence: recurrenceToNumber(recurrenceType ? recurrenceType : RecurrenceType.None),
-      recurrenceEndDate,
-      fieldId: fieldId ? fieldId : '',
-      status: TaskStatus.ToDo
+      recurrenceEndDate: recurrenceEndDate ? new Date(recurrenceEndDate).toISOString() : null,
+      fieldId: this.fields().find(f => f.name === location)?.id ?? '',
+      status: statusToNumber(TaskStatus.ToDo)
     }
 
     const assignUsersToTaskDto = this.workers().filter(w => assignees?.includes(w.name)).map(w => w.id);

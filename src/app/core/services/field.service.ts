@@ -27,4 +27,8 @@ export class FieldService {
   getFieldsCities(): Observable<GetFieldsCitiesResponse> {
     return this.http.get<GetFieldsCitiesResponse>(`${this.apiUrl}/cities`);
   }
+
+  getFieldById(fieldId: string): Observable<Field> {
+    return this.http.get<Field>(`${this.apiUrl}/${fieldId}`);
+  }
 }

@@ -7,6 +7,7 @@ import {ScrollPanel} from 'primeng/scrollpanel';
 import {TaskMonitorCalendarComponent} from '../task-monitor-calendar/task-monitor-calendar.component';
 import {SpeedDial} from "primeng/speeddial";
 import {Router} from '@angular/router';
+import { ButtonDirective } from 'primeng/button';
 
 @Component({
   selector: 'app-task-monitor-tabs-menu',
@@ -18,7 +19,8 @@ import {Router} from '@angular/router';
     TaskMonitorBoardComponent,
     ScrollPanel,
     TaskMonitorCalendarComponent,
-    SpeedDial
+    SpeedDial,
+    ButtonDirective
   ],
   templateUrl: './task-monitor-tabs-menu.component.html',
   styleUrl: './task-monitor-tabs-menu.component.css'
@@ -26,7 +28,7 @@ import {Router} from '@angular/router';
 export class TaskMonitorTabsMenuComponent implements OnInit {
   items: MenuItem[] | null = [];
 
-  constructor(private router: Router) {
+  constructor(protected router: Router) {
   }
 
   ngOnInit() {

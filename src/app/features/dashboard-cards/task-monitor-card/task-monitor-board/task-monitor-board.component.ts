@@ -4,21 +4,24 @@ import { CommonModule } from '@angular/common';
 import { CardModule } from 'primeng/card';
 import { TagModule } from 'primeng/tag';
 import { ScrollPanelModule } from 'primeng/scrollpanel';
-import { TaskDto, TaskPriority, TaskStatus } from '../../../../core/models/task.model';
+import { TaskPriority, TaskStatus } from '../../../../core/models/task.model';
 import { FarmerTasksService } from '../../../../core/services/farmer-tasks.service';
 import { UserProfileService } from '../../../../core/services/user-profile.service';
 import { catchError, forkJoin, map, of, switchMap } from 'rxjs';
+import { FieldService } from '../../../../core/services/field.service';
 
 interface Task {
   id: string;
   title: string;
   description: string | null | undefined;
   dueDate: string | null | undefined;
-  assignedUserNames: string | null | undefined;
-  status: TaskStatus;
   priority: TaskPriority;
+  status: TaskStatus;
+  assignedUserNames: string | null | undefined;
+  categoryName: string | null | undefined;
   commentsCount?: number;
   createdAt: string;
+  fieldName?: string | null | undefined;
 }
 
 @Component({
@@ -38,7 +41,8 @@ export class TaskMonitorBoardComponent implements OnInit {
 
   constructor(
     private taskService: FarmerTasksService,
-    private userProfileService: UserProfileService
+    private userProfileService: UserProfileService,
+    private fieldsService: FieldService
   ) {
     this.statusMap.set(0, TaskStatus.ToDo);
     this.statusMap.set(1, TaskStatus.InProgress);
@@ -60,19 +64,32 @@ export class TaskMonitorBoardComponent implements OnInit {
       .pipe(
         switchMap(tasks => {
           const taskObservables = tasks.map(task => {
+            // Fetch field name
+            const fieldObservable = this.fieldsService.getFieldById(task.fieldId).pipe(
+              map(field => field.name),
+              catchError(error => {
+                console.error(`Error fetching field name for field ${task.fieldId}:`, error);
+                return of(null);
+              })
+            );
+
             if (task.assignedUserIds.length === 0) {
-              // No assigned users, return task as is
-              return of({
-                id: task.id,
-                title: task.title,
-                description: task.description,
-                dueDate: task.dueDate,
-                assignedUserNames: "Unassigned",
-                status: this.statusMap.get(task.status) ?? TaskStatus.ToDo,
-                priority: this.priorityMap.get(task.priority) ?? TaskPriority.Low,
-                commentsCount: task.commentsCount,
-                createdAt: task.createdAt
-              });
+              // No assigned users, only fetch field name
+              return fieldObservable.pipe(
+                map(fieldName => ({
+                  id: task.id,
+                  title: task.title,
+                  description: task.description,
+                  dueDate: task.dueDate,
+                  assignedUserNames: "Unassigned",
+                  status: this.statusMap.get(task.status) ?? TaskStatus.ToDo,
+                  priority: this.priorityMap.get(task.priority) ?? TaskPriority.Low,
+                  categoryName: task.categoryName,
+                  commentsCount: task.commentsCount,
+                  createdAt: task.createdAt,
+                  fieldName: fieldName
+                }))
+              );
             }
 
             // Fetch all user profiles for the assigned users
@@ -86,8 +103,8 @@ export class TaskMonitorBoardComponent implements OnInit {
               )
             );
 
-            return forkJoin(profileObservables).pipe(
-              map(userNames => ({
+            return forkJoin({ fieldName: fieldObservable, userNames: forkJoin(profileObservables) }).pipe(
+              map(({ fieldName, userNames }) => ({
                 id: task.id,
                 title: task.title,
                 description: task.description,
@@ -95,8 +112,10 @@ export class TaskMonitorBoardComponent implements OnInit {
                 assignedUserNames: userNames.join(", "), // Join names into a string
                 status: this.statusMap.get(task.status) ?? TaskStatus.ToDo,
                 priority: this.priorityMap.get(task.priority) ?? TaskPriority.Low,
+                categoryName: task.categoryName,
                 commentsCount: task.commentsCount,
-                createdAt: task.createdAt
+                createdAt: task.createdAt,
+                fieldName: fieldName
               }))
             );
           });
@@ -113,6 +132,7 @@ export class TaskMonitorBoardComponent implements OnInit {
         }
       });
   }
+
 
   getPriorityIcon(priority: TaskPriority): string {
     switch (priority) {
@@ -141,6 +161,23 @@ export class TaskMonitorBoardComponent implements OnInit {
         return 'bg-purple-400 text-white';
       default:
         return '';
+    }
+  }
+
+  getCategoryIcon(categoryName: string): string {
+    switch (categoryName) {
+      case 'Maintenance':
+        return 'pi pi-wrench';
+      case 'Pest and Disease Control':
+        return 'pi pi-filter';
+      case 'Planting':
+        return 'pi pi-hammer';
+      case 'Irrigation':
+        return 'pi pi-cloud';
+      case 'Harvesting':
+        return 'pi pi-box';
+      default:
+        return 'pi pi-question';
     }
   }
 

@@ -9,19 +9,28 @@
       <div class="flex flex-col gap-2">
         <p-card *ngFor="let task of getTasksByStatus(status)">
           <!-- Individual task card -->
-          <div class="flex items-center gap-2">
-            <i [class]="getPriorityIcon(task.priority)"></i>
-            <span class="font-bold">{{ task.title }}</span>
+          <div class="flex justify-between items-center">
+            <div class="flex items-center gap-2">
+              <i [class]="getPriorityIcon(task.priority)"></i>
+              <span class="font-bold">{{ task.title }}</span>
+            </div>
+            <i [class]="getCategoryIcon(task.categoryName ?? '')"></i>
           </div>
 
-          <div class="flex flex-col gap-2 my-4">
+          <div class="flex flex-col gap-2 my-6">
             <div class="flex flex-row gap-2">
               <i class="pi pi-user"></i>
               <p class="text-sm">{{ task.assignedUserNames }}</p>
             </div>
-            <div class="flex flex-row gap-2">
+            <div class="flex flex-row gap-2 items-center">
               <i class="pi pi-calendar-clock"></i>
-              <p class="text-sm">Due at {{ task.dueDate | date: 'HH:mm, yyyy-MM-dd' }}</p>
+              <p class="text-sm" *ngIf="task.dueDate != null && task.dueDate?.length != 0">Due
+                at {{ task.dueDate | date: 'HH:mm, dd.MM.yyyy' }}</p>
+              <p class="text-sm" *ngIf="task.dueDate == null || task.dueDate?.length == 0">No due date</p>
+            </div>
+            <div class="flex flex-row gap-2 items-center" *ngIf="task.fieldName != null && task.dueDate?.length != 0">
+              <i class="pi pi-map-marker"></i>
+              <p class="text-sm">{{ task.fieldName }}</p>
             </div>
           </div>
 
@@ -30,7 +39,7 @@
               <i class="pi pi-comments"></i>
               <span>{{ task.commentsCount }}</span>
             </div>
-            <p class="text-sm text-gray-500">{{ task.createdAt | date: 'HH:mm, yyyy-MM-dd' }}</p>
+            <p class="text-sm text-gray-500">{{ task.createdAt | date: 'HH:mm, dd.MM.yyyy' }}</p>
           </div>
         </p-card>
       </div>

@@ -3,9 +3,9 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { catchError, map, Observable, of } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import {
-  AssignAttributesRequest,
+  AttributesRequest,
   AttributeMap,
-  CreateUserProfileRequest, CreateUserProfileResponse,
+  CreateUserProfileRequest, CreateUserProfileResponse, UpdateUserProfileRequest,
   UserProfileDto
 } from '../models/user-profile.model';
 
@@ -33,12 +33,20 @@ export class UserProfileService {
     return this.http.post<CreateUserProfileResponse>(`${this.apiUrl}/create`, request);
   }
 
+  updateUserProfile(userProfileId: string, request: UpdateUserProfileRequest): Observable<void> {
+    return this.http.put<void>(`${this.apiUrl}/${userProfileId}`, request);
+  }
+
   getManagerProfile(): Observable<UserProfileDto> {
     return this.http.get<UserProfileDto>(this.apiUrl);
   }
 
-  assignAttributes(request: AssignAttributesRequest): Observable<void> {
+  assignAttributes(request: AttributesRequest): Observable<void> {
     return this.http.post<void>(`${this.apiUrl}/attributes/assign`, request);
+  }
+
+  updateAttributes(request: AttributesRequest): Observable<void> {
+    return this.http.put<void>(`${this.apiUrl}/attributes/update`, request);
   }
 
   // returns a map of available attributes grouped by category

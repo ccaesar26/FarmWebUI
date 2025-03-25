@@ -4,3 +4,10 @@ export interface User {
   email: string;
   userProfileId: string;
 }
+
+export interface UpdateUserRequest {
+  id: string;
+  username: string;
+  email: string;
+  roleName: string;
+}

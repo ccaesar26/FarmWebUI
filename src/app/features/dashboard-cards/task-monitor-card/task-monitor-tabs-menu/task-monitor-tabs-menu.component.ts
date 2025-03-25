@@ -4,8 +4,6 @@ import {TabPanel, TabView} from 'primeng/tabview';
 import {MenuItem, PrimeTemplate} from 'primeng/api';
 import {TaskMonitorBoardComponent} from '../task-monitor-board/task-monitor-board.component';
 import {ScrollPanel} from 'primeng/scrollpanel';
-import {TaskMonitorCalendarComponent} from '../task-monitor-calendar/task-monitor-calendar.component';
-import {SpeedDial} from "primeng/speeddial";
 import {Router} from '@angular/router';
 import { ButtonDirective } from 'primeng/button';
 
@@ -18,8 +16,6 @@ import { ButtonDirective } from 'primeng/button';
     PrimeTemplate,
     TaskMonitorBoardComponent,
     ScrollPanel,
-    TaskMonitorCalendarComponent,
-    SpeedDial,
     ButtonDirective
   ],
   templateUrl: './task-monitor-tabs-menu.component.html',

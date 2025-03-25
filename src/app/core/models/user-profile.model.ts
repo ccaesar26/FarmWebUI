@@ -18,11 +18,17 @@ export interface UserProfileDto {
   attributeNames: string[];
 }
 
-export interface AssignAttributesRequest {
+export interface AttributesRequest {
   userProfileId: string | null;
   attributeNames: string[];
 }
 
 export interface AttributeMap {
   [category: string]: string[];
+}
+
+export interface UpdateUserProfileRequest {
+  name: string;
+  dateOfBirth: string;
+  gender: string;
 }

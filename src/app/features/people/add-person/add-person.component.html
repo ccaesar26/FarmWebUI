@@ -2,7 +2,7 @@
 <p-fluid>
 
   <form [formGroup]="personForm" (ngSubmit)="onSubmit()" class="max-w-xl mx-auto my-auto space-y-8 h-full">
-    <h2 class="text-3xl font-bold px-5 mb-6">Add Person</h2>
+    <h2 class="text-3xl font-bold px-5 mb-6">{{ title }}</h2>
     <p-card header="Authentication">
       <p-floatlabel variant="on" class="block w-full mt-2">
         <input id="register-username" pInputText [formControl]="personForm.controls.username" class="w-full"
@@ -64,15 +64,15 @@
 
     <p-card header="Personal Information" class="m-4">
       <p-floatlabel variant="on" class="block w-full mt-2">
-        <input id="fullName" pInputText [formControl]="personForm.controls.fullName" class="w-full"
+        <input id="name" pInputText [formControl]="personForm.controls.name" class="w-full"
                pTooltip="Enter the person's full name." tooltipPosition="top"/>
-        <label for="fullName">Full name</label>
+        <label for="name">Full name</label>
       </p-floatlabel>
       <div class="my-4">
         <p-message severity="error" text="Full Name is required"
-                   *ngIf="personForm.controls.fullName.errors?.['required'] && (personForm.controls.fullName.dirty || personForm.controls.fullName.touched || submitted)"></p-message>
+                   *ngIf="personForm.controls.name.errors?.['required'] && (personForm.controls.name.dirty || personForm.controls.name.touched || submitted)"></p-message>
         <p-message severity="error"
-                   *ngIf="personForm.controls.fullName.errors?.['maxlength'] && (personForm.controls.fullName.dirty || personForm.controls.fullName.touched || submitted)"
+                   *ngIf="personForm.controls.name.errors?.['maxlength'] && (personForm.controls.name.dirty || personForm.controls.name.touched || submitted)"
                    text="Full Name cannot exceed 100 characters"></p-message>
       </div>
 

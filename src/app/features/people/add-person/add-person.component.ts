@@ -17,7 +17,7 @@ import { Select } from 'primeng/select';
 import { MultiSelect } from 'primeng/multiselect';
 import { Router } from '@angular/router';
 import {
-  AssignAttributesRequest,
+  AttributesRequest,
   AttributeMap,
   CreateUserProfileRequest
 } from '../../../core/models/user-profile.model';
@@ -65,22 +65,23 @@ export class AddPersonComponent implements OnInit {
     username: new FormControl('', [ Validators.required ]),
     email: new FormControl('', [ Validators.required ]),
     password: new FormControl('', [ Validators.required ]),
-    fullName: new FormControl('', [ Validators.required ]),
+    name: new FormControl('', [ Validators.required ]),
     dateOfBirth: new FormControl('', [ Validators.required ]),
-    gender: new FormControl(null, [ Validators.required ]),
-    attributes: new FormControl([], [ Validators.required ]),
+    gender: new FormControl<string | null>(null, [ Validators.required ]),
+    attributes: new FormControl<string[]>([], [ Validators.required ]),
   });
   genders: { label: string; value: string }[] = [];
   submitted: boolean = false;
   submitting: boolean = false;
   showPassword: boolean = false;
+  title: string = 'Add Person';
 
   availableAttributes: AttributeCategory[] = [];
 
   constructor(
     private router: Router,
     private userService: UserService,
-    private userProfileService: UserProfileService,
+    private userProfileService: UserProfileService
   ) {
   }
 
@@ -105,9 +106,9 @@ export class AddPersonComponent implements OnInit {
     this.submitted = true;
 
     if (this.personForm.valid) {
-      const { username, email, fullName, dateOfBirth, gender, attributes } = this.personForm.value;
+      const { username, email, password, name, dateOfBirth, gender, attributes } = this.personForm.value;
 
-      if (username == null || email == null || fullName == null || dateOfBirth == null || gender == null || attributes == null) {
+      if (username == null || email == null || password == null || name == null || dateOfBirth == null || gender == null || attributes == null) {
         console.log("Error: One or more fields are null");
         return;
       }
@@ -115,19 +116,19 @@ export class AddPersonComponent implements OnInit {
       const registerRequest: RegisterRequest = {
         username: username,
         email: email,
-        password: "password",
+        password: password,
         role: "Worker"
       };
 
       const userProfile: CreateUserProfileRequest = {
         userId: null,
-        name: fullName,
+        name: name,
         dateOfBirth: this.formatDate(dateOfBirth),
         gender: gender,
         role: "Worker"
       };
 
-      const assignAttributesRequest: AssignAttributesRequest = {
+      const assignAttributesRequest: AttributesRequest = {
         userProfileId: null,
         attributeNames: attributes
       };
@@ -142,7 +143,7 @@ export class AddPersonComponent implements OnInit {
   addPersonToFarm(
     registerRequest: RegisterRequest,
     userProfile: CreateUserProfileRequest,
-    attributes: AssignAttributesRequest
+    attributes: AttributesRequest
   ) {
     this.userService.createUser(registerRequest).subscribe({
       next: (response) => {

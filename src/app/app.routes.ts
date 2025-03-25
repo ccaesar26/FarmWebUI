@@ -11,7 +11,6 @@ import { RegisterSuccessComponent } from './core/components/register-success/reg
 import { dashboardGuardFn } from './core/guards/dashboard.guard';
 import { initializeFarmGuardFn } from './core/guards/initialize-farm.guard';
 import { PeopleManagementComponent } from './features/people/people-management/people-management.component';
-import { AddPersonComponent } from './features/people/add-person/add-person.component';
 import { CreateTaskComponent } from './features/tasks/create-task/create-task.component';
 
 export const routes: Routes = [
@@ -71,7 +70,7 @@ export const routes: Routes = [
     children: [
       { path: '', component: DashboardComponent, canActivate: [ dashboardGuardFn ] },
       { path: 'people', component: PeopleManagementComponent, canActivate: [ dashboardGuardFn ] },
-      { path: 'people/add', component: AddPersonComponent, canActivate: [ dashboardGuardFn ] },
+      // { path: 'people/add', component: AddPersonComponent, canActivate: [ dashboardGuardFn ] },
       { path: 'tasks/create', component: CreateTaskComponent, canActivate: [ dashboardGuardFn ] }
     ]
   },

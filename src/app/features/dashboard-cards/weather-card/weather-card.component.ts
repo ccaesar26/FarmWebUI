@@ -3,7 +3,7 @@ import { WeatherService } from '../../../core/services/weather.service';
 import { FieldService } from '../../../core/services/field.service';
 import { WeatherResponse } from '../../../core/models/weather.model';
 import { CityOption, GetFieldCoordinatesResponse, GetFieldsCitiesResponse } from '../../../core/models/field.model';
-import { DatePipe, NgForOf, NgIf } from '@angular/common';
+import { DatePipe, DecimalPipe, NgForOf, NgIf } from '@angular/common';
 import { AnimationOptions, LottieComponent } from 'ngx-lottie';
 import { FormsModule } from '@angular/forms';
 import { DropdownModule } from 'primeng/dropdown';
@@ -21,7 +21,8 @@ import { ScrollPanel } from 'primeng/scrollpanel';
     ProgressSpinner,
     NgIf,
     LottieComponent,
-    ScrollPanel
+    ScrollPanel,
+    DecimalPipe
   ]
 })
 export class WeatherCardComponent implements OnInit {

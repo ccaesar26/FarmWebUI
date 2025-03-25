@@ -1,26 +1,50 @@
 import { Component, OnInit } from '@angular/core';
-import { SpeedDial } from 'primeng/speeddial';
 import { MenuItem } from 'primeng/api';
 import { Router } from '@angular/router';
 import { UserProfileService } from '../../../core/services/user-profile.service';
 import { UserService } from '../../../core/services/user.service';
 import { CommonModule } from '@angular/common';
 import { catchError, forkJoin, map, of, switchMap } from 'rxjs';
+import { Toolbar } from 'primeng/toolbar';
+import { Button } from 'primeng/button';
+import { TableModule } from 'primeng/table';
+import { IconField } from 'primeng/iconfield';
+import { InputIcon } from 'primeng/inputicon';
+import { InputText } from 'primeng/inputtext';
+import { Dialog } from 'primeng/dialog';
+import { PersonFormComponent } from '../person-form/person-form.component';
+import { RegisterRequest } from '../../../core/models/auth.model';
+import {
+  AttributesRequest,
+  CreateUserProfileRequest,
+  UpdateUserProfileRequest
+} from '../../../core/models/user-profile.model';
+import { UpdateUserRequest } from '../../../core/models/user.model';
 
-interface UserEntry {
+export interface UserEntry {
   id: string;
   username: string;
   email: string;
+  password?: string;
   userProfileId: string;
   name: string;
-  attributeNames: string[];
+  dateOfBirth: string;
+  gender: string;
+  attributes: string[];
 }
 
 @Component({
   selector: 'app-people-management',
   imports: [
-    SpeedDial,
-    CommonModule
+    CommonModule,
+    Toolbar,
+    Button,
+    TableModule,
+    IconField,
+    InputIcon,
+    InputText,
+    Dialog,
+    PersonFormComponent
   ],
   templateUrl: './people-management.component.html',
   styleUrl: './people-management.component.css'
@@ -28,6 +52,9 @@ interface UserEntry {
 export class PeopleManagementComponent implements OnInit {
   items: MenuItem[] | null = null;
   workers: UserEntry[] = [];
+  selectedWorker: UserEntry | null = null;
+  selectedWorkers: UserEntry[] = [];
+  displayModal: boolean = false;
 
   constructor(
     protected router: Router,
@@ -37,22 +64,6 @@ export class PeopleManagementComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.items = [
-      {
-        label: 'Add',
-        icon: 'pi pi-plus',
-        command: () => {
-          this.router.navigate([ '/dashboard/people/add' ]);
-        }
-      },
-      {
-        label: 'Download CSV',
-        icon: 'pi pi-download',
-        command: () => {
-        }
-      },
-    ]
-
     this.fetchWorkers();
   }
 
@@ -89,9 +100,12 @@ export class PeopleManagementComponent implements OnInit {
                     id: user.id,
                     username: user.username,
                     email: user.email,
+                    password: undefined,
                     userProfileId: user.userProfileId,  // Correct ID from profile
                     name: profile.name, // Combine to form a full name
-                    attributeNames: profile.attributeNames || [] // Default to empty array if null
+                    dateOfBirth: profile.dateOfBirth,
+                    gender: profile.gender,
+                    attributes: profile.attributeNames || [] // Default to empty array if null
                   };
                   combinedData.push(userEntry);
                 }
@@ -108,5 +122,145 @@ export class PeopleManagementComponent implements OnInit {
       .subscribe(workers => {
         this.workers = workers;
       });
+  }
+
+  openNew() {
+    this.selectedWorker = null; // Set to null for add mode
+    this.displayModal = true;
+  }
+
+  deleteSelectedPeople() {
+
+  }
+
+  openEditWorker(worker: UserEntry) {
+    this.selectedWorker = worker; // Pass the selected user
+    this.displayModal = true;
+  }
+
+  deleteWorker(worker: UserEntry) {
+
+  }
+
+  onSave(updatedUser: UserEntry) {
+    if (this.selectedWorker) {
+      const updateUserRequest: UpdateUserRequest = {
+        id: updatedUser.id,
+        username: updatedUser.username,
+        email: updatedUser.email,
+        roleName: 'Worker'
+      }
+
+      const updateUserProfileRequest: UpdateUserProfileRequest = {
+        name: updatedUser.name,
+        dateOfBirth: updatedUser.dateOfBirth,
+        gender: updatedUser.gender
+      }
+
+      const assignAttributesRequest: AttributesRequest = {
+        userProfileId: updatedUser.userProfileId,
+        attributeNames: updatedUser.attributes
+      }
+
+      this.updatePersonInFarm(updateUserRequest, updateUserProfileRequest, assignAttributesRequest);
+    } else {
+      if (updatedUser.password == null) {
+        console.log('Error: Password is null');
+        return;
+      }
+      // Add the new user
+      const registerRequest: RegisterRequest = {
+        username: updatedUser.username,
+        email: updatedUser.email,
+        password: updatedUser.password,
+        role: 'Worker'
+      }
+
+      const userProfile: CreateUserProfileRequest = {
+        userId: null,
+        name: updatedUser.name,
+        dateOfBirth: updatedUser.dateOfBirth,
+        gender: updatedUser.gender,
+        role: 'Worker'
+      }
+
+      const assignAttributesRequest: AttributesRequest = {
+        userProfileId: null,
+        attributeNames: updatedUser.attributes
+      }
+
+      this.addPersonToFarm(registerRequest, userProfile, assignAttributesRequest);
+    }
+  }
+
+  private addPersonToFarm(
+    registerRequest: RegisterRequest,
+    userProfile: CreateUserProfileRequest,
+    attributes: AttributesRequest
+  ) {
+    this.userService.createUser(registerRequest).subscribe({
+      next: (response) => {
+        userProfile.userId = response.userId;
+        this.userProfileService.createUserProfile(userProfile).subscribe({
+          next: (response) => {
+            attributes.userProfileId = response.userProfileId;
+            this.userProfileService.assignAttributes(attributes).subscribe({
+              next: () => {
+                this.router
+                  .navigate([ '/dashboard/people' ], { replaceUrl: true })
+                  // .then(() => this.submitting = false);
+              },
+              error: (error) => {
+                console.error('Failed to assign attributes', error);
+                // this.submitting = false;
+              }
+            });
+          },
+          error: (error) => {
+            console.error('Failed to create user profile', error);
+            // this.submitting = false;
+          }
+        });
+      },
+      error: (error) => {
+        console.error('Failed to create user', error);
+        // this.submitting = false;
+      }
+    });
+  }
+
+  private updatePersonInFarm(
+    updateUserRequest: UpdateUserRequest,
+    updateUserProfileRequest: UpdateUserProfileRequest,
+    assignAttributesRequest: AttributesRequest
+  ) {
+    this.userService.updateUser(updateUserRequest).subscribe({
+      next: () => {
+        this.userProfileService.updateUserProfile(updateUserRequest.id, updateUserProfileRequest).subscribe({
+          next: () => {
+            assignAttributesRequest.userProfileId = updateUserRequest.id;
+            this.userProfileService.updateAttributes(assignAttributesRequest).subscribe({
+              next: () => {
+                this.router
+                  .navigate([ '/dashboard/people' ], { replaceUrl: true })
+                  // .then(() => this.submitting = false);
+              },
+              error: (error) => {
+                console.error('Failed to assign attributes', error);
+                // this.submitting = false;
+              }
+            });
+          },
+          error: (error) => {
+            console.error('Failed to update user profile', error);
+            // this.submitting = false;
+          }
+        });
+      },
+      error: (error) => {
+        console.error('Failed to update user', error);
+        // this.submitting = false;
+      }
+    });
   }
 }

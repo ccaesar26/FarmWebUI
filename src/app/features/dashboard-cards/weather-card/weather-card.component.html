@@ -2,7 +2,7 @@
   <!-- Header with Dropdown -->
   <ng-template pTemplate="header">
     <div class="flex justify-between items-center px-4 pt-4">
-      <h3 class="text-lg font-bold mr-4">Weather</h3>
+<!--      <h3 class="text-lg font-bold mr-4">Weather</h3>-->
       <p-dropdown
         [options]="cities()"
         [ngModel]="selectedCity()"
@@ -10,7 +10,7 @@
         optionLabel="name"
         placeholder="Select a location"
         (onChange)="fetchWeather(selectedCity())"
-        class="max-w-full w-48">
+        class="max-w-full w-full">
       </p-dropdown>
     </div>
   </ng-template>
@@ -26,7 +26,7 @@
       <!-- Weather Content -->
       <div *ngIf="weatherData() && !loading()" class="flex flex-wrap items-center justify-center gap-8 p-4 flex-grow">
         <!-- Weather Animation (Left) -->
-        <div class="w-40 h-40 flex-shrink-0">
+        <div class="w-32 h-32 flex-shrink-0">
           <ng-lottie [options]="animationOptions" class="w-full h-full"></ng-lottie>
         </div>
 
@@ -34,7 +34,7 @@
         <div class="flex flex-col text-left sm:w-auto w-full">
           <!-- Large Temperature -->
           <p class="text-6xl font-extrabold leading-tight">
-            {{ weatherData()?.temperature }}°C
+            {{ weatherData()?.temperature | number: '1.0-0' }}°C
           </p>
 
           <!-- Weather Description -->

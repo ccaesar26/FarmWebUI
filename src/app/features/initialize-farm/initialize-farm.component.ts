@@ -9,7 +9,7 @@ import { DatePicker } from 'primeng/datepicker';
 import { Fluid } from 'primeng/fluid';
 import { Select } from 'primeng/select';
 import { NgxMapboxGLModule } from 'ngx-mapbox-gl';
-import { PolygonComponent } from '../polygon/polygon.component';
+import { PolygonComponent } from '../../core/components/polygon/polygon.component';
 import { AutoFocus } from 'primeng/autofocus';
 import { Divider } from 'primeng/divider';
 import { convertToGeoJson, Polygon } from '../../core/models/polygon.model';

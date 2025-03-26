@@ -1,0 +1,8 @@
+<h2 class="text-3xl font-bold mb-4 ml-4">Fields Management</h2>
+
+<p-card>
+  <form [formGroup]="form" (ngSubmit)="onSave()" class="w-full h-full">
+    <app-polygon formControlName="fields"></app-polygon>
+    <p-button>Save</p-button>
+  </form>
+</p-card>

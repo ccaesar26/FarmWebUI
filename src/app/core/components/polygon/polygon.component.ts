@@ -10,9 +10,9 @@ import { Ripple } from 'primeng/ripple';
 import { InputText } from 'primeng/inputtext';
 import { mapDrawUtils, updatePolygonLabels } from './map-draw-utils';
 import { Tooltip } from 'primeng/tooltip';
-import { Polygon } from '../../core/models/polygon.model';
-import { OnChangeFn, OnTouch } from '../../core/models/control-value-accessor';
-import { ConfigService } from '../../core/services/config.service';
+import { Polygon } from '../../models/polygon.model';
+import { OnChangeFn, OnTouch } from '../../models/control-value-accessor';
+import { ConfigService } from '../../services/config.service';
 
 @Component({
   selector: 'app-polygon',

@@ -1,4 +1,4 @@
-import { Component, HostListener, OnInit } from '@angular/core';
+import { Component, HostListener, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import mapboxgl from 'mapbox-gl';
 import MapboxDraw from '@mapbox/mapbox-gl-draw';
 import { NgForOf, NgIf } from '@angular/common';
@@ -28,8 +28,8 @@ import { ConfigService } from '../../services/config.service';
     }
   ]
 })
-export class PolygonComponent implements OnInit, ControlValueAccessor {
-  polygons: Array<Polygon> = [];
+export class PolygonComponent implements OnInit, OnChanges, ControlValueAccessor {
+  @Input() polygons: Array<Polygon> = [];
 
   onChange: OnChangeFn<Array<Polygon>> = () => {
   };
@@ -73,27 +73,43 @@ export class PolygonComponent implements OnInit, ControlValueAccessor {
           this.restorePolygonsOnMap();
         }
       });
-
-
     });
+  }
+
+  ngOnChanges(changes: SimpleChanges): void { // Implement ngOnChanges
+    if (changes['polygons'] && !changes['polygons'].firstChange) { // Check if 'polygons' input changed and it's not the first change
+      // React to changes in the polygons input (e.g., when loaded initially or updated)
+      if (this.map && this.map.loaded()) {
+        this.restorePolygonsOnMap(); // Re-render polygons on the map
+      } else if (this.map) {
+        this.map.on('load', () => this.restorePolygonsOnMap()); // If map not loaded yet, wait for load
+      }
+    }
   }
 
   private restorePolygonsOnMap() {
-    this.polygons.forEach(polygon => {
-      this.draw.add({
-        type: 'Feature',
-        properties: {},
-        geometry: {
-          type: 'Polygon',
-          coordinates: [ polygon.coordinates ]
-        }
-      });
-    });
-    setTimeout(() => {
-      updatePolygonLabels(this.map, this.polygons);
-    }, 500); // Small delay to ensure polygons are drawn before updating labels
-  }
+    if (this.draw) {
+      this.draw.deleteAll(); // Clear existing features from Mapbox Draw
+    }
 
+    if (this.polygons && this.polygons.length > 0) {
+      this.polygons.forEach(polygon => {
+        this.draw.add({
+          type: 'Feature',
+          properties: {},
+          geometry: {
+            type: 'Polygon',
+            coordinates: [ polygon.coordinates ]
+          }
+        });
+      });
+      setTimeout(() => {
+        updatePolygonLabels(this.map, this.polygons);
+      }, 500); // Small delay to ensure polygons are drawn before updating labels
+    } else {
+      updatePolygonLabels(this.map, []); // Clear labels if no polygons
+    }
+  }
 
   private handleDrawEvent(event: any) {
     const features = event.features;
@@ -171,9 +187,12 @@ export class PolygonComponent implements OnInit, ControlValueAccessor {
   }
 
   writeValue(value: Array<Polygon>): void {
-    if (value === null) return;
-    this.polygons = value;
-    updatePolygonLabels(this.map, this.polygons);
+    if (value) {
+      // For form control updates *after* initial load. No need to re-render map here.
+      this.polygons = value; // Update internal polygons. ngOnChanges will handle map rendering on initial load.
+    } else {
+      this.polygons = []; // Handle null/undefined values if needed.
+    }
   }
 
   @HostListener("focusout")

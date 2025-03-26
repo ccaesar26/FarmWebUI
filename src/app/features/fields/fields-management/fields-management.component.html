@@ -2,7 +2,7 @@
 
 <p-card>
   <form [formGroup]="form" (ngSubmit)="onSave()" class="w-full h-full">
-    <app-polygon formControlName="fields"></app-polygon>
+    <app-polygon [polygons]="form.controls['fields'].value" formControlName="fields"></app-polygon>
     <p-button>Save</p-button>
   </form>
 </p-card>

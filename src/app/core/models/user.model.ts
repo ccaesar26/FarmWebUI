@@ -11,3 +11,11 @@ export interface UpdateUserRequest {
   email: string;
   roleName: string;
 }
+
+export interface UpdateUserResponse {
+  userId: string;
+  username: string;
+  email: string;
+  roleName: string;
+  userProfileId: string;
+}

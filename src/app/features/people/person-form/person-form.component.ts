@@ -3,14 +3,13 @@ import { FormGroup, Validators, ReactiveFormsModule, FormControl } from '@angula
 import { DropdownModule } from 'primeng/dropdown';
 import { Router } from '@angular/router';
 import {
-  AttributesRequest,
+  AttributeCategory,
+  AttributeItem,
   AttributeMap,
-  CreateUserProfileRequest
+  convertAttributeMap
 } from '../../../core/models/user-profile.model';
-import { RegisterRequest } from '../../../core/models/auth.model';
 import { UserProfileService } from '../../../core/services/user-profile.service';
 import { UserService } from '../../../core/services/user.service';
-import { Dialog } from 'primeng/dialog';
 import { UserEntry } from '../people-management/people-management.component';
 import { Button, ButtonDirective } from 'primeng/button';
 import { Calendar } from 'primeng/calendar';
@@ -27,23 +26,11 @@ import { PasswordDirective } from 'primeng/password';
 import { Select } from 'primeng/select';
 import { Tooltip } from 'primeng/tooltip';
 
-interface AttributeItem {
-  label: string;
-  value: string;
-}
-
-interface AttributeCategory {
-  label: string;
-  value: string;
-  items: AttributeItem[];
-}
-
 @Component({
   selector: 'app-person-form',
   imports: [
     ReactiveFormsModule,
     DropdownModule,
-    Dialog,
     Button,
     ButtonDirective,
     Calendar,
@@ -103,7 +90,7 @@ export class PersonFormComponent implements OnInit {
 
     this.userProfileService.getAvailableAttributes().subscribe({
       next: (attributeMap) => {
-        this.availableAttributes = this.convertAttributeMap(attributeMap);
+        this.availableAttributes = convertAttributeMap(attributeMap);
       },
       error: (error) => {
         console.error('Failed to get attribute map', error);
@@ -124,12 +111,11 @@ export class PersonFormComponent implements OnInit {
 
     const { username, email, password, name, dateOfBirth, gender, attributes } = this.personForm.value;
 
-    if (username == null || email == null || password == null || name == null || dateOfBirth == null || gender == null || attributes == null) {
+    if (username == null || email == null || name == null || dateOfBirth == null || gender == null || attributes == null) {
       console.log("Error: One or more fields are null");
       return;
     }
 
-    const formData = this.personForm.value;
     // Create a CombinedUser object from the form data.
     const combinedUser: UserEntry = {
       id: this.person ? this.person.id : '', // Use existing ID if editing
@@ -140,7 +126,7 @@ export class PersonFormComponent implements OnInit {
       dateOfBirth: dateOfBirth, // You might need to format this
       gender: gender,
       attributes: attributes,
-      password: password
+      password: password || undefined, // Only include password if it is set
     };
     if (!this.person) { //if it is an add operation, password is required
       this.personForm.get('password')?.setValidators([ Validators.required, Validators.minLength(8) ]);
@@ -151,82 +137,11 @@ export class PersonFormComponent implements OnInit {
       return;
     }
     this.save.emit(combinedUser); //emit event
-
   }
-
-  // onSubmit() {
-  //   this.submitting = true;
-  //   this.submitted = true;
-  //
-  //   if (this.personForm.valid) {
-  //     const { username, email, password, fullName, dateOfBirth, gender, attributes } = this.personForm.value;
-  //
-  //     if (username == null || email == null || password == null || fullName == null || dateOfBirth == null || gender == null || attributes == null) {
-  //       console.log("Error: One or more fields are null");
-  //       return;
-  //     }
-  //
-  //     const registerRequest: RegisterRequest = {
-  //       username: username,
-  //       email: email,
-  //       password: password,
-  //       role: "Worker"
-  //     };
-  //
-  //     const userProfile: CreateUserProfileRequest = {
-  //       userId: null,
-  //       name: fullName,
-  //       dateOfBirth: this.formatDate(dateOfBirth),
-  //       gender: gender,
-  //       role: "Worker"
-  //     };
-  //
-  //     const assignAttributesRequest: AssignAttributesRequest = {
-  //       userProfileId: null,
-  //       attributeNames: attributes
-  //     };
-  //
-  //     this.addPersonToFarm(registerRequest, userProfile, assignAttributesRequest);
-  //   } else { //form not valid
-  //     console.log("Form is invalid");
-  //     return;
-  //   }
-  // }
-
-  // onCancel() {
-  //   this.router.navigate([ '/dashboard/people' ], { replaceUrl: true }).then(
-  //     () => this.submitting = false
-  //   )
-  // }
 
   private formatDate(date: Date | string): string {
     if (!date) return '';
     return new Date(date).toISOString().split('T')[0];
-  }
-
-  private convertAttributeMap(attributeMap: AttributeMap): AttributeCategory[] {
-    const categories: AttributeCategory[] = [];
-
-    for (const categoryName in attributeMap) {
-      if (Object.prototype.hasOwnProperty.call(attributeMap, categoryName)) {
-        const attributes = attributeMap[categoryName];
-
-        const items: AttributeItem[] = attributes.map(attributeName => ({
-          label: attributeName,
-          value: attributeName,
-        }));
-
-        const category: AttributeCategory = {
-          label: categoryName,
-          value: categoryName,
-          items: items,
-        };
-
-        categories.push(category);
-      }
-    }
-
-    return categories;
   }
 
   onCancel() {

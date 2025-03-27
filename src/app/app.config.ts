@@ -23,7 +23,9 @@ export const appConfig: ApplicationConfig = {
         preset: AuraPreset
       }
     }),
-    provideHttpClient(withInterceptors([authInterceptorFn])),
+    provideHttpClient(
+      withInterceptors([authInterceptorFn])
+    ),
     provideLottieOptions({ player: () => player }),
     provideAnimations()
   ]

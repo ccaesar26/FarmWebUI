@@ -13,11 +13,15 @@ import { Tooltip } from 'primeng/tooltip';
 import { Polygon } from '../../models/polygon.model';
 import { OnChangeFn, OnTouch } from '../../models/control-value-accessor';
 import { ConfigService } from '../../services/config.service';
+import { IconField } from 'primeng/iconfield';
+import { InputIcon } from 'primeng/inputicon';
+import { MapboxGeocoderService } from '../../services/mapbox-geocoder.service';
+import { debounceTime, distinctUntilChanged, Subject, switchMap } from 'rxjs';
 
 @Component({
   selector: 'app-polygon',
   standalone: true,
-  imports: [ NgIf, FormsModule, Button, Dialog, TableModule, NgForOf, ButtonDirective, Ripple, InputText, Tooltip, NgClass ],
+  imports: [ NgIf, FormsModule, Button, Dialog, TableModule, NgForOf, ButtonDirective, Ripple, InputText, Tooltip, NgClass, IconField, InputIcon ],
   templateUrl: './polygon.component.html',
   styleUrls: [ './polygon.component.css' ],
   providers: [
@@ -34,6 +38,10 @@ export class PolygonComponent implements OnInit, OnChanges, ControlValueAccessor
 
   @Input() polygons: Array<Polygon> = [];
 
+  searchQuery: string = '';
+  searchResults: any[] = [];
+  private searchTerms = new Subject<string>();
+
   onChange: OnChangeFn<Array<Polygon>> = () => {
   };
   onTouch: OnTouch = () => {
@@ -45,7 +53,10 @@ export class PolygonComponent implements OnInit, OnChanges, ControlValueAccessor
 
   _originalName: string = '';
 
-  constructor(private configService: ConfigService) {
+  constructor(
+    private configService: ConfigService,
+    private mapboxGeocoderService: MapboxGeocoderService
+  ) {
   }
 
   ngOnInit() {
@@ -75,6 +86,14 @@ export class PolygonComponent implements OnInit, OnChanges, ControlValueAccessor
         if (this.polygons.length > 0) {
           this.restorePolygonsOnMap();
         }
+
+        this.searchTerms.pipe(
+          debounceTime(300),
+          distinctUntilChanged(),
+          switchMap((term: string) => this.mapboxGeocoderService.searchLocation(term))
+        ).subscribe(results => {
+          this.searchResults = results.features || [];
+        });
       });
     });
   }
@@ -201,5 +220,37 @@ export class PolygonComponent implements OnInit, OnChanges, ControlValueAccessor
   @HostListener("focusout")
   onFocusOut() {
     this.onTouch();
+  }
+
+  zoomIn() {
+    if (this.map) {
+      this.map.zoomIn();
+    }
+  }
+
+  zoomOut() {
+    if (this.map) {
+      this.map.zoomOut();
+    }
+  }
+
+  onSearch(): void {
+    this.searchTerms.next(this.searchQuery);
+  }
+
+  onSelectSearchResult(result: any): void {
+    if (this.map && result && result.properties.coordinates) {
+      const longitude = result.properties.coordinates.longitude;
+      const latitude = result.properties.coordinates.latitude;
+
+      this.map.flyTo({
+        center: [ longitude, latitude ],
+        zoom: 13, // Adjust zoom level as needed
+        speed: 1.2,
+        curve: 1
+      });
+      this.searchResults = []; // Clear search results
+      this.searchQuery = '';    // Clear search input
+    }
   }
 }

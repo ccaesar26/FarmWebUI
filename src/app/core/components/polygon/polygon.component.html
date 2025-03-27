@@ -124,12 +124,24 @@
             </td>
 
             <!-- Non-editable Coordinates Column -->
+<!--            <td class="p-3">-->
+<!--              <ul (click)="onGoToFieldButtonClick(polygon)">-->
+<!--                <li *ngFor="let coord of polygon.coordinates" class="text-gray-600">-->
+<!--                  {{ coord[0] }}, {{ coord[1] }}-->
+<!--                </li>-->
+<!--              </ul>-->
+<!--            </td>-->
+
             <td class="p-3">
-              <ul>
-                <li *ngFor="let coord of polygon.coordinates" class="text-gray-600">
-                  {{ coord[0] }}, {{ coord[1] }}
-                </li>
-              </ul>
+              <p-button variant="text" severity="secondary" (click)="onGoToFieldButtonClick(polygon)">
+                <ng-template #content>
+                  <ul>
+                    <li *ngFor="let coord of polygon.coordinates" class="text-gray-600">
+                      {{ coord[0] }}, {{ coord[1] }}
+                    </li>
+                  </ul>
+                </ng-template>
+              </p-button>
             </td>
 
             <!-- Action Buttons -->

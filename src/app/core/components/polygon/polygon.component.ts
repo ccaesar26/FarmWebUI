@@ -8,7 +8,7 @@ import { Dialog } from 'primeng/dialog';
 import { TableModule } from 'primeng/table';
 import { Ripple } from 'primeng/ripple';
 import { InputText } from 'primeng/inputtext';
-import { mapDrawUtils, updatePolygonLabels } from './map-draw-utils';
+import { getPolygonCentroid, mapDrawUtils, updatePolygonLabels } from './map-draw-utils';
 import { Tooltip } from 'primeng/tooltip';
 import { Polygon } from '../../models/polygon.model';
 import { OnChangeFn, OnTouch } from '../../models/control-value-accessor';
@@ -255,6 +255,41 @@ export class PolygonComponent implements OnInit, OnChanges, ControlValueAccessor
       this.searchResults = []; // Clear search results
       this.searchQuery = '';    // Clear search input
       this.selectedSearchResult = null;
+    }
+  }
+
+  onFieldSelect(event: any) { // Add onFieldSelect method
+    alert('Field selected: ' + event.data.name); // Show alert with selected field name
+    const selectedPolygon: Polygon = event.data; // Extract selected polygon from event.data
+
+    if (selectedPolygon && selectedPolygon.coordinates && selectedPolygon.coordinates.length > 0) {
+      const centerLngLat = getPolygonCentroid(selectedPolygon.coordinates); // Get polygon center
+
+      if (centerLngLat) {
+        this.dialogVisible = false; // Hide the dialog
+        this.map.flyTo({
+          center: centerLngLat, // Fly to the center of the selected polygon
+          zoom: 14, // Adjust zoom level as needed
+          speed: 1.2,
+          curve: 1
+        });
+      }
+    }
+  }
+
+  onGoToFieldButtonClick(selectedPolygon: Polygon) {
+    if (selectedPolygon && selectedPolygon.coordinates && selectedPolygon.coordinates.length > 0) {
+      const centerLngLat = getPolygonCentroid(selectedPolygon.coordinates); // Get polygon center
+
+      if (centerLngLat) {
+        this.dialogVisible = false; // Hide the dialog
+        this.map.flyTo({
+          center: centerLngLat, // Fly to the center of the selected polygon
+          zoom: 14, // Adjust zoom level as needed
+          speed: 1.2,
+          curve: 1
+        });
+      }
     }
   }
 }

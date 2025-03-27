@@ -51,7 +51,7 @@ export function updatePolygonLabels(map: mapboxgl.Map, polygons: Array<Polygon>)
  * @param coordinates - Array of [longitude, latitude] points.
  * @returns The centroid [longitude, latitude].
  */
-function getPolygonCentroid(coordinates: number[][]): [ number, number ] {
+export function getPolygonCentroid(coordinates: number[][]): [ number, number ] {
   let x = 0, y = 0, len = coordinates.length;
   coordinates.forEach(coord => {
     x += coord[0];

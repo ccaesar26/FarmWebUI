@@ -17,11 +17,13 @@ import { IconField } from 'primeng/iconfield';
 import { InputIcon } from 'primeng/inputicon';
 import { MapboxGeocoderService } from '../../services/mapbox-geocoder.service';
 import { debounceTime, distinctUntilChanged, Subject, switchMap } from 'rxjs';
+import { Listbox } from 'primeng/listbox';
+import { Card } from 'primeng/card';
 
 @Component({
   selector: 'app-polygon',
   standalone: true,
-  imports: [ NgIf, FormsModule, Button, Dialog, TableModule, NgForOf, ButtonDirective, Ripple, InputText, Tooltip, NgClass, IconField, InputIcon ],
+  imports: [ NgIf, FormsModule, Button, Dialog, TableModule, NgForOf, ButtonDirective, Ripple, InputText, Tooltip, NgClass, IconField, InputIcon, Listbox, Card ],
   templateUrl: './polygon.component.html',
   styleUrls: [ './polygon.component.css' ],
   providers: [
@@ -40,6 +42,7 @@ export class PolygonComponent implements OnInit, OnChanges, ControlValueAccessor
 
   searchQuery: string = '';
   searchResults: any[] = [];
+  selectedSearchResult: any | null = null;
   private searchTerms = new Subject<string>();
 
   onChange: OnChangeFn<Array<Polygon>> = () => {
@@ -251,6 +254,7 @@ export class PolygonComponent implements OnInit, OnChanges, ControlValueAccessor
       });
       this.searchResults = []; // Clear search results
       this.searchQuery = '';    // Clear search input
+      this.selectedSearchResult = null;
     }
   }
 }

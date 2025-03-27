@@ -1,7 +1,7 @@
 <div class="flex flex-col items-end gap-2 w-full min-h-64">
 
   <div class="flex flex-row gap-2 p-fluid w-full">
-    <p-iconfield class="p-fluid w-full">
+    <p-iconfield class="p-fluid w-full relative">
       <p-inputicon styleClass="pi pi-search"/>
       <input
         pInputText
@@ -9,15 +9,25 @@
         placeholder="Search location..."
         class="w-full"
         [(ngModel)]="searchQuery"
-        (input)="onSearch()"/>
-      <ul *ngIf="searchResults.length > 0"
-          class="absolute left-0 right-0 mt-2 bg-white border rounded shadow-md z-10 max-h-48 overflow-y-auto">
-        <li *ngFor="let result of searchResults"
-            class="p-2 hover:bg-gray-100 cursor-pointer"
-            (click)="onSelectSearchResult(result)">
-          {{ result.properties.full_address }}
-        </li>
-      </ul>
+        (input)="onSearch()"
+      />
+      <!-- Wrap p-listbox in p-card -->
+      <p-card
+        *ngIf="searchResults.length > 0"
+        styleClass="absolute left-0 right-0 pl-0 mt-2 z-10 h-48 overflow-y-auto search-results-card"
+      >
+        <p-listbox
+          scrollHeight="150"
+          [options]="searchResults"
+          [(ngModel)]="selectedSearchResult"
+          (ngModelChange)="onSelectSearchResult($event)"
+          [style]="{ 'width': '100%', 'height': '218px', 'border': 'none', 'shadow': 'none' }"
+          [styleClass]="'absolute left-0 right-0 top-0 bottom-0'">
+          <ng-template let-result pTemplate="item">
+            <div>{{ result.properties.full_address }}</div>
+          </ng-template>
+        </p-listbox>
+      </p-card>
     </p-iconfield>
 
     <!-- Custom Draw PolygonType Button -->

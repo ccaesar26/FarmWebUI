@@ -13,6 +13,7 @@ import { initializeFarmGuardFn } from './core/guards/initialize-farm.guard';
 import { PeopleManagementComponent } from './features/people/people-management/people-management.component';
 import { CreateTaskComponent } from './features/tasks/create-task/create-task.component';
 import { FieldsManagementComponent } from './features/fields/fields-management/fields-management.component';
+import { CropCatalogComponent } from './features/crops/crop-catalog/crop-catalog.component';
 
 export const routes: Routes = [
   {
@@ -70,9 +71,10 @@ export const routes: Routes = [
     component: MainLayoutComponent,
     children: [
       { path: '', component: DashboardComponent, canActivate: [ dashboardGuardFn ] },
-      { path: 'people', component: PeopleManagementComponent, canActivate: [ dashboardGuardFn ] },
+      { path: 'fields', component: FieldsManagementComponent, canActivate: [ dashboardGuardFn ] },
+      { path: 'crops', component: CropCatalogComponent, canActivate: [ dashboardGuardFn ] },
       { path: 'tasks/create', component: CreateTaskComponent, canActivate: [ dashboardGuardFn ] },
-      { path: 'fields', component: FieldsManagementComponent, canActivate: [ dashboardGuardFn ] }
+      { path: 'people', component: PeopleManagementComponent, canActivate: [ dashboardGuardFn ] },
     ]
   },
   { path: '**', redirectTo: '', pathMatch: 'full' }

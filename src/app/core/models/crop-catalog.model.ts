@@ -1,0 +1,15 @@
+export interface CropCatalogEntry {
+  id: string,
+  name: string,
+  binomialName: string,
+  isPerennial: boolean,
+  daysToFirstHarvest?: number,
+  daysToLastHarvest?: number,
+  harvestSeasonStart?: string,
+  harvestSeasonEnd?: string,
+  description?: string,
+  wikipediaLink?: string,
+  imageLink?: string,
+  sunRequirements?: string,
+  sowingMethod?: string,
+}

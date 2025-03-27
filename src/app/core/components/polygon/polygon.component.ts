@@ -1,7 +1,7 @@
 import { Component, HostListener, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import mapboxgl from 'mapbox-gl';
 import MapboxDraw from '@mapbox/mapbox-gl-draw';
-import { NgForOf, NgIf } from '@angular/common';
+import { NgClass, NgForOf, NgIf } from '@angular/common';
 import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { Button, ButtonDirective } from 'primeng/button';
 import { Dialog } from 'primeng/dialog';
@@ -17,7 +17,7 @@ import { ConfigService } from '../../services/config.service';
 @Component({
   selector: 'app-polygon',
   standalone: true,
-  imports: [ NgIf, FormsModule, Button, Dialog, TableModule, NgForOf, ButtonDirective, Ripple, InputText, Tooltip ],
+  imports: [ NgIf, FormsModule, Button, Dialog, TableModule, NgForOf, ButtonDirective, Ripple, InputText, Tooltip, NgClass ],
   templateUrl: './polygon.component.html',
   styleUrls: [ './polygon.component.css' ],
   providers: [
@@ -29,6 +29,9 @@ import { ConfigService } from '../../services/config.service';
   ]
 })
 export class PolygonComponent implements OnInit, OnChanges, ControlValueAccessor {
+  @Input() mapWidth: string = 'w-full'; // Default width, can be overridden
+  @Input() mapHeight: string = 'h-80'; // Default height, can be overridden
+
   @Input() polygons: Array<Polygon> = [];
 
   onChange: OnChangeFn<Array<Polygon>> = () => {

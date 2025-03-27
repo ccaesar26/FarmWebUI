@@ -18,10 +18,10 @@
     </p-button>
   </div>
 
-  <div id="map" class="w-full h-80 rounded-lg"></div>
+  <div id="map" [ngClass]="[mapWidth, mapHeight, 'rounded-lg']"></div>
 
   <div class="flex justify-center">
-    <p-button type="button" (click)="showDialog()" icon="pi pi-external-link" label="Edit selection"></p-button>
+    <p-button type="button" (click)="showDialog()" icon="pi pi-external-link" label="Edit selection" styleClass="w-36"></p-button>
   </div>
 
   <p-dialog

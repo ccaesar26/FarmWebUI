@@ -33,6 +33,7 @@
     "lottie-web": "^5.12.2",
     "mapbox-gl": "^2.15.0",
     "mapbox-gl-draw-rounded-circle": "^2.1.0",
+    "material-symbols": "^0.29.2",
     "ngx-lottie": "^13.0.1",
     "ngx-mapbox-gl": "^11.0.1",
     "primeicons": "^7.0.0",

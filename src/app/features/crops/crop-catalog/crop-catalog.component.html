@@ -1,6 +1,6 @@
 <h2 class="text-3xl font-bold mb-4 ml-4">Crop Catalog</h2>
 
-<div class="p-4">
+<p-card>
   <div *ngIf="isLoading()" class="flex justify-content-center align-items-center" style="min-height: 200px;">
     <p-progressSpinner></p-progressSpinner>
   </div>
@@ -38,7 +38,7 @@
     [rowsPerPageOptions]="[10,25,50]"
     styleClass="mt-4"
   ></p-paginator>
-</div>
+</p-card>
 
 <p-dialog [visible]="dialogVisible()" [header]="selectedCrop()?.name || 'Crop Details'" [modal]="true"
           [style]="{width: '25vw'}" [draggable]="false" [resizable]="false" (close)="closeDialog()" closable="false">

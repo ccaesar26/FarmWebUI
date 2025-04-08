@@ -66,7 +66,10 @@ export class LoginComponent {
       next: () => this.router
         .navigate([ '/dashboard' ])
         .then(() => this.isSubmitting = false),
-      error: (err) => this.errorMessage = err.message
+      error: (err) => {
+        this.isSubmitting = false;
+        this.errorMessage = err.message;
+      }
     });
   }
 }

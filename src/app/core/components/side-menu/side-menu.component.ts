@@ -6,6 +6,7 @@ import { Avatar } from 'primeng/avatar';
 import { AuthService } from '../../services/auth.service';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { UserProfileService } from '../../services/user-profile.service';
+import { StyleClass } from 'primeng/styleclass';
 
 @Component({
   selector: 'app-side-menu',
@@ -16,7 +17,8 @@ import { UserProfileService } from '../../services/user-profile.service';
     Button,
     Avatar,
     RouterLink,
-    RouterLinkActive
+    RouterLinkActive,
+    StyleClass
   ],
   styleUrls: [ './side-menu.component.scss' ]
 })

@@ -14,6 +14,7 @@ import { PeopleManagementComponent } from './features/people/people-management/p
 import { CreateTaskComponent } from './features/tasks/create-task/create-task.component';
 import { FieldsManagementComponent } from './features/fields/fields-management/fields-management.component';
 import { CropCatalogComponent } from './features/crops/crop-catalog/crop-catalog.component';
+import { PlantedCropsComponent } from './features/crops/planted-crops/planted-crops.component';
 
 export const routes: Routes = [
   {
@@ -72,7 +73,8 @@ export const routes: Routes = [
     children: [
       { path: '', component: DashboardComponent, canActivate: [ dashboardGuardFn ] },
       { path: 'fields', component: FieldsManagementComponent, canActivate: [ dashboardGuardFn ] },
-      { path: 'crops', component: CropCatalogComponent, canActivate: [ dashboardGuardFn ] },
+      { path: 'crop-catalog', component: CropCatalogComponent, canActivate: [ dashboardGuardFn ] },
+      { path: 'planted-crops', component: PlantedCropsComponent, canActivate: [ dashboardGuardFn ] },
       { path: 'tasks/create', component: CreateTaskComponent, canActivate: [ dashboardGuardFn ] },
       { path: 'people', component: PeopleManagementComponent, canActivate: [ dashboardGuardFn ] },
     ]

@@ -1,12 +1,5 @@
-<!--<p-dialog header="{{ isAddMode() ? 'Add Person' : 'Edit Person' }}"-->
-<!--          [visible]="true"-->
-<!--          [style]="{ width: '450px' }"-->
-<!--          [modal]="true">-->
-<!-- people-management.component.html -->
 <p-fluid>
-
   <form [formGroup]="personForm" (ngSubmit)="onSubmit()" class="max-w-xl mx-auto my-auto space-y-8 h-full">
-    <!--      <h2 class="text-3xl font-bold px-5 mb-6">{{ title }}</h2>-->
     <p-card header="Authentication">
       <p-floatlabel variant="on" class="block w-full mt-2">
         <input id="register-username" pInputText [formControl]="personForm.controls.username" class="w-full"

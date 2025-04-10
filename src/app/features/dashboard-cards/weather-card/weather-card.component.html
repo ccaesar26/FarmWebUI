@@ -1,23 +1,24 @@
-<p-card class="w-full h-full flex flex-col">
+<p-card class="w-full h-full flex flex-col" styleClass="h-[24rem]">
   <!-- Header with Dropdown -->
   <ng-template pTemplate="header">
-    <div class="flex justify-between items-center px-4 pt-4">
-<!--      <h3 class="text-lg font-bold mr-4">Weather</h3>-->
-      <p-dropdown
+    <div class="flex justify-between items-center px-3 pt-3 h-12">
+      <h3 class="text-xl font-medium ml-2 mr-4">Weather</h3>
+      <p-select
         [options]="cities()"
         [ngModel]="selectedCity()"
         (ngModelChange)="onCityChange($event)"
         optionLabel="name"
         placeholder="Select a location"
-        (onChange)="fetchWeather(selectedCity())"
+        (onChange)="fetchWeatherAndForecast(selectedCity())"
+        size="small"
         class="max-w-full w-full">
-      </p-dropdown>
+      </p-select>
     </div>
   </ng-template>
 
   <!-- Content Section -->
   <ng-template pTemplate="content">
-    <p-scroll-panel [style]="{ height: '256px' }" class="flex flex-col h-full">
+    <p-scroll-panel [style]="{ height: '296px' }" class="flex flex-col h-full">
       <!-- Loading Spinner -->
       <div *ngIf="loading()" class="text-center">
         <p-progressSpinner></p-progressSpinner>
@@ -27,7 +28,7 @@
       <div *ngIf="weatherData() && !loading()" class="flex flex-wrap items-center justify-center gap-8 p-4 flex-grow">
         <!-- Weather Animation (Left) -->
         <div class="w-32 h-32 flex-shrink-0">
-          <ng-lottie [options]="animationOptions" class="w-full h-full"></ng-lottie>
+          <ng-lottie [options]="currentWeatherAnimationOptions" class="w-full h-full"></ng-lottie>
         </div>
 
         <!-- Weather Details (Right) - Stacks below animation on small screens -->
@@ -47,7 +48,22 @@
           <p><strong>Pressure:</strong> {{ weatherData()?.pressure }} hPa</p>
           <p><strong>Wind:</strong> {{ weatherData()?.windSpeed }} km/h</p>
         </div>
+
+        <!--    Horizontal scrollable with forecast for 16 days    -->
       </div>
+        <p-scroll-panel *ngIf="dailyForecast() && dailyForecast().length > 0 && !loading()">
+          <div class="flex flex-row w-fit mt-2">
+            <div *ngFor="let forecast of dailyForecast(); let i = index" [className]="getForecastClass()">
+              <p class="text-sm font-medium">{{ forecast.date }}</p>
+              <div class="size-16 p-2">
+                <ng-lottie [options]="dailyForecastAnimationOptions()[i]" class="w-full h-full"></ng-lottie>
+              </div>
+              <p class="text-lg font-medium">{{ forecast.dayTemperature | number: '1.0-0' }}°C</p>
+              <p class="text-xs text-gray-600">Min: {{ forecast.minTemperature | number: '1.0-0' }}°C</p>
+              <p class="text-xs text-gray-600">Max: {{ forecast.maxTemperature | number: '1.0-0' }}°C</p>
+            </div>
+          </div>
+        </p-scroll-panel>
 
       <!-- Placeholder Text -->
       <div *ngIf="!loading() && !weatherData()" class="text-center text-gray-500">

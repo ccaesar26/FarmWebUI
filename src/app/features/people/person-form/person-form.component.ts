@@ -1,15 +1,8 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormGroup, Validators, ReactiveFormsModule, FormControl } from '@angular/forms';
 import { DropdownModule } from 'primeng/dropdown';
-import { Router } from '@angular/router';
-import {
-  AttributeCategory,
-  AttributeItem,
-  AttributeMap,
-  convertAttributeMap
-} from '../../../core/models/user-profile.model';
+import { AttributeCategory, convertAttributeMap } from '../../../core/models/user-profile.model';
 import { UserProfileService } from '../../../core/services/user-profile.service';
-import { UserService } from '../../../core/services/user.service';
 import { UserEntry } from '../people-management/people-management.component';
 import { Button, ButtonDirective } from 'primeng/button';
 import { Calendar } from 'primeng/calendar';
@@ -76,8 +69,6 @@ export class PersonFormComponent implements OnInit {
   availableAttributes: AttributeCategory[] = [];
 
   constructor(
-    private router: Router,
-    private userService: UserService,
     private userProfileService: UserProfileService
   ) {
   }
@@ -98,7 +89,7 @@ export class PersonFormComponent implements OnInit {
     });
 
     // Update form when the person input changes
-    if (this.person) { //if a person has been passed, it is an edition
+    if (this.person) { //if a person has been passed, it is an edit operation
       this.personForm.patchValue(this.person);
     }
   }

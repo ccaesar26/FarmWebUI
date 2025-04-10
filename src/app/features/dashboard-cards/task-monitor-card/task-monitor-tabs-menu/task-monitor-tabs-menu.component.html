@@ -1,22 +1,24 @@
-<p-card class="!w-full !h-full flex flex-col">
-  <p-tabView [scrollable]="true" class="relative">
-    <div class="absolute right-0 top-0 p-2">
-      <button pButton label="Add Task" icon="pi pi-plus" class="p-button-sm p-button-primary"
-              (click)="router.navigate(['/dashboard/tasks/create'])"></button>
-    </div>
-    <p-tabPanel header="Board View" leftIcon="pi pi-th-large">
-      <ng-template pTemplate="content" class="!h-full">
-        <p-scroll-panel [style]="{ height: '596px' }">
-          <app-task-monitor-board></app-task-monitor-board>
-        </p-scroll-panel>
-      </ng-template>
-    </p-tabPanel>
-    <p-tabPanel header="Calendar View" leftIcon="pi pi-calendar">
-      <ng-template pTemplate="content">
-        <p-scroll-panel [style]="{ height: '590px' }">
-
-        </p-scroll-panel>
-      </ng-template>
-    </p-tabPanel>
-  </p-tabView>
+<p-card class="!w-full !h-full flex flex-col" styleClass="h-[49rem]">
+  <ng-template pTemplate="content">
+    <p-tabView [scrollable]="true" class="relative">
+      <div class="absolute right-0 top-0 p-2">
+        <button pButton label="Add Task" icon="pi pi-plus" class="p-button-sm p-button-primary"
+                (click)="router.navigate(['/dashboard/tasks/create'])"></button>
+      </div>
+      <p-tabPanel header="Board View" leftIcon="pi pi-th-large">
+        <ng-template pTemplate="content" class="!h-full">
+          <p-scroll-panel [style]="{ height: '42rem' }">
+            <app-task-monitor-board></app-task-monitor-board>
+          </p-scroll-panel>
+        </ng-template>
+      </p-tabPanel>
+      <!--      <p-tabPanel header="Calendar View" leftIcon="pi pi-calendar">-->
+      <!--        <ng-template pTemplate="content">-->
+      <!--          <p-scroll-panel [style]="{ height: '590px' }">-->
+      <!--            -->
+      <!--          </p-scroll-panel>-->
+      <!--        </ng-template>-->
+      <!--      </p-tabPanel>-->
+    </p-tabView>
+  </ng-template>
 </p-card>

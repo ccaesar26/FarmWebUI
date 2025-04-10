@@ -31,30 +31,44 @@ interface DroughtSummary {
   standalone: true,
   imports: [ CommonModule, CardModule, ProgressSpinnerModule, DropdownModule, FormsModule, TableModule, ScrollPanel ], // Include DropdownModule
   templateUrl: './drought-data-card.component.html',
-  styleUrls: ['./drought-data-card.component.css']
+  styleUrls: [ './drought-data-card.component.css' ]
 })
 export class DroughtDataCardComponent implements OnInit {
 
   loading = signal(false);
   errorMessage = signal<string | null>(null);
-  droughtSummary = signal<DroughtSummary[]>([]);
-  selectedDroughtCondition = signal<DroughtSummary | null>(null); // Add selected condition
+  droughtSummaries = signal<DroughtSummary[]>([]);
+  // selectedDroughtCondition = signal<DroughtSummary | null>(null); // Add selected condition
 
   // Options for the dropdown
-  droughtConditionOptions = computed(() => {
-    return this.droughtSummary().map(summary => ({
-      label: `${summary.meaning}`,
-      value: summary
-    }));
-  });
+  // droughtConditionOptions = computed(() => {
+  //   return this.droughtSummaries().map(summary => ({
+  //     label: `${summary.meaning}`,
+  //     value: summary
+  //   }));
+  // });
 
   // Computed signal for display properties (icon and color)
-  droughtDisplay = computed<DroughtLevelDisplay | null>(() => {
-    const levelInfo = this.selectedDroughtCondition();
-    if (!levelInfo) {
-      return null;
-    }
-
+  // droughtDisplay = computed<DroughtLevelDisplay | null>(() => {
+  //   const levelInfo = this.selectedDroughtCondition();
+  //   if (!levelInfo) {
+  //     return null;
+  //   }
+  //
+  //   const displayData: { [key: number]: DroughtLevelDisplay } = {
+  //     0: { icon: "pi pi-circle", color: "text-green-500" },
+  //     1: { icon: "pi pi-info-circle", color: "text-yellow-500" },
+  //     2: { icon: "pi pi-exclamation-circle", color: "text-orange-500" },
+  //     3: { icon: "pi pi-exclamation-triangle", color: "text-red-500" },
+  //     4: { icon: "pi pi-circle", color: "text-emerald-500" },
+  //     5: { icon: "pi pi-circle", color: "text-cyan-500" },
+  //     6: { icon: "pi pi-circle", color: "text-teal-500" },
+  //   };
+  //
+  //   // Default to level 0 if the selected level isn't in displayData
+  //   return displayData[levelInfo.level] || displayData[0];
+  // });
+  droughtDisplay = (summary: DroughtSummary) => {
     const displayData: { [key: number]: DroughtLevelDisplay } = {
       0: { icon: "pi pi-circle", color: "text-green-500" },
       1: { icon: "pi pi-info-circle", color: "text-yellow-500" },
@@ -66,12 +80,12 @@ export class DroughtDataCardComponent implements OnInit {
     };
 
     // Default to level 0 if the selected level isn't in displayData
-    return displayData[levelInfo.level] || displayData[0];
-  });
+    return displayData[summary.level] || displayData[0];
+  };
 
 
-
-  constructor(private droughtService: DroughtDataService, private fieldService: FieldService) { }
+  constructor(private droughtService: DroughtDataService, private fieldService: FieldService) {
+  }
 
   ngOnInit(): void {
     this.fetchDroughtData(); // No date parameter
@@ -80,8 +94,8 @@ export class DroughtDataCardComponent implements OnInit {
   fetchDroughtData(): void {
     this.loading.set(true);
     this.errorMessage.set(null);
-    this.droughtSummary.set([]);
-    this.selectedDroughtCondition.set(null); // Reset selected condition
+    this.droughtSummaries.set([]);
+    // this.selectedDroughtCondition.set(null); // Reset selected condition
 
     this.fieldService.getFieldsCoordinates().pipe(
       switchMap((fieldCoordinates: GetFieldCoordinatesResponse) => {
@@ -133,29 +147,32 @@ export class DroughtDataCardComponent implements OnInit {
               });
             });
 
-            const summaryArray: DroughtSummary[] = Array.from(summaryMap.entries()).map(([level, data]) => ({
+            const summaryArray: DroughtSummary[] = Array.from(summaryMap.entries()).map(([ level, data ]) => ({
               level,
               meaning: data.meaning,
               description: data.description,
               fields: data.fields
             }));
 
-            this.droughtSummary.set(summaryArray);
+            this.droughtSummaries.set(summaryArray.sort((a, b) => {
+              const priorityOrder = [ 3, 2, 1, 0, 4, 5, 6 ];
+              return priorityOrder.indexOf(a.level) - priorityOrder.indexOf(b.level);
+            }));
 
             // Determine the highest urgency level for default selection
-            const priorityOrder = [3, 2, 1, 0, 4, 5, 6];
-            let defaultCondition: DroughtSummary | null = null;
-            for (const level of priorityOrder) {
-              const foundCondition = summaryArray.find(s => s.level === level);
-              if (foundCondition) {
-                defaultCondition = foundCondition;
-                break; // Stop as soon as we find a match
-              }
-            }
+            // const priorityOrder = [ 3, 2, 1, 0, 4, 5, 6 ];
+            // let defaultCondition: DroughtSummary | null = null;
+            // for (const level of priorityOrder) {
+            //   const foundCondition = summaryArray.find(s => s.level === level);
+            //   if (foundCondition) {
+            //     defaultCondition = foundCondition;
+            //     break; // Stop as soon as we find a match
+            //   }
+            // }
+            //
+            // this.selectedDroughtCondition.set(defaultCondition || null); // Set default or null if none found
 
-            this.selectedDroughtCondition.set(defaultCondition || null); // Set default or null if none found
-
-            return summaryArray;
+            // return summaryArray;
           })
         );
       }),
@@ -165,14 +182,18 @@ export class DroughtDataCardComponent implements OnInit {
         return of([]);
       })
     ).subscribe({
-      next: () => { this.loading.set(false); },
-      error: () => { this.loading.set(false); }
+      next: () => {
+        this.loading.set(false);
+      },
+      error: () => {
+        this.loading.set(false);
+      }
     });
   }
 
-  onConditionChange(newCondition: DroughtSummary | null): void{
-    this.selectedDroughtCondition.set(newCondition);
-  }
+  // onConditionChange(newCondition: DroughtSummary | null): void {
+  //   this.selectedDroughtCondition.set(newCondition);
+  // }
 
   // Helper function (remains the same)
   isPointInPolygon(point: { x: number, y: number }, polygon: any): boolean {

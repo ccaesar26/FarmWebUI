@@ -12,3 +12,20 @@ export interface WeatherResponse {
   lottieAnimation: string;
   description: string;
 }
+
+export interface DailyForecastWithAnimationResponse {
+  date: string;
+  dayTemperature: number;
+  minTemperature: number;
+  maxTemperature: number;
+  humidity: number;
+  pressure: number;
+  windSpeed: number;
+  windGust: number;
+  cloudCoverage: number;
+  precipitationProbability: number;
+  rain?: number;
+  snow?: number;
+  lottieAnimationName: string;
+  lottieAnimation: string;
+}

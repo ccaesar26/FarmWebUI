@@ -5,6 +5,8 @@ export interface CropCatalogEntry {
   isPerennial: boolean,
   daysToFirstHarvest?: number,
   daysToLastHarvest?: number,
+  minMonthsToBearFruit?: number,
+  maxMonthsToBearFruit?: number,
   harvestSeasonStart?: string,
   harvestSeasonEnd?: string,
   description?: string,

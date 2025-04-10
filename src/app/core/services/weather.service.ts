@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
-import { WeatherResponse } from '../models/weather.model';
+import { DailyForecastWithAnimationResponse, WeatherResponse } from '../models/weather.model';
 import { Observable } from 'rxjs';
 import * as signalR from '@microsoft/signalr';
 
@@ -45,5 +45,13 @@ export class WeatherService {
 
   getWeatherByCoords(lat: number, lon: number) {
     return this.http.get<WeatherResponse>(`${this.apiUrl}/current?latitude=${lat}&longitude=${lon}`);
+  }
+
+  getDailyForecast(lat: number, lon: number, cnt: number = 7): Observable<DailyForecastWithAnimationResponse[]> {
+    const params = new HttpParams()
+      .set('latitude', lat)
+      .set('longitude', lon)
+      .set('cnt', cnt.toString());
+    return this.http.get<DailyForecastWithAnimationResponse[]>(`${this.apiUrl}/forecast/daily`, { params });
   }
 }

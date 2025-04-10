@@ -1,58 +1,63 @@
 <!-- drought-data-card.component.html -->
-<p-card class="w-full">
+<p-card styleClass="h-[24rem]">
   <!-- Header -->
-  <ng-template pTemplate="header">
-    <div class="flex justify-between items-center px-4 pt-4">
-<!--      <h3 class="text-lg font-bold mr-4">Drought Data</h3>-->
-      <p-dropdown *ngIf="droughtConditionOptions().length > 0" [options]="droughtConditionOptions()"
-                  [(ngModel)]="selectedDroughtCondition" optionLabel="label" optionValue="value"
-                  placeholder="Select a Condition" (onChange)="onConditionChange($event.value)"
-                  class="max-w-full w-full"></p-dropdown>
-    </div>
-  </ng-template>
+    <ng-template pTemplate="header">
+      <div class="flex justify-between items-center px-3 pt-3 h-12">
+        <h3 class="text-xl font-medium ml-2 mr-4">Drought Status over fields</h3>
+<!--        <p-dropdown *ngIf="droughtConditionOptions().length > 0" [options]="droughtConditionOptions()"-->
+<!--                    [(ngModel)]="selectedDroughtCondition" optionLabel="label" optionValue="value"-->
+<!--                    placeholder="Select a Condition" (onChange)="onConditionChange($event.value)"-->
+<!--                    class="max-w-full w-full"></p-dropdown>-->
+      </div>
+    </ng-template>
 
   <!-- Content -->
   <ng-template pTemplate="content">
-    <p-scroll-panel [style]="{ height: '256px' }">
+<!--    <p-scroll-panel [style]="{ height: '256px' }">-->
+  <p-scroll-panel [style]="{ width: '100%', height: '296px' }">
       <!-- Loading Spinner -->
       <div *ngIf="loading()" class="text-center">
         <p-progressSpinner></p-progressSpinner>
       </div>
 
       <!-- Selected Drought Condition Display -->
-      <div *ngIf="selectedDroughtCondition() && !loading()" class="flex items-center justify-center gap-8 p-4">
-        <!-- Drought Icon (Left) -->
-        <div *ngIf="droughtDisplay()" [class]="droughtDisplay()?.color">
-          <i [class]="droughtDisplay()?.icon" style="font-size: 2rem"></i>
-        </div>
-        <div class="flex flex-col text-left">
-          <p class="text-4xl font-extrabold leading-tight">
-            {{ selectedDroughtCondition()?.meaning }}
+      <div *ngIf="!loading()" class="flex flex-col">
+        <div *ngFor="let summary of droughtSummaries()">
+          <div class="flex items-center justify-center gap-8 p-4">
+            <!-- Drought Icon (Left) -->
+            <div *ngIf="droughtDisplay(summary)" [class]="droughtDisplay(summary).color">
+              <i [class]="droughtDisplay(summary).icon" style="font-size: 2rem"></i>
+            </div>
+            <div class="flex flex-col text-left">
+              <p class="text-4xl font-extrabold leading-tight">
+                {{ summary?.meaning }}
+              </p>
+            </div>
+          </div>
+          <p class="text-md my-1">
+            {{ summary?.description }}
           </p>
+          <!--    <p  *ngIf="selectedDroughtCondition() && !loading()">Level: {{ selectedDroughtCondition()?.level }}</p>-->
+
+          <!-- Affected Fields (Show only if fields are present) -->
+          <div *ngIf="summary?.fields?.length && !loading()" class="my-4">
+            <h4 class="text-md font-bold">Fields:</h4>
+            <ul class="list-disc list-inside">
+              <li *ngFor="let field of summary?.fields">{{ field }}</li>
+            </ul>
+          </div>
+
+          <!-- Error Message -->
+          <div *ngIf="errorMessage()" class="text-center text-red-500">
+            <p>{{ errorMessage() }}</p>
+          </div>
+
+          <!-- No Data Message -->
+          <div *ngIf="!loading() && droughtSummaries().length === 0" class="text-center text-gray-500">
+            <p>No drought data available.</p>
+          </div>
         </div>
       </div>
-      <p *ngIf="selectedDroughtCondition() && !loading()" class="text-lg font-medium my-2">
-        {{ selectedDroughtCondition()?.description }}
-      </p>
-      <!--    <p  *ngIf="selectedDroughtCondition() && !loading()">Level: {{ selectedDroughtCondition()?.level }}</p>-->
-
-      <!-- Affected Fields (Show only if fields are present) -->
-      <div *ngIf="selectedDroughtCondition()?.fields?.length && !loading()" class="mt-4">
-        <h4 class="text-md font-bold">Fields:</h4>
-        <ul class="list-disc list-inside">
-          <li *ngFor="let field of selectedDroughtCondition()?.fields">{{ field }}</li>
-        </ul>
-      </div>
-
-      <!-- Error Message -->
-      <div *ngIf="errorMessage()" class="text-center text-red-500">
-        <p>{{ errorMessage() }}</p>
-      </div>
-
-      <!-- No Data Message -->
-      <div *ngIf="!loading() && droughtSummary().length === 0" class="text-center text-gray-500">
-        <p>No drought data available.</p>
-      </div>
-    </p-scroll-panel>
+  </p-scroll-panel>
   </ng-template>
 </p-card>

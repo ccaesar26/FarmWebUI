@@ -1,5 +1,5 @@
 // task-monitor-board.component.ts
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, OnDestroy, OnInit, signal, WritableSignal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CardModule } from 'primeng/card';
 import { TagModule } from 'primeng/tag';
@@ -7,7 +7,7 @@ import { ScrollPanelModule } from 'primeng/scrollpanel';
 import { TaskPriority, TaskStatus } from '../../../../core/models/task.model';
 import { FarmerTasksService } from '../../../../core/services/farmer-tasks.service';
 import { UserProfileService } from '../../../../core/services/user-profile.service';
-import { catchError, forkJoin, map, of, switchMap } from 'rxjs';
+import { catchError, forkJoin, map, of, Subscription, switchMap } from 'rxjs';
 import { FieldService } from '../../../../core/services/field.service';
 
 interface Task {
@@ -33,11 +33,13 @@ interface Task {
 })
 export class TaskMonitorBoardComponent implements OnInit {
 
-  tasks = signal<Task[]>([]);
+  tasks: WritableSignal<Task[]> = signal([]);
   taskStatuses: TaskStatus[] = Object.values(TaskStatus);
 
   statusMap: Map<number, TaskStatus> = new Map();
   priorityMap: Map<number, TaskPriority> = new Map();
+
+  isDarkMode: WritableSignal<boolean> = signal(false);
 
   constructor(
     private taskService: FarmerTasksService,
@@ -53,6 +55,8 @@ export class TaskMonitorBoardComponent implements OnInit {
     this.priorityMap.set(1, TaskPriority.Medium);
     this.priorityMap.set(2, TaskPriority.High);
     this.priorityMap.set(3, TaskPriority.Urgent);
+
+    this.isDarkMode.set(window.matchMedia('(prefers-color-scheme: dark)').matches);
   }
 
   ngOnInit() {
@@ -149,16 +153,32 @@ export class TaskMonitorBoardComponent implements OnInit {
     }
   }
 
+  // getStatusColor(taskStatus: TaskStatus): string {
+  //   switch (taskStatus) {
+  //     case TaskStatus.ToDo:
+  //       return 'bg-sky-400 text-white'; // Use Tailwind classes for color
+  //     case TaskStatus.InProgress:
+  //       return 'bg-amber-400 text-white';
+  //     case TaskStatus.Completed:
+  //       return 'bg-green-400 text-white';
+  //     case TaskStatus.OnHold:
+  //       return 'bg-purple-400 text-white';
+  //     default:
+  //       return '';
+  //   }
+  // }
+
   getStatusColor(taskStatus: TaskStatus): string {
+    const isDark = this.isDarkMode();
     switch (taskStatus) {
       case TaskStatus.ToDo:
-        return 'bg-sky-400 text-white'; // Use Tailwind classes for color
+        return isDark ? 'bg-sky-800' : 'bg-sky-200';
       case TaskStatus.InProgress:
-        return 'bg-amber-400 text-white';
+        return isDark ? 'bg-amber-800' : 'bg-amber-200';
       case TaskStatus.Completed:
-        return 'bg-green-400 text-white';
+        return isDark ? 'bg-green-800' : 'bg-green-200';
       case TaskStatus.OnHold:
-        return 'bg-purple-400 text-white';
+        return isDark ? 'bg-purple-800' : 'bg-purple-200';
       default:
         return '';
     }

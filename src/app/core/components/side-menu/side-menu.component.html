@@ -3,7 +3,7 @@
     <div class="flex flex-row items-center justify-between p-4 shrink-0">
       <span class="flex flex-row items-center gap-2">
         <img src="/assets/icons/farmforge.svg" alt="Farm" class="w-16 h-16 p-2"/>
-        <span class="font-semibold text-4xl">Farm<span class="text-primary">Forge</span></span>
+        <span class="font-semibold text-4xl">Farm<span class="text-primary">Insight</span></span>
       </span>
     </div>
   </ng-template>
@@ -66,6 +66,7 @@
       </li>
       <li>
         <a pRipple
+           [routerLink]="['/dashboard/tasks']" routerLinkActive="active-link" (click)="visible = false"
            class="flex items-center cursor-pointer p-4 rounded-border text-surface-700 dark:text-surface-100 hover:bg-surface-100 dark:hover:bg-surface-700 duration-150 transition-colors p-ripple">
           <i class="material-symbols-rounded mr-4">task</i>
           <span class="font-medium text-lg">Tasks</span>

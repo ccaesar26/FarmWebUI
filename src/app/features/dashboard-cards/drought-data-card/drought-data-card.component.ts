@@ -31,7 +31,7 @@ interface DroughtSummary {
   standalone: true,
   imports: [ CommonModule, CardModule, ProgressSpinnerModule, DropdownModule, FormsModule, TableModule, ScrollPanel ], // Include DropdownModule
   templateUrl: './drought-data-card.component.html',
-  styleUrls: [ './drought-data-card.component.css' ]
+  styleUrls: [ './drought-data-card.component.scss' ]
 })
 export class DroughtDataCardComponent implements OnInit {
 

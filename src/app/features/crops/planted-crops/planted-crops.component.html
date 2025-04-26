@@ -1,9 +1,12 @@
 <h2 class="text-3xl font-bold mb-4 ml-4">Planted Crops</h2>
 
-<p-card>
-  <div *ngIf="isLoading()" class="flex justify-content-center align-items-center" style="min-height: 200px;">
+<div *ngIf="isLoading()" class="flex justify-content-center align-items-center w-full h-full">
+  <div style="min-height: 200px;">
     <p-progressSpinner></p-progressSpinner>
   </div>
+</div>
+
+<p-card *ngIf="!isLoading()">
         <p-button label="New" icon="pi pi-plus" class="mr-2" (onClick)="openNew()"/>
   <p-table [value]="crops">
     <ng-template #caption>

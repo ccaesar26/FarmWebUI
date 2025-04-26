@@ -22,7 +22,7 @@ import { Paginator } from 'primeng/paginator';
     Paginator
   ],
   templateUrl: './crop-catalog.component.html',
-  styleUrl: './crop-catalog.component.css'
+  styleUrl: './crop-catalog.component.scss'
 })
 export class CropCatalogComponent implements OnInit {
   allCropEntries: WritableSignal<CropCatalogEntry[]> = signal([]);

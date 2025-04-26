@@ -35,7 +35,7 @@ import { CropDto } from '../../../core/models/planted-crop.model';
     InputNumber
   ],
   templateUrl: './planted-crop-form.component.html',
-  styleUrl: './planted-crop-form.component.css'
+  styleUrl: './planted-crop-form.component.scss'
 })
 export class PlantedCropFormComponent implements OnInit {
 

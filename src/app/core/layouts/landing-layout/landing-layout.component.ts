@@ -9,7 +9,7 @@ import { RouterOutlet } from '@angular/router';
     RouterOutlet
   ],
   templateUrl: './landing-layout.component.html',
-  styleUrl: './landing-layout.component.css'
+  styleUrl: './landing-layout.component.scss'
 })
 export class LandingLayoutComponent {
 

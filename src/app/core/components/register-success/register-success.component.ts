@@ -8,7 +8,7 @@ import { Router } from '@angular/router';
     Button
   ],
   templateUrl: './register-success.component.html',
-  styleUrl: './register-success.component.css'
+  styleUrl: './register-success.component.scss'
 })
 export class RegisterSuccessComponent {
   constructor(private router: Router) {

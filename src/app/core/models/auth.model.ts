@@ -13,3 +13,8 @@ export interface RegisterRequest {
 export interface RegisterResponse {
   userId: string;
 }
+
+export interface AuthResponse {
+  accessToken: string;
+  refreshToken: string;
+}

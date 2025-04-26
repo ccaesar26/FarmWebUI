@@ -13,7 +13,7 @@ import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
     RouterOutlet
   ],
   templateUrl: './auth-tabs.component.html',
-  styleUrl: './auth-tabs.component.css'
+  styleUrl: './auth-tabs.component.scss'
 })
 export class AuthTabsComponent {
   activeTab: number = 0;

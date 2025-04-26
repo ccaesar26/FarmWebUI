@@ -9,7 +9,7 @@ import {
     TaskMonitorTabsMenuComponent
   ],
   templateUrl: './tasks-management.component.html',
-  styleUrl: './tasks-management.component.css'
+  styleUrl: './tasks-management.component.scss'
 })
 export class TasksManagementComponent {
 

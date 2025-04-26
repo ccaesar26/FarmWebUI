@@ -48,7 +48,7 @@ import { forkJoin, switchMap } from 'rxjs';
     RouterLink
   ],
   templateUrl: './initialize-farm.component.html',
-  styleUrl: './initialize-farm.component.css'
+  styleUrl: './initialize-farm.component.scss'
 })
 export class InitializeFarmComponent {
   form: FormGroup = new FormGroup({

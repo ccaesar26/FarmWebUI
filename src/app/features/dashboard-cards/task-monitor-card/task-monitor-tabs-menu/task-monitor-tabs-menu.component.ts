@@ -19,7 +19,7 @@ import { ButtonDirective } from 'primeng/button';
     ButtonDirective
   ],
   templateUrl: './task-monitor-tabs-menu.component.html',
-  styleUrl: './task-monitor-tabs-menu.component.css'
+  styleUrl: './task-monitor-tabs-menu.component.scss'
 })
 export class TaskMonitorTabsMenuComponent implements OnInit {
   items: MenuItem[] | null = [];

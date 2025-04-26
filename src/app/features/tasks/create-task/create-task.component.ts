@@ -46,7 +46,7 @@ import { ButtonDirective } from 'primeng/button';
     ButtonDirective
   ],
   templateUrl: './create-task.component.html',
-  styleUrl: './create-task.component.css'
+  styleUrl: './create-task.component.scss'
 })
 export class CreateTaskComponent implements OnInit {
   form = new FormGroup({

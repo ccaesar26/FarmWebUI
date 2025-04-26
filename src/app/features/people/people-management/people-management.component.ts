@@ -59,7 +59,7 @@ type AttributeMatchMode = 'containsAnyAttribute' | 'containsAllAttributes';
     SelectButton
   ],
   templateUrl: './people-management.component.html',
-  styleUrl: './people-management.component.css'
+  styleUrl: './people-management.component.scss'
 })
 export class PeopleManagementComponent implements OnInit {
   items: MenuItem[] | null = null;

@@ -9,7 +9,7 @@ import { Button } from 'primeng/button';
     Button
   ],
   templateUrl: './unauthorized.component.html',
-  styleUrl: './unauthorized.component.css'
+  styleUrl: './unauthorized.component.scss'
 })
 export class UnauthorizedComponent {
 

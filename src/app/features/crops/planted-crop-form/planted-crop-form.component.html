@@ -1,5 +1,5 @@
 <p-fluid>
-  <form [formGroup]="cropForm" (ngSubmit)="onSubmit()" class="max-w-xl mx-auto my-auto space-y-8 h-full flex flex-col">
+  <form [formGroup]="cropForm" (ngSubmit)="onSubmit()" class="max-w-xl mx-auto my-auto space-y-4 h-full flex flex-col">
     <p-card header="Crop Details">
       <p-floatlabel variant="on" class="block w-full mt-2">
         <p-select id="name" [options]="cropEntries()" formControlName="selectedCrop" optionLabel="name"

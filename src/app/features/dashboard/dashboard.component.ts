@@ -13,7 +13,7 @@ import {
     TaskMonitorTabsMenuComponent
   ],
   templateUrl: './dashboard.component.html',
-  styleUrl: './dashboard.component.css'
+  styleUrl: './dashboard.component.scss'
 })
 export class DashboardComponent {
 }

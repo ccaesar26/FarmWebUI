@@ -30,7 +30,7 @@ import { finalize } from 'rxjs';
     NgIf
   ],
   templateUrl: './login.component.html',
-  styleUrl: './login.component.css'
+  styleUrl: './login.component.scss'
 })
 export class LoginComponent {
   loginForm = new FormGroup({

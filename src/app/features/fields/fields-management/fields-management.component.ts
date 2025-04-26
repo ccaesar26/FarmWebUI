@@ -18,7 +18,7 @@ import { CreateFieldRequest, UpdateFieldRequest } from '../../../core/models/fie
     Button
   ],
   templateUrl: './fields-management.component.html',
-  styleUrl: './fields-management.component.css'
+  styleUrl: './fields-management.component.scss'
 })
 export class FieldsManagementComponent implements OnInit {
   form: FormGroup = new FormGroup({
@@ -120,6 +120,7 @@ export class FieldsManagementComponent implements OnInit {
     ).subscribe({
       next: (refreshedPolygons) => {
         this.isSaving.set(false);
+        this.loadExistingFields();
         console.log('Fields saved and refreshed successfully', refreshedPolygons);
         // Optionally, show a success message to the user
       },

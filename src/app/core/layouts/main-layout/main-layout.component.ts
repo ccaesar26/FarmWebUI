@@ -9,7 +9,7 @@ import { SideMenuComponent } from '../../components/side-menu/side-menu.componen
     SideMenuComponent
   ],
   templateUrl: './main-layout.component.html',
-  styleUrl: './main-layout.component.css'
+  styleUrl: './main-layout.component.scss'
 })
 export class MainLayoutComponent {
 }

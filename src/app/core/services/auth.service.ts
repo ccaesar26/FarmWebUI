@@ -3,7 +3,7 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { catchError, map, Observable, of, switchMap, throwError } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { LoginRequest, RegisterRequest, RegisterResponse } from '../models/auth.model';
+import { AuthResponse, LoginRequest, RegisterRequest, RegisterResponse } from '../models/auth.model';
 
 @Injectable({
   providedIn: 'root'
@@ -13,15 +13,20 @@ export class AuthService {
   private usersApiUrl = `${ environment.apiUrl }/users`;
 
   private role = signal<string | null>(null);
-  public isAuthenticated = computed(() => this.role() !== null);
+  // private accessToken = signal<string | null>(null);
+  public isAuthenticated = computed(() => this.role() !== null); // && this.accessToken() !== null);
 
   constructor(private http: HttpClient, private router: Router) {
     this.restoreSession();
   }
 
   login(data: LoginRequest): Observable<void> {
-    return this.http.post<void>(`${ this.identityApiUrl }/login`, data).pipe(
-      switchMap(() => this.fetchUserRole()), // 🔥 Ensures role is fetched before proceeding
+    return this.http.post<AuthResponse>(`${ this.identityApiUrl }/login`, data).pipe(
+      switchMap((response) => {
+        // this.accessToken.set(response.accessToken);
+        localStorage.setItem('refreshToken', response.refreshToken);
+        return this.fetchUserRole();
+      }), // 🔥 Ensures role is fetched before proceeding
       catchError(this.handleAuthError)
     );
   }
@@ -40,7 +45,7 @@ export class AuthService {
       }),
       catchError(() => {
         this.role.set(null);
-        // this.router.navigate(['/login']);
+        // this.accessToken.set(null);
         return throwError(() => new Error('Failed to fetch user role'));
       })
     );
@@ -50,7 +55,8 @@ export class AuthService {
     this.http.post(`${ this.identityApiUrl }/logout`, {}).subscribe({
       next: () => {
         this.role.set(null);
-        // this.router.navigate(['/login']);
+        // this.accessToken.set(null);
+        localStorage.removeItem('refreshToken');
       },
       error: () => console.error('Logout failed')
     });
@@ -60,9 +66,30 @@ export class AuthService {
     return this.fetchUserRole().pipe(catchError(() => of(undefined)));
   }
 
-  refreshToken(): Observable<void> {
-    return this.http.post<void>(`${this.identityApiUrl}/refresh-token`, {}); // Call the backend refresh endpoint
+  refreshToken(): Observable<AuthResponse> {
+    const refreshToken = localStorage.getItem('refreshToken');
+
+    if (!refreshToken) {
+      this.logout();
+      return throwError(() => new Error('No refresh token available'));
+    }
+
+    return this.http.post<AuthResponse>(`${this.identityApiUrl}/refresh-token`, { refreshToken }).pipe(
+      map(response => {
+        // this.accessToken.set(response.accessToken);
+        localStorage.setItem('refreshToken', response.refreshToken);
+        return response;
+      }),
+      catchError((error) => {
+        this.logout(); // If refresh fails, likely the refresh token is also invalid
+        return throwError(() => error);
+      })
+    );
   }
+
+  // getAccessToken(): string | null {
+  //   return this.accessToken();
+  // }
 
   private handleAuthError(error: HttpErrorResponse): Observable<never> {
     let errorMessage = 'An unknown error occurred';

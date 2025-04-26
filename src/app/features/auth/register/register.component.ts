@@ -26,7 +26,7 @@ import { finalize } from 'rxjs';
     NgIf
   ],
   templateUrl: './register.component.html',
-  styleUrl: './register.component.css'
+  styleUrl: './register.component.scss'
 })
 export class RegisterComponent {
   registerForm = new FormGroup({

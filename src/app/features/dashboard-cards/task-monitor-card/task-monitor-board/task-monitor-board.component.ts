@@ -29,7 +29,7 @@ interface Task {
   standalone: true,
   imports: [ CommonModule, CardModule, TagModule, ScrollPanelModule ], // Add ScrollPanelModule
   templateUrl: './task-monitor-board.component.html',
-  styleUrls: [ './task-monitor-board.component.css' ]
+  styleUrls: [ './task-monitor-board.component.scss' ]
 })
 export class TaskMonitorBoardComponent implements OnInit {
 

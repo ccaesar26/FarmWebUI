@@ -25,7 +25,7 @@ import { Card } from 'primeng/card';
   standalone: true,
   imports: [ NgIf, FormsModule, Button, Dialog, TableModule, NgForOf, ButtonDirective, Ripple, InputText, Tooltip, NgClass, IconField, InputIcon, Listbox, Card ],
   templateUrl: './polygon.component.html',
-  styleUrls: [ './polygon.component.css' ],
+  styleUrls: [ './polygon.component.scss' ],
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,

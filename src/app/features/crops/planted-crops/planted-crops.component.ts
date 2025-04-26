@@ -22,7 +22,7 @@ import { CropCreateDto, CropDto } from '../../../core/models/planted-crop.model'
     DatePipe
   ],
   templateUrl: './planted-crops.component.html',
-  styleUrl: './planted-crops.component.css'
+  styleUrl: './planted-crops.component.scss'
 })
 export class PlantedCropsComponent implements OnInit {
   isLoading: WritableSignal<boolean> = signal(false)

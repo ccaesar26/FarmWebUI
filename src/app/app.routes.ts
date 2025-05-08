@@ -11,11 +11,11 @@ import { RegisterSuccessComponent } from './core/components/register-success/reg
 import { dashboardGuardFn } from './core/guards/dashboard.guard';
 import { initializeFarmGuardFn } from './core/guards/initialize-farm.guard';
 import { PeopleManagementComponent } from './features/people/people-management/people-management.component';
-import { CreateTaskComponent } from './features/tasks/create-task/create-task.component';
 import { FieldsManagementComponent } from './features/fields/fields-management/fields-management.component';
 import { CropCatalogComponent } from './features/crops/crop-catalog/crop-catalog.component';
 import { PlantedCropsComponent } from './features/crops/planted-crops/planted-crops.component';
 import { TasksManagementComponent } from './features/tasks/tasks-management/tasks-management.component';
+import { ReportsManagementComponent } from './features/reports/reports-management/reports-management.component';
 
 export const routes: Routes = [
   {
@@ -77,7 +77,7 @@ export const routes: Routes = [
       { path: 'crop-catalog', component: CropCatalogComponent, canActivate: [ dashboardGuardFn ] },
       { path: 'planted-crops', component: PlantedCropsComponent, canActivate: [ dashboardGuardFn ] },
       { path: 'tasks', component: TasksManagementComponent, canActivate: [ dashboardGuardFn ] },
-      { path: 'tasks/create', component: CreateTaskComponent, canActivate: [ dashboardGuardFn ] },
+      { path: 'reports', component: ReportsManagementComponent, canActivate: [ dashboardGuardFn ] },
       { path: 'people', component: PeopleManagementComponent, canActivate: [ dashboardGuardFn ] },
     ]
   },

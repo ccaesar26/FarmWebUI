@@ -13,6 +13,7 @@ import { AuthService } from '../../../core/services/auth.service';
 import { Router } from '@angular/router';
 import { NgIf } from '@angular/common';
 import { finalize } from 'rxjs';
+import { Toast } from 'primeng/toast';
 
 @Component({
   selector: 'app-login',
@@ -27,7 +28,8 @@ import { finalize } from 'rxjs';
     InputGroup,
     InputGroupAddon,
     PasswordDirective,
-    NgIf
+    NgIf,
+    Toast
   ],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss'

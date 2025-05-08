@@ -1,33 +1,34 @@
 // task-monitor-board.component.ts
-import { Component, OnDestroy, OnInit, signal, WritableSignal } from '@angular/core';
+import { Component, OnInit, signal, WritableSignal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CardModule } from 'primeng/card';
 import { TagModule } from 'primeng/tag';
 import { ScrollPanelModule } from 'primeng/scrollpanel';
-import { TaskPriority, TaskStatus } from '../../../../core/models/task.model';
+import {
+  CreateTaskDto,
+  priorityToNumber,
+  statusToNumber,
+  Task, TaskCategoryDto,
+  TaskPriority,
+  TaskStatus
+} from '../../../../core/models/task.model';
 import { FarmerTasksService } from '../../../../core/services/farmer-tasks.service';
 import { UserProfileService } from '../../../../core/services/user-profile.service';
-import { catchError, forkJoin, map, of, Subscription, switchMap } from 'rxjs';
+import { catchError, finalize, forkJoin, map, of, switchMap } from 'rxjs';
 import { FieldService } from '../../../../core/services/field.service';
-
-interface Task {
-  id: string;
-  title: string;
-  description: string | null | undefined;
-  dueDate: string | null | undefined;
-  priority: TaskPriority;
-  status: TaskStatus;
-  assignedUserNames: string | null | undefined;
-  categoryName: string | null | undefined;
-  commentsCount?: number;
-  createdAt: string;
-  fieldName?: string | null | undefined;
-}
+import { ButtonDirective } from 'primeng/button';
+import { Router } from '@angular/router';
+import { ProgressSpinner } from 'primeng/progressspinner';
+import { Dialog } from 'primeng/dialog';
+import { TaskFormComponent } from '../../../tasks/task-form/task-form.component';
+import { UserProfileDto } from '../../../../core/models/user-profile.model';
+import { Field } from '../../../../core/models/field.model';
+import { UserService } from '../../../../core/services/user.service';
 
 @Component({
   selector: 'app-task-monitor-board',
   standalone: true,
-  imports: [ CommonModule, CardModule, TagModule, ScrollPanelModule ], // Add ScrollPanelModule
+  imports: [ CommonModule, CardModule, TagModule, ScrollPanelModule, ButtonDirective, ProgressSpinner, Dialog, TaskFormComponent ], // Add ScrollPanelModule
   templateUrl: './task-monitor-board.component.html',
   styleUrls: [ './task-monitor-board.component.scss' ]
 })
@@ -40,11 +41,21 @@ export class TaskMonitorBoardComponent implements OnInit {
   priorityMap: Map<number, TaskPriority> = new Map();
 
   isDarkMode: WritableSignal<boolean> = signal(false);
+  loading: WritableSignal<boolean> = signal(true);
+
+  displayModal: WritableSignal<boolean> = signal(false);
+  selectedTask = signal<Task | null>(null);
+
+  categories: WritableSignal<TaskCategoryDto[]> = signal([]);
+  workers: WritableSignal<UserProfileDto[]> = signal([]);
+  fields: WritableSignal<Field[]> = signal([]);
 
   constructor(
     private taskService: FarmerTasksService,
+    private userService: UserService,
     private userProfileService: UserProfileService,
-    private fieldsService: FieldService
+    private fieldService: FieldService,
+    protected router: Router
   ) {
     this.statusMap.set(0, TaskStatus.ToDo);
     this.statusMap.set(1, TaskStatus.InProgress);
@@ -57,19 +68,44 @@ export class TaskMonitorBoardComponent implements OnInit {
     this.priorityMap.set(3, TaskPriority.Urgent);
 
     this.isDarkMode.set(window.matchMedia('(prefers-color-scheme: dark)').matches);
+
+    this.taskService.onTasksUpdate = () => {
+      console.log('Task update received.');
+      this.loadTasks();
+    }
+
+    this.taskService.startConnection();
   }
 
   ngOnInit() {
+    this.taskService.getTaskCategories().subscribe(categories => {
+      this.categories.set(categories);
+    });
+
+    this.userService.getWorkerUsers()
+      .subscribe(users => {
+          users.map(user =>
+            this.userProfileService.getProfileByUserId(user.id)
+              .subscribe(userProfile => this.workers.set([ ...this.workers(), userProfile ]))
+          );
+        }
+      );
+
+    this.fieldService.getFields().subscribe(
+      fields => this.fields.set(fields)
+    );
+
     this.loadTasks();
   }
 
   loadTasks() {
+    this.loading.set(true);
     this.taskService.getTasks({}) // Fetch all tasks (empty filter)
       .pipe(
         switchMap(tasks => {
           const taskObservables = tasks.map(task => {
             // Fetch field name
-            const fieldObservable = this.fieldsService.getFieldById(task.fieldId).pipe(
+            const fieldObservable = this.fieldService.getFieldById(task.fieldId).pipe(
               map(field => field.name),
               catchError(error => {
                 console.error(`Error fetching field name for field ${task.fieldId}:`, error);
@@ -88,6 +124,8 @@ export class TaskMonitorBoardComponent implements OnInit {
                   assignedUserNames: "Unassigned",
                   status: this.statusMap.get(task.status) ?? TaskStatus.ToDo,
                   priority: this.priorityMap.get(task.priority) ?? TaskPriority.Low,
+                  recurrence: task.recurrence,
+                  recurrenceEndDate: task.recurrenceEndDate,
                   categoryName: task.categoryName,
                   commentsCount: task.commentsCount,
                   createdAt: task.createdAt,
@@ -116,6 +154,8 @@ export class TaskMonitorBoardComponent implements OnInit {
                 assignedUserNames: userNames.join(", "), // Join names into a string
                 status: this.statusMap.get(task.status) ?? TaskStatus.ToDo,
                 priority: this.priorityMap.get(task.priority) ?? TaskPriority.Low,
+                recurrence: task.recurrence,
+                recurrenceEndDate: task.recurrenceEndDate,
                 categoryName: task.categoryName,
                 commentsCount: task.commentsCount,
                 createdAt: task.createdAt,
@@ -125,7 +165,8 @@ export class TaskMonitorBoardComponent implements OnInit {
           });
 
           return forkJoin(taskObservables);
-        })
+        }),
+        finalize(() => this.loading.set(false))
       )
       .subscribe({
         next: (tasks) => {
@@ -153,21 +194,6 @@ export class TaskMonitorBoardComponent implements OnInit {
     }
   }
 
-  // getStatusColor(taskStatus: TaskStatus): string {
-  //   switch (taskStatus) {
-  //     case TaskStatus.ToDo:
-  //       return 'bg-sky-400 text-white'; // Use Tailwind classes for color
-  //     case TaskStatus.InProgress:
-  //       return 'bg-amber-400 text-white';
-  //     case TaskStatus.Completed:
-  //       return 'bg-green-400 text-white';
-  //     case TaskStatus.OnHold:
-  //       return 'bg-purple-400 text-white';
-  //     default:
-  //       return '';
-  //   }
-  // }
-
   getStatusColor(taskStatus: TaskStatus): string {
     const isDark = this.isDarkMode();
     switch (taskStatus) {
@@ -187,21 +213,90 @@ export class TaskMonitorBoardComponent implements OnInit {
   getCategoryIcon(categoryName: string): string {
     switch (categoryName) {
       case 'Maintenance':
-        return 'pi pi-wrench';
+        return 'handyman';
       case 'Pest and Disease Control':
-        return 'pi pi-filter';
+        return 'pest_control';
       case 'Planting':
-        return 'pi pi-hammer';
+        return 'psychiatry';
       case 'Irrigation':
-        return 'pi pi-cloud';
+        return 'sprinkler';
+      case 'Fertilization':
+        return 'experiment';
       case 'Harvesting':
-        return 'pi pi-box';
+        return 'agriculture';
       default:
-        return 'pi pi-question';
+        return 'category';
     }
   }
 
   getTasksByStatus(status: TaskStatus): Task[] {
     return this.tasks().filter(task => task.status === status);
+  }
+
+  openNew() {
+    this.selectedTask.set(null); // Set to null for add mode
+    this.displayModal.set(true);
+  }
+
+  onSave(updatedTask: Task) {
+    if (this.selectedTask()) {
+      // Edit mode
+      this.updateTaskInFarm(updatedTask);
+    } else {
+      // Add mode
+      this.addTaskToFarm(updatedTask);
+    }
+  }
+
+  onCancel() {
+    this.displayModal.set(false);
+  }
+
+  addTaskToFarm(task: Task) {
+    const createTaskDto: CreateTaskDto = {
+      title: task.title,
+      description: task.description,
+      dueDate: task.dueDate ? new Date(task.dueDate).toISOString() : null,
+      priority: priorityToNumber(task.priority),
+      categoryId: this.categories().find(c => c.name === task.categoryName)?.id ?? '',
+      recurrence: task.recurrence,
+      recurrenceEndDate: task.recurrenceEndDate ? new Date(task.recurrenceEndDate).toISOString() : null,
+      fieldId: this.fields().find(f => f.name === task.fieldName)?.id ?? '',
+      status: statusToNumber(TaskStatus.ToDo)
+    }
+
+    const assignees = task.assignedUserNames;
+    const userProfileIds = this.workers().filter(w => assignees?.includes(w.name)).map(w => w.id);
+
+    this.userService.getWorkerUsers().subscribe({
+      next: (users) => {
+        const assignUsersToTaskDto = users.filter(u => userProfileIds.includes(u.userProfileId)).map(u => u.id);
+
+        this.taskService.createTask(createTaskDto)
+          .subscribe({
+            next: (taskId) => {
+              this.taskService.assignTask(taskId, assignUsersToTaskDto)
+                .subscribe({
+                  next: () => {
+                    this.displayModal.set(false);
+                    // this.loadTasks(); // Should be automatically updated with SignalR
+                  },
+                  error: () => {
+                    alert('Failed to assign users to task');
+                  }
+                });
+            },
+            error: () => {
+              alert('Failed to create task');
+            }
+          });
+      },
+      error: () => {
+        alert('Failed to get worker users');
+      }
+    });
+  }
+
+  updateTaskInFarm(task: Task) {
   }
 }

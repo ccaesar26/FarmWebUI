@@ -1,19 +1,63 @@
-<div class="flex flex-col h-full">
-  <!-- Sidebar -->
-  <div class="flex flex-row items-center mt-8">
-    <app-side-menu class="px-8"></app-side-menu>
-    <div class="flex items-center justify-between">
+<!-- app.component.html -->
+<div class="flex flex-col h-screen overflow-hidden"> <!-- Parent fills screen height, prevents body scroll -->
+
+  <!-- 1. Header -->
+  <header class="flex flex-row items-center justify-between gap-4 p-6 shadow-md surface-card flex-shrink-0">
+    <!-- Header doesn't shrink -->
+    <div class="flex items-center gap-4">
+      <!-- Button to toggle the sidebar (now controlled by parent signal) -->
+      <p-button severity="secondary" (click)="expanded.set(!expanded())" icon="pi pi-bars"
+                [text]="true"></p-button>
+      <!-- App Title/Logo -->
+      <div class="flex items-center justify-between flex-grow">
       <span class="flex flex-row items-center gap-2">
         <h1 class="text-4xl font-semibold">
           Farm<span class="text-primary-500">Insight</span>
         </h1>
       </span>
-
+      </div>
     </div>
 
-  </div>
+    <div class="">
+      <p-overlay-badge [badgeDisabled]="notificationCount() == 0" class="">
+        <p-button pRipple icon="pi pi-bell" severity="secondary" [rounded]="true" [text]="true"
+        (onClick)="this.notificationVisible.set(true)"></p-button>
+      </p-overlay-badge>
+    </div>
+  </header>
 
-  <div class="flex-1 flex flex-col p-8">
-    <router-outlet></router-outlet>
+  <!-- 2. Main Content Area (Sidebar + Outlet) -->
+  <div class="flex flex-row flex-grow overflow-hidden"> <!-- This row grows and handles internal overflow -->
+
+    <!-- Sidebar Container (Controls visibility and width) -->
+    <!-- Use ngClass for conditional width/visibility -->
+    <div class="flex-shrink-0 transition-all duration-300 ease-in-out overflow-y-auto"
+         [ngClass]="expanded() ? 'w-64' : 'w-0'"> <!-- Adjust w-64 as needed -->
+      <!-- The actual SideMenu component -->
+      <app-side-menu class="h-full block"></app-side-menu> <!-- Side menu takes full height of its container -->
+    </div>
+
+    <!-- Router Outlet Area (Scrollable) -->
+    <main class="flex-grow p-4 overflow-y-auto overflow-x-hidden"> <!-- Grows and scrolls vertically -->
+      <router-outlet></router-outlet>
+    </main>
+
   </div>
 </div>
+
+<p-drawer header="Notifications" [visible]="notificationVisible()" position="right"
+          styleClass="!w-full md:!w-80 lg:!w-[30rem]" (onHide)="this.notificationVisible.set(false)">
+  <div *ngIf="notificationCount() == 0" class="flex flex-col items-center justify-center h-full">
+    <p class="text-gray-500">No notifications</p>
+  </div>
+  <div class="flex flex-col gap-4">
+<!--    <p-card *ngFor="let notification of notifications" class="w-full">-->
+<!--      <div class="flex flex-row items-center justify-between">-->
+<!--        <h3 class="text-lg font-bold">{{ notification.title }}</h3>-->
+<!--        <p-button icon="pi pi-times" severity="secondary" (click)="removeNotification(notification)"></p-button>-->
+<!--      </div>-->
+<!--      <p>{{ notification.message }}</p>-->
+<!--    </p-card>-->
+  </div>
+
+</p-drawer>

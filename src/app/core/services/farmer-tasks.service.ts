@@ -10,14 +10,47 @@ import {
   UpdateTaskDto
 } from '../models/task.model';
 import { catchError, Observable, throwError } from 'rxjs';
+import * as signalR from '@microsoft/signalr';
 
 @Injectable({
   providedIn: 'root'
 })
 export class FarmerTasksService {
   private apiUrl = `${environment.apiUrl}/tasks`;
+  private hubConnection!: signalR.HubConnection;
+
+  public onTasksUpdate: (() => void) | null = null;
 
   constructor(private http: HttpClient) { }
+
+  startConnection() {
+    this.hubConnection = new signalR.HubConnectionBuilder()
+      .withUrl(`http://localhost:5800/taskHub`, {
+        skipNegotiation: true,
+        transport: signalR.HttpTransportType.WebSockets
+      })
+      .build();
+
+    this.hubConnection
+      .start()
+      .then(() => console.log('SignalR connection started.'));
+
+    this.hubConnection.on('TaskCreated', () => {
+      console.log('Task created event received.');
+
+      if (this.onTasksUpdate) {
+        this.onTasksUpdate();
+      }
+    });
+
+    this.hubConnection.on('TaskUpdated', () => {
+      console.log('Task updated event received.');
+
+      if (this.onTasksUpdate) {
+        this.onTasksUpdate();
+      }
+    });
+  }
 
   createTask(dto: CreateTaskDto): Observable<string> { // Returns the task ID
     return this.http.post<string>(this.apiUrl, dto).pipe(

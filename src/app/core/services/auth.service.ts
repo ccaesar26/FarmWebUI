@@ -14,7 +14,7 @@ export class AuthService {
 
   private role = signal<string | null>(null);
   // private accessToken = signal<string | null>(null);
-  public isAuthenticated = computed(() => this.role() !== null); // && this.accessToken() !== null);
+  public isAuthenticated = computed(() => this.role() !== null && this.role() == "Manager");
 
   constructor(private http: HttpClient, private router: Router) {
     this.restoreSession();

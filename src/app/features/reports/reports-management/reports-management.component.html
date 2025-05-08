@@ -1,0 +1,80 @@
+<p-toast></p-toast>
+
+<h2 class="text-3xl font-bold my-4 ml-4">Reports</h2>
+
+<div *ngIf="isLoading()" class="flex justify-center items-center h-[400px]"> <!-- Added fixed height for spinner -->
+  <p-progress-spinner></p-progress-spinner>
+</div>
+
+<div *ngIf="!isLoading()">
+  <p-accordion [multiple]="true" [activeIndex]="activeAccordionIndexes">
+    <ng-container *ngFor="let status of reportStatuses; let i = index">
+      <!-- Apply Tailwind classes directly or via styleClass if p-accordionPanel supports it -->
+      <p-accordion-panel [value]="i.toString()" >
+        <p-accordion-header >
+          <!-- Header Content -->
+          <div class="flex justify-between w-full px-4 py-3 items-center"> <!-- Adjusted padding -->
+            <span class="font-semibold">{{ reportStatusToString(status) }}</span>
+            <!-- Using p-tag for count, styled with Tailwind potentially -->
+            <p-tag [value]="reportsByStatus()[status]?.length?.toString() || '0'" severity="info" styleClass="text-xs px-2 py-1"></p-tag>
+          </div>
+        </p-accordion-header>
+        <p-accordion-content>
+          <div *ngIf="reportsByStatus()[status] && reportsByStatus()[status]!.length > 0; else noReports" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4"> <!-- Padding moved here -->
+            <!-- Report Cards -->
+            <p-card *ngFor="let report of reportsByStatus()[status]" styleClass="shadow-md hover:shadow-lg transition-shadow duration-200 surface-ground"> <!-- Use surface-ground -->
+              <ng-template pTemplate="title">
+                <div class="flex justify-between items-start mb-1">
+                  <span class="text-lg font-semibold mr-2">{{ report.title }}</span>
+                  <p-tag [value]="reportStatusToString(report.status)" [severity]="getStatusSeverity(report.status)"></p-tag>
+                </div>
+              </ng-template>
+              <ng-template pTemplate="subtitle">
+                <div class="text-xs text-color-secondary mb-2 space-y-1"> <!-- Adjusted font size and spacing -->
+                  <div> <!-- Wrap each info line -->
+                    <i class="pi pi-user text-xs mr-1"></i> <!-- Smaller icon -->
+                    Reported by {{ report.creatorUsername || '...' }}
+                  </div>
+                  <div>
+                    <i class="pi pi-calendar text-xs mr-1"></i>
+                    {{ report.createdAt | date:'MMM d, y, h:mm a' }}
+                  </div>
+                  <div *ngIf="report.updatedAt">
+                    <i class="pi pi-history text-xs mr-1"></i>
+                    Updated: {{ report.updatedAt | date:'MMM d, y, h:mm a' }}
+                  </div>
+                  <div *ngIf="report.fieldName" class="flex items-center"> <!-- Use flex for alignment -->
+                    <i class="pi pi-map-marker text-xs mr-1"></i> Field: {{ report.fieldName }}
+                  </div>
+                </div>
+              </ng-template>
+              <ng-template pTemplate="content">
+                <div class="flex flex-col gap-3">
+                  <img *ngIf="report.imageData"
+                       [src]="'data:' + (report.imageMimeType || 'image/png') + ';base64,' + report.imageData"
+                  alt="Report Image"
+                  class="report-image w-full h-auto max-h-60 object-contain rounded border surface-border mb-3"> <!-- Added mb-3 -->
+                  <p *ngIf="report.description" class="m-0 text-sm leading-normal"> <!-- Adjusted text size/leading -->
+                    {{ report.description }}
+                  </p>
+                  <p *ngIf="!report.description" class="m-0 text-sm text-color-secondary italic">
+                    No description provided.
+                  </p>
+                </div>
+              </ng-template>
+              <ng-template pTemplate="footer">
+                <div class="flex gap-2 justify-end pt-2 border-t surface-border"> <!-- Added border-t and pt-2 -->
+                  <p-button type="button" label="Comments" icon="pi pi-comments" styleClass="p-button-text p-button-sm" (click)="openCommentsDialog(report)"></p-button>
+                  <p-button type="button" label="Update Status" icon="pi pi-check-circle" styleClass="p-button-text p-button-sm p-button-secondary" (click)="openUpdateStatusDialog(report)"></p-button>
+                </div>
+              </ng-template>
+            </p-card>
+          </div>
+          <ng-template #noReports>
+            <p class="text-center text-color-secondary p-4">No reports with status "{{ reportStatusToString(status) }}".</p>
+          </ng-template>
+        </p-accordion-content>
+      </p-accordion-panel>
+    </ng-container>
+  </p-accordion>
+</div>

@@ -61,6 +61,39 @@ export function recurrenceToNumber(recurrence: RecurrenceType) {
   }
 }
 
+export function numberToRecurrence(recurrence: number) {
+  switch (recurrence) {
+    case 0:
+      return RecurrenceType.None;
+    case 1:
+      return RecurrenceType.Daily;
+    case 2:
+      return RecurrenceType.Weekly;
+    case 3:
+      return RecurrenceType.Monthly;
+    case 4:
+      return RecurrenceType.Yearly;
+    default:
+      return RecurrenceType.None;
+  }
+}
+
+export interface Task {
+  id: string;
+  title: string;
+  description: string | null | undefined;
+  dueDate: string | null | undefined;
+  priority: TaskPriority;
+  status: TaskStatus;
+  assignedUserNames: string | null | undefined;
+  categoryName: string | null | undefined;
+  recurrence: number;
+  recurrenceEndDate: string | null;
+  commentsCount?: number;
+  createdAt: string;
+  fieldName?: string | null | undefined;
+}
+
 export interface TaskDto {
   id: string;
   title: string;

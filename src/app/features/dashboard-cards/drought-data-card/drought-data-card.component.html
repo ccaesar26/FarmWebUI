@@ -1,20 +1,20 @@
 <!-- drought-data-card.component.html -->
-<p-card styleClass="h-[24rem]">
+<p-card styleClass="h-[21.33rem]">
   <!-- Header -->
-    <ng-template pTemplate="header">
-      <div class="flex justify-between items-center px-3 pt-3 h-12">
-        <h3 class="text-xl font-medium ml-2 mr-4">Drought Status over fields</h3>
-<!--        <p-dropdown *ngIf="droughtConditionOptions().length > 0" [options]="droughtConditionOptions()"-->
-<!--                    [(ngModel)]="selectedDroughtCondition" optionLabel="label" optionValue="value"-->
-<!--                    placeholder="Select a Condition" (onChange)="onConditionChange($event.value)"-->
-<!--                    class="max-w-full w-full"></p-dropdown>-->
-      </div>
-    </ng-template>
+  <ng-template pTemplate="header">
+    <div class="flex justify-between items-center px-3 pt-3 h-12">
+      <h3 class="text-xl font-medium ml-2 mr-4">Drought Status over fields</h3>
+      <!--        <p-dropdown *ngIf="droughtConditionOptions().length > 0" [options]="droughtConditionOptions()"-->
+      <!--                    [(ngModel)]="selectedDroughtCondition" optionLabel="label" optionValue="value"-->
+      <!--                    placeholder="Select a Condition" (onChange)="onConditionChange($event.value)"-->
+      <!--                    class="max-w-full w-full"></p-dropdown>-->
+    </div>
+  </ng-template>
 
   <!-- Content -->
   <ng-template pTemplate="content">
-<!--    <p-scroll-panel [style]="{ height: '256px' }">-->
-  <p-scroll-panel [style]="{ width: '100%', height: '296px' }">
+    <!--    <p-scroll-panel [style]="{ height: '256px' }">-->
+    <p-scroll-panel styleClass="w-full h-[16.33rem]">
       <!-- Loading Spinner -->
       <div *ngIf="loading()" class="text-center">
         <p-progressSpinner></p-progressSpinner>
@@ -23,7 +23,7 @@
       <!-- Selected Drought Condition Display -->
       <div *ngIf="!loading()" class="flex flex-col">
         <div *ngFor="let summary of droughtSummaries()">
-          <div class="flex items-center justify-center gap-8 p-4">
+          <div class="flex items-center justify-center gap-8 pb-4">
             <!-- Drought Icon (Left) -->
             <div *ngIf="droughtDisplay(summary)" [class]="droughtDisplay(summary).color">
               <i [class]="droughtDisplay(summary).icon" style="font-size: 2rem"></i>
@@ -47,6 +47,9 @@
             </ul>
           </div>
 
+          <!--     Divider     -->
+          <hr class="border-t-1 border-gray-300 my-8"/>
+
           <!-- Error Message -->
           <div *ngIf="errorMessage()" class="text-center text-red-500">
             <p>{{ errorMessage() }}</p>
@@ -58,6 +61,6 @@
           </div>
         </div>
       </div>
-  </p-scroll-panel>
+    </p-scroll-panel>
   </ng-template>
 </p-card>

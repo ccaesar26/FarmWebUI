@@ -22,7 +22,7 @@ import { CreateUserProfileRequest } from '../../core/models/user-profile.model';
 import { CreateFarmProfileRequest } from '../../core/models/farm-profile.model';
 import { CreateFieldRequest } from '../../core/models/field.model';
 import { COUNTRIES } from './countries.constants';
-import { forkJoin, switchMap } from 'rxjs';
+import { catchError, forkJoin, Observable, of, switchMap } from 'rxjs';
 
 @Component({
   selector: 'app-initialize-farm',
@@ -108,8 +108,7 @@ export class InitializeFarmComponent {
     }));
 
     this.initializeFarm(userProfile, farmProfile, fieldRequests).subscribe(() => {
-      this.isSubmitting = false;
-      this.router.navigate([ '/dashboard' ]);
+      this.router.navigate([ '/dashboard' ]).then(() => this.isSubmitting = false);
     });
   }
 
@@ -117,15 +116,22 @@ export class InitializeFarmComponent {
     userProfile: CreateUserProfileRequest,
     farmProfile: CreateFarmProfileRequest,
     fieldRequests: CreateFieldRequest[]
-  ) {
+  ): Observable<any> {
     return this.userProfileService.createUserProfile(userProfile).pipe(
       switchMap(() => this.farmProfileService.createFarmProfile(farmProfile)),
       switchMap(() => {
         return this.authService.refreshToken().pipe(
           switchMap(() => {
-            return fieldRequests.length > 0
-              ? forkJoin(fieldRequests.map(field => this.fieldService.createField(field)))
-              : [];
+            if (fieldRequests.length > 0) {
+              return forkJoin(fieldRequests.map(field => this.fieldService.createField(field).pipe(
+                catchError(err => {
+                  console.error(`Error creating field "${field.fieldName}":`, err);
+                  return of(null);
+                })
+              )));
+            } else {
+              return of(null);
+            }
           })
         );
       })

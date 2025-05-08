@@ -13,6 +13,7 @@ import { catchError, map, switchMap } from 'rxjs/operators';
 import { DroughtLevelInfo } from '../../../core/models/drought-data.model';
 import { GetFieldCoordinatesResponse } from '../../../core/models/field.model';
 import { ScrollPanel } from 'primeng/scrollpanel';
+import { StyleClass } from 'primeng/styleclass';
 
 interface DroughtLevelDisplay {
   icon: string;
@@ -29,7 +30,7 @@ interface DroughtSummary {
 @Component({
   selector: 'app-drought-data-card',
   standalone: true,
-  imports: [ CommonModule, CardModule, ProgressSpinnerModule, DropdownModule, FormsModule, TableModule, ScrollPanel ], // Include DropdownModule
+  imports: [ CommonModule, CardModule, ProgressSpinnerModule, DropdownModule, FormsModule, TableModule, ScrollPanel, StyleClass ], // Include DropdownModule
   templateUrl: './drought-data-card.component.html',
   styleUrls: [ './drought-data-card.component.scss' ]
 })

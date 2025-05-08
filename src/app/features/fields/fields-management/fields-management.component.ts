@@ -51,7 +51,7 @@ export class FieldsManagementComponent implements OnInit {
         return of([]); // Return empty array on error
       })
     ).subscribe(polygons => {
-      this.initialFields = [...polygons]; // Store initial state
+      this.initialFields = [ ...polygons ]; // Store initial state
       this.form.controls['fields'].patchValue(polygons); // Set form value for PolygonComponent
       this.isLoading.set(false);
       console.log("Loaded fields:", polygons);
@@ -71,6 +71,7 @@ export class FieldsManagementComponent implements OnInit {
 
     const fieldsToCreate: CreateFieldRequest[] = [];
     const fieldsToUpdate: UpdateFieldRequest[] = [];
+    const fieldsToDelete: string[] = [];
 
     polygons.forEach(polygon => {
       const isNewField = !this.initialFields.some(initialField => initialField.id === polygon.id);
@@ -90,16 +91,27 @@ export class FieldsManagementComponent implements OnInit {
       }
     });
 
+    this.initialFields.forEach(polygon => {
+      const isDeletedField = !polygons.some(newPolygon => newPolygon.id === polygon.id);
+      if (isDeletedField) {
+        fieldsToDelete.push(polygon.id);
+      }
+    })
+
     const createObservables = fieldsToCreate.length > 0
       ? fieldsToCreate.map(field => this.fieldService.createField(field))
       : [ of(null) ]; // of(null) if no creates
     const updateObservables = fieldsToUpdate.length > 0
       ? fieldsToUpdate.map(field => this.fieldService.updateField(field))
       : [ of(null) ]; // of(null) if no updates
+    const deleteObservables = fieldsToDelete.length > 0
+      ? fieldsToDelete.map(fieldId => this.fieldService.deleteField(fieldId))
+      : [ of(null) ]; // of(null) if no deletes
 
     forkJoin({
       creates: forkJoin(createObservables),
-      updates: forkJoin(updateObservables)
+      updates: forkJoin(updateObservables),
+      deletes: forkJoin(deleteObservables)
     }).pipe(
       tap(() => console.log('Save operations started')), // Log at the start of save operations
       switchMap(() => this.fieldService.getFields()), // Refresh fields after save

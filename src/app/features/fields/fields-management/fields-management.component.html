@@ -1,9 +1,9 @@
-<h2 class="text-3xl font-bold mb-4 ml-4">Fields Management</h2>
+<h2 class="text-3xl font-bold my-4 ml-4">Fields Management</h2>
 
 <p-card>
   <form [formGroup]="form" (ngSubmit)="onSave()" class="w-full h-full">
     <app-polygon [polygons]="form.controls['fields'].value" formControlName="fields"
-                 mapHeight="h-[38rem]"></app-polygon>
+                 mapHeight="h-[42rem]"></app-polygon>
 
     <div class="flex justify-end gap-2">
       <p-button label="Discard" icon="pi pi-times" styleClass="p-button-secondary w-36" (click)="onDiscard()"></p-button>

@@ -28,8 +28,7 @@ import { Toast } from 'primeng/toast';
     InputGroup,
     InputGroupAddon,
     PasswordDirective,
-    NgIf,
-    Toast
+    NgIf
   ],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss'

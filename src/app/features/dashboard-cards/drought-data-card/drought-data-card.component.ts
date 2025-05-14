@@ -5,7 +5,7 @@ import { CardModule } from 'primeng/card';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { DroughtDataService } from '../../../core/services/drought-data.service';
 import { FieldService } from '../../../core/services/field.service';
-import { DropdownModule } from 'primeng/dropdown'; // Import DropdownModule
+import { DropdownModule } from 'primeng/dropdown';
 import { FormsModule } from '@angular/forms';
 import { TableModule } from 'primeng/table';
 import { forkJoin, of } from 'rxjs';
@@ -13,7 +13,6 @@ import { catchError, map, switchMap } from 'rxjs/operators';
 import { DroughtLevelInfo } from '../../../core/models/drought-data.model';
 import { GetFieldCoordinatesResponse } from '../../../core/models/field.model';
 import { ScrollPanel } from 'primeng/scrollpanel';
-import { StyleClass } from 'primeng/styleclass';
 
 interface DroughtLevelDisplay {
   icon: string;
@@ -30,7 +29,7 @@ interface DroughtSummary {
 @Component({
   selector: 'app-drought-data-card',
   standalone: true,
-  imports: [ CommonModule, CardModule, ProgressSpinnerModule, DropdownModule, FormsModule, TableModule, ScrollPanel, StyleClass ], // Include DropdownModule
+  imports: [ CommonModule, CardModule, ProgressSpinnerModule, DropdownModule, FormsModule, TableModule, ScrollPanel ], // Include DropdownModule
   templateUrl: './drought-data-card.component.html',
   styleUrls: [ './drought-data-card.component.scss' ]
 })

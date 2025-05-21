@@ -61,6 +61,15 @@
               <span class="font-medium text-lg">My Crops</span>
             </a>
           </li>
+          <li>
+            <a pRipple
+               [routerLink]="['/dashboard/crop-health']" routerLinkActive="active-link"
+               class="flex items-center cursor-pointer p-4 rounded-border text-surface-700 dark:text-surface-100 hover:bg-surface-100 dark:hover:bg-surface-700 duration-150 transition-colors p-ripple pl-8">
+              <!-- Added pl-8 for indent -->
+              <i class="material-symbols-rounded mr-4">temp_preferences_eco</i>
+              <span class="font-medium text-lg">Disease AI Tool</span>
+            </a>
+          </li>
         </ul>
       </li>
       <li>
@@ -90,21 +99,21 @@
     </ul>
   </div>
 <!--  <ng-template #footer>-->
-    <div class="">
-      <hr class="border-t border-0 border-surface my-4"/>
-      <a pRipple
-         class="flex items-center cursor-pointer p-4 gap-2 rounded-border text-surface-700 dark:text-surface-100
-                hover:bg-surface-100 dark:hover:bg-surface-700 duration-150 transition-colors p-ripple">
-        <p-avatar [label]="initial" shape="square"/>
-        <span class="font-semibold ml-2" [textContent]="name"></span>
-      </a>
-      <a pRipple (click)="logout()"
-         class="group flex items-center cursor-pointer p-4 gap-2 rounded-border text-red-600
-          hover:bg-red-100 dark:hover:bg-red-700 dark:hover:text-red-100 duration-150 transition-colors p-ripple">
-        <i class="pi pi-sign-out p-1.5 rounded-border border-red-600 border-2
-            group-hover:border-red-100 dark:group-hover:border-red-100"></i>
-        <span class="font-semibold ml-2">Logout</span>
-      </a>
-    </div>
+<!--    <div class="">-->
+<!--      <hr class="border-t border-0 border-surface my-4"/>-->
+<!--      <a pRipple-->
+<!--         class="flex items-center cursor-pointer p-4 gap-2 rounded-border text-surface-700 dark:text-surface-100-->
+<!--                hover:bg-surface-100 dark:hover:bg-surface-700 duration-150 transition-colors p-ripple">-->
+<!--        <p-avatar [label]="initial" shape="square"/>-->
+<!--        <span class="font-semibold ml-2" [textContent]="name"></span>-->
+<!--      </a>-->
+<!--      <a pRipple (click)="logout()"-->
+<!--         class="group flex items-center cursor-pointer p-4 gap-2 rounded-border text-red-600-->
+<!--          hover:bg-red-100 dark:hover:bg-red-700 dark:hover:text-red-100 duration-150 transition-colors p-ripple">-->
+<!--        <i class="pi pi-sign-out p-1.5 rounded-border border-red-600 border-2-->
+<!--            group-hover:border-red-100 dark:group-hover:border-red-100"></i>-->
+<!--        <span class="font-semibold ml-2">Logout</span>-->
+<!--      </a>-->
+<!--    </div>-->
 <!--  </ng-template>-->
 </div>

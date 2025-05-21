@@ -3,26 +3,37 @@
 
   <!-- 1. Header -->
   <header class="flex flex-row items-center justify-between gap-4 p-6 shadow-md surface-card flex-shrink-0">
-    <!-- Header doesn't shrink -->
     <div class="flex items-center gap-4">
-      <!-- Button to toggle the sidebar (now controlled by parent signal) -->
-      <p-button severity="secondary" (click)="expanded.set(!expanded())" icon="pi pi-bars"
-                [text]="true"></p-button>
-      <!-- App Title/Logo -->
+      <p-button severity="secondary" (click)="expanded.set(!expanded())" icon="pi pi-bars" [text]="true"></p-button>
       <div class="flex items-center justify-between flex-grow">
-      <span class="flex flex-row items-center gap-2">
-        <h1 class="text-4xl font-semibold">
-          Farm<span class="text-primary-500">Insight</span>
-        </h1>
-      </span>
+        <span class="flex flex-row items-center gap-2">
+          <h1 class="text-4xl font-semibold">
+            Farm<span class="text-primary-500">Insight</span>
+          </h1>
+        </span>
       </div>
     </div>
 
-    <div class="">
-      <p-overlay-badge [badgeDisabled]="notificationCount() == 0" class="">
+    <!-- Right side of header: Notifications and Profile -->
+    <div class="flex items-center gap-3">
+      <!-- Notification Bell -->
+      <p-overlay-badge [badgeDisabled]="notificationCount() === 0">
         <p-button pRipple icon="pi pi-bell" severity="secondary" [rounded]="true" [text]="true"
-        (onClick)="this.notificationVisible.set(true)"></p-button>
+                  (onClick)="this.notificationVisible.set(true)"></p-button>
       </p-overlay-badge>
+
+      <!-- Profile Dropdown -->
+      <div class="relative"> <!-- Wrapper for menu positioning -->
+        <button pButton pRipple type="button"
+                (click)="profileMenu.toggle($event)"
+                aria-haspopup="true"
+                [attr.aria-controls]="profileMenu.id"
+                class="p-button-rounded p-button-text p-button-secondary"> <!-- Style as a rounded text button -->
+          <p-avatar [label]="userInitial()" shape="square" styleClass="cursor-pointer"></p-avatar>
+          <!-- Or use an icon if you prefer: <i class="pi pi-user text-xl"></i> -->
+        </button>
+        <p-menu #profileMenu [model]="profileMenuItems()" [popup]="true" appendTo="body"></p-menu>
+      </div>
     </div>
   </header>
 
@@ -32,7 +43,7 @@
     <!-- Sidebar Container (Controls visibility and width) -->
     <!-- Use ngClass for conditional width/visibility -->
     <div class="flex-shrink-0 transition-all duration-300 ease-in-out overflow-y-auto"
-         [ngClass]="expanded() ? 'w-64' : 'w-0'"> <!-- Adjust w-64 as needed -->
+      [ngClass]="expanded() ? 'w-64' : 'w-0'"> <!-- Adjust w-64 as needed -->
       <!-- The actual SideMenu component -->
       <app-side-menu class="h-full block"></app-side-menu> <!-- Side menu takes full height of its container -->
     </div>
@@ -46,18 +57,20 @@
 </div>
 
 <p-drawer header="Notifications" [visible]="notificationVisible()" position="right"
-          styleClass="!w-full md:!w-80 lg:!w-[30rem]" (onHide)="this.notificationVisible.set(false)">
-  <div *ngIf="notificationCount() == 0" class="flex flex-col items-center justify-center h-full">
-    <p class="text-gray-500">No notifications</p>
-  </div>
+  styleClass="!w-full md:!w-80 lg:!w-[30rem]" (onHide)="this.notificationVisible.set(false)">
+  @if (notificationCount() == 0) {
+    <div class="flex flex-col items-center justify-center h-full">
+      <p class="text-gray-500">No notifications</p>
+    </div>
+  }
   <div class="flex flex-col gap-4">
-<!--    <p-card *ngFor="let notification of notifications" class="w-full">-->
-<!--      <div class="flex flex-row items-center justify-between">-->
-<!--        <h3 class="text-lg font-bold">{{ notification.title }}</h3>-->
-<!--        <p-button icon="pi pi-times" severity="secondary" (click)="removeNotification(notification)"></p-button>-->
-<!--      </div>-->
-<!--      <p>{{ notification.message }}</p>-->
+    <!--    <p-card *ngFor="let notification of notifications" class="w-full">-->
+    <!--      <div class="flex flex-row items-center justify-between">-->
+    <!--        <h3 class="text-lg font-bold">{{ notification.title }}</h3>-->
+    <!--        <p-button icon="pi pi-times" severity="secondary" (click)="removeNotification(notification)"></p-button>-->
+  <!--      </div>-->
+  <!--      <p>{{ notification.message }}</p>-->
 <!--    </p-card>-->
-  </div>
+</div>
 
 </p-drawer>

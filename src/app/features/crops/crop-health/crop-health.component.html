@@ -1,0 +1,148 @@
+<!-- crop-health.component.html -->
+
+<div class="flex flex-row justify-between items-center">
+  <h2 class="text-3xl font-bold my-4 ml-4">Crop Disease Identifier AI Tool</h2>
+  <p-button
+    label="New query"
+    icon="pi pi-plus"
+    class="mr-2"
+    (onClick)="openNew()"/>
+</div>
+
+@if (isLoading()) {
+  <div class="flex justify-center items-center h-[400px]">
+    <p-progress-spinner></p-progress-spinner>
+  </div>
+} @else {
+  <div>
+    <p-table [value]="pastEntries()" dataKey="name" [expandedRowKeys]="expandedRows()"
+             styleClass="p-datatable-striped p-datatable-gridlines" responsiveLayout="scroll">
+      <ng-template pTemplate="header">
+        <tr>
+          <th style="width: 3rem"></th> <!-- For expander icon -->
+          <th>Query Name</th>
+          <th>Field Name</th>
+          <th>Date & Time</th>
+          <th>Top Crop Guess</th>
+          <th>Top Disease Guess</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-entry let-expanded="expanded">
+        <tr>
+          <td>
+            <button type="button" pButton pRipple [pRowToggler]="entry"
+                    class="p-button-text p-button-rounded p-button-plain"
+                    [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'">
+            </button>
+          </td>
+          <td>{{ entry.name }}</td>
+          <td>{{ entry.fieldName }}</td>
+          <td>{{ entry.datetime | date: 'MMM d, y, h:mm a' }}</td>
+          <td>
+            @if (entry.cropSuggestions) {
+              <p-tag [value]="entry.cropSuggestions[0].name" severity="success"></p-tag>
+            } @else if (entry.isPlant) {
+              <span>Unknown Crop</span>
+            } @else {
+              <span>Not a Plant</span>
+            }
+          </td>
+          <td>
+            @if (entry.diseaseSuggestions) {
+              <p-tag [value]="entry.diseaseSuggestions[0].name" severity="warn"></p-tag>
+            } @else if (entry.isPlant) {
+              <span>No Disease Detected</span>
+            }
+          </td>
+        </tr>
+      </ng-template>
+      <ng-template #expandedrow let-entry>
+        <tr>
+          <td [attr.colspan]="6"> <!-- Colspan to match number of columns -->
+            <div class="p-4 surface-ground grid grid-cols-1 md:grid-cols-2 gap-4">
+              <!-- Left Column: Image -->
+              <div class="flex justify-center items-center">
+                @if (entry.imageBase64Data) {
+<!--                  <div class="w-[16rem] rounded-lg border">-->
+                    <p-image [src]="entry.imageBase64Data"
+                             imageClass="rounded-lg w-[16rem] object-cover hover:rounded-lg"
+                             alt="Crop Image for {{ entry.name }}" [preview]="true">
+                    </p-image>
+<!--                  </div>-->
+                } @else {
+                  <div class="text-center text-color-secondary italic">
+                    No image provided for this query.
+                  </div>
+                }
+              </div>
+
+              <!-- Right Column: Suggestions -->
+              <div>
+                @if (entry.isPlant) {
+                  @if (entry.cropSuggestions && entry.cropSuggestions.length > 0) {
+                    <div class="mb-4">
+                      <h4 class="font-semibold mb-2 text-lg">Crop Suggestions:</h4>
+                      @for (crop of entry.cropSuggestions; track crop.id) {
+                        <div class="flex justify-between items-center text-sm mb-1">
+                        <span>{{ crop.name }} @if (crop.scientificName) {
+                          <em>({{ crop.scientificName }})</em>
+                        } </span>
+                          <span class="font-medium">{{ (crop.probability * 100).toFixed(1) }}%</span>
+                        </div>
+                        <p-progressBar [value]="crop.probability * 100" [showValue]="false"
+                                       [style]="{'height': '0.75rem'}"></p-progressBar>
+                      }
+                    </div>
+                  } @else {
+                    <div class="text-color-secondary italic">
+                      No specific crop suggestions available.
+                    </div>
+                  }
+
+                  @if (entry.diseaseSuggestions && entry.diseaseSuggestions.length > 0) {
+                    <div class="mt-4">
+                      <h4 class="font-semibold mb-2 text-lg">Disease Suggestions:</h4>
+                      @for (disease of entry.diseaseSuggestions; track disease.id) {
+                        <div class="flex justify-between items-center text-sm mb-1">
+                      <span>{{ disease.name }} @if (disease.scientificName) {
+                        <em>({{ disease.scientificName }})</em>
+                      }</span>
+                          <span class="font-medium">{{ (disease.probability * 100).toFixed(1) }}%</span>
+                        </div>
+                        <p-progressBar [value]="disease.probability * 100" [showValue]="false"
+                                       [style]="{'height': '0.75rem'}"
+                                       [ngClass]="'p-progressbar-' + getProbabilitySeverity(disease.probability)"></p-progressBar>
+                      }
+                    </div>
+                  } @else {
+                    <div class="text-color-secondary italic">
+                      No disease suggestions available for the identified crop(s).
+                    </div>
+                  }
+                } @else {
+                  <div class="text-center font-semibold text-lg p-4">
+                    The submitted image was not identified as a plant.
+                  </div>
+                }
+              </div>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td [attr.colspan]="6" class="text-center p-4">No past crop health queries found.</td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+}
+
+<p-dialog
+  header="Check health of crop"
+  [(visible)]="displayModal"
+  [modal]="true"
+  [style]="{width: '42rem'}"
+  styleClass="p-fluid">
+  <app-crop-id-form (cancel)="onCancel()" (save)="createIdRequest($event)"></app-crop-id-form>
+</p-dialog>

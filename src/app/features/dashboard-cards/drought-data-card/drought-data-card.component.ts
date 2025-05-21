@@ -1,6 +1,6 @@
 // drought-data-card.component.ts
 import { Component, OnInit, computed, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { CardModule } from 'primeng/card';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { DroughtDataService } from '../../../core/services/drought-data.service';
@@ -29,7 +29,7 @@ interface DroughtSummary {
 @Component({
   selector: 'app-drought-data-card',
   standalone: true,
-  imports: [ CommonModule, CardModule, ProgressSpinnerModule, DropdownModule, FormsModule, TableModule, ScrollPanel ], // Include DropdownModule
+  imports: [CardModule, ProgressSpinnerModule, DropdownModule, FormsModule, TableModule, ScrollPanel], // Include DropdownModule
   templateUrl: './drought-data-card.component.html',
   styleUrls: [ './drought-data-card.component.scss' ]
 })

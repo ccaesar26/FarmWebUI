@@ -4,7 +4,7 @@ import { CropCatalogService } from '../../../core/services/crop-catalog.service'
 import { Card } from 'primeng/card';
 import { PrimeTemplate } from 'primeng/api';
 import { ProgressSpinner } from 'primeng/progressspinner';
-import { NgForOf, NgIf } from '@angular/common';
+
 import { Dialog } from 'primeng/dialog';
 import { Button } from 'primeng/button';
 import { Paginator } from 'primeng/paginator';
@@ -15,12 +15,10 @@ import { Paginator } from 'primeng/paginator';
     Card,
     PrimeTemplate,
     ProgressSpinner,
-    NgIf,
-    NgForOf,
     Dialog,
     Button,
     Paginator
-  ],
+],
   templateUrl: './crop-catalog.component.html',
   styleUrl: './crop-catalog.component.scss'
 })

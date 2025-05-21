@@ -1,6 +1,6 @@
 import { Component, OnInit, signal, WritableSignal } from '@angular/core';
 import { Card } from 'primeng/card';
-import { DatePipe, NgIf } from '@angular/common';
+import { DatePipe } from '@angular/common';
 import { ProgressSpinner } from 'primeng/progressspinner';
 import { TableModule } from 'primeng/table';
 import { Button } from 'primeng/button';
@@ -13,14 +13,13 @@ import { CropCreateDto, CropDto } from '../../../core/models/planted-crop.model'
   selector: 'app-planted-crops',
   imports: [
     Card,
-    NgIf,
     ProgressSpinner,
     TableModule,
     Button,
     Dialog,
     PlantedCropFormComponent,
     DatePipe
-  ],
+],
   templateUrl: './planted-crops.component.html',
   styleUrl: './planted-crops.component.scss'
 })
@@ -84,7 +83,6 @@ export class PlantedCropsComponent implements OnInit {
         this.hideDialog();
       },
       (error) => {
-        alert('Error creating crop: ' + JSON.stringify(error, null, 2));
         console.error('Error creating crop:', error);
       }
     );

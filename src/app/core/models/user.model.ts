@@ -5,6 +5,13 @@ export interface User {
   userProfileId: string;
 }
 
+export interface UserDto {
+  id: string;
+  username: string;
+  email: string;
+  roleName: string;
+}
+
 export interface UpdateUserRequest {
   id: string;
   username: string;

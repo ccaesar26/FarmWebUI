@@ -4,153 +4,178 @@
 
 <h2 class="text-3xl font-bold my-4 ml-4">Reports</h2>
 
-<div *ngIf="isLoading()" class="flex justify-center items-center h-[400px]">
-  <p-progress-spinner></p-progress-spinner>
-</div>
+@if (isLoading()) {
+  <div class="flex justify-center items-center h-[400px]">
+    <p-progress-spinner></p-progress-spinner>
+  </div>
+}
 
-<div *ngIf="!isLoading()">
-  <p-accordion [multiple]="true" [value]="'0'">
-    <!-- Iterate over the new group names: 'Current', 'Closed' -->
-    <ng-container *ngFor="let groupName of reportGroups; let i = index">
-      <p-accordion-panel [value]="i.toString()">
-        <p-accordion-header>
-          <div class="flex justify-between w-full px-4 py-3 items-center">
-            <!-- Display the group name -->
-            <span class="font-semibold text-xl">{{ groupName }} Reports</span>
-            <!-- Get count from the correct group -->
-            <p-tag [value]="reportsByGroup()[groupName].length.toString() || '0'"
-                   styleClass="text-xs px-2 py-1"></p-tag>
-          </div>
-        </p-accordion-header>
-        <p-accordion-content>
-          <!-- Check if the group exists and has reports -->
-          <div *ngIf="reportsByGroup()[groupName] && reportsByGroup()[groupName]!.length > 0; else noReportsInGroup"
-               class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4">
-            <!-- Iterate over reports within the current group -->
-            <p-card *ngFor="let report of reportsByGroup()[groupName]"
+@if (!isLoading()) {
+  <div>
+    <p-accordion [multiple]="true" [value]="'0'">
+      <!-- Iterate over the new group names: 'Current', 'Closed' -->
+      @for (groupName of reportGroups; track groupName; let i = $index) {
+        <p-accordion-panel [value]="i.toString()">
+          <p-accordion-header>
+            <div class="flex justify-between w-full px-4 py-3 items-center">
+              <!-- Display the group name -->
+              <span class="font-semibold text-xl">{{ groupName }} Reports</span>
+              <!-- Get count from the correct group -->
+              <p-tag [value]="reportsByGroup()[groupName].length.toString() || '0'"
+              styleClass="text-xs px-2 py-1"></p-tag>
+            </div>
+          </p-accordion-header>
+          <p-accordion-content>
+            <!-- Check if the group exists and has reports -->
+            @if (reportsByGroup()[groupName] && reportsByGroup()[groupName]!.length > 0) {
+              <div
+                class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4">
+                <!-- Iterate over reports within the current group -->
+                @for (report of reportsByGroup()[groupName]; track report) {
+                  <p-card
                     styleClass="shadow-md hover:shadow-lg transition-shadow duration-200 surface-ground">
-              <ng-template pTemplate="title">
-                <div class="flex justify-between items-start mb-1">
-                  <span class="text-lg font-semibold mr-2">{{ report.title }}</span>
-                  <!-- Status tag still uses individual report status -->
-                  <p-tag [value]="reportStatusToString(report.status)"
-                         [severity]="getStatusSeverity(report.status)"></p-tag>
-                </div>
-              </ng-template>
-              <ng-template pTemplate="subtitle">
-                <!-- Subtitle content remains the same -->
-                <div class="text-xs text-color-secondary mb-2 space-y-1">
-                  <div>
-                    <i class="pi pi-user text-xs mr-1"></i>
-                    Reported by {{ report.creatorUsername || '...' }}
-                  </div>
-                  <div>
-                    <i class="pi pi-calendar text-xs mr-1"></i>
-                    {{ report.createdAt | date:'MMM d, y, h:mm a' }}
-                  </div>
-                  <div *ngIf="report.updatedAt">
-                    <i class="pi pi-history text-xs mr-1"></i>
-                    Updated: {{ report.updatedAt | date:'MMM d, y, h:mm a' }}
-                  </div>
-                  <div *ngIf="report.fieldName" class="flex items-center">
-                    <i class="pi pi-map-marker text-xs mr-1"></i> Field: {{ report.fieldName }}
-                  </div>
-                </div>
-              </ng-template>
-              <ng-template pTemplate="content">
-                <!-- Content remains the same -->
-                <div class="flex flex-col gap-3">
-                  <div *ngIf="report.imageData" class="relative">
-                    <img
-                         [src]="'data:' + (report.imageMimeType || 'image/png') + ';base64,' + report.imageData"
-                         alt="Report Image"
-                         class="w-full h-auto max-h-60 object-contain rounded border surface-border mb-3 relative"
-                    >
-                    <div class="absolute top-2 right-2">
-                      <button pButton pRipple type="button" icon="pi pi-download"
-                              (click)="downloadImage(report.imageData, report.imageMimeType, report.title + '_image')"
-                              pTooltip="Download Image" tooltipPosition="top"
-                              class="p-button-rounded p-button-text p-button-secondary bg-surface-a/70 hover:bg-surface-b/90">
-                      </button>
-                    </div>
-                  </div>
-                  <!-- Added mb-3 -->
-                  <p *ngIf="report.description" class="m-0 text-sm leading-normal"> <!-- Adjusted text size/leading -->
-                    {{ report.description }}
-                  </p>
-                  <p *ngIf="!report.description" class="m-0 text-sm text-color-secondary italic">
-                    No description provided.
-                  </p>
-                </div>
-              </ng-template>
-              <ng-template pTemplate="footer">
-                <div class="flex justify-between pt-2 border-t surface-border">
-                  <p-button type="button" label="Comments" icon="pi pi-comments"
-                            styleClass="p-button-text p-button-sm p-button-secondary"
-                            (click)="openCommentsDialog(report)"></p-button>
-                  <div class="flex gap-2 justify-end"> <!-- Added border-t and pt-2 -->
-                    <p-button type="button" label="Update Status" icon="pi pi-check-circle"
-                              styleClass="p-button-text p-button-sm"
-                              (click)="openUpdateStatusDialog(report)"></p-button>
-                    <p-button type="button" label="Mark as closed" icon="pi pi-times-circle"
-                              styleClass="p-button-text p-button-sm p-button-danger"
-                              (click)="markAsClosedDialog(report)"></p-button>
-                  </div>
-                </div>
-              </ng-template>
-            </p-card>
-          </div>
-          <!-- Updated "no reports" message -->
-          <ng-template #noReportsInGroup>
-            <p class="text-center text-color-secondary p-4">No {{ groupName }} reports.</p>
-          </ng-template>
-        </p-accordion-content>
-      </p-accordion-panel>
-    </ng-container>
-  </p-accordion>
-</div>
+                    <ng-template pTemplate="title">
+                      <div class="flex justify-between items-start mb-1">
+                        <span class="text-lg font-semibold mr-2">{{ report.title }}</span>
+                        <!-- Status tag still uses individual report status -->
+                        <p-tag [value]="reportStatusToString(report.status)"
+                        [severity]="getStatusSeverity(report.status)"></p-tag>
+                      </div>
+                    </ng-template>
+                    <ng-template pTemplate="subtitle">
+                      <!-- Subtitle content remains the same -->
+                      <div class="text-xs text-color-secondary mb-2 space-y-1">
+                        <div>
+                          <i class="pi pi-user text-xs mr-1"></i>
+                          Reported by {{ report.creatorUsername || '...' }}
+                        </div>
+                        <div>
+                          <i class="pi pi-calendar text-xs mr-1"></i>
+                          {{ report.createdAt | date:'MMM d, y, h:mm a' }}
+                        </div>
+                        @if (report.updatedAt) {
+                          <div>
+                            <i class="pi pi-history text-xs mr-1"></i>
+                            Updated: {{ report.updatedAt | date:'MMM d, y, h:mm a' }}
+                          </div>
+                        }
+                        @if (report.fieldName) {
+                          <div class="flex items-center">
+                            <i class="pi pi-map-marker text-xs mr-1"></i> Field: {{ report.fieldName }}
+                          </div>
+                        }
+                      </div>
+                    </ng-template>
+                    <ng-template pTemplate="content">
+                      <!-- Content remains the same -->
+                      <div class="flex flex-col gap-3 items-center">
+                        @if (report.imageData) {
+                          <div>
+                            <div class="w-[12rem] relative">
+                              <p-image
+                                [src]="'data:' + (report.imageMimeType || 'image/png') + ';base64,' + report.imageData"
+                                alt="Report Image" preview="true"
+                                styleClass="object-cover rounded border surface-border mb-3"
+                                >
+                                <ng-template #indicator>
+                                  <i class="pi pi-search"></i>
+                                </ng-template>
+                              </p-image>
+                              <div class="absolute top-2 right-2">
+                                <button pButton pRipple type="button" icon="pi pi-download"
+                                  (click)="downloadImage(report.imageData, report.imageMimeType, report.title + '_image')"
+                                  pTooltip="Download Image" tooltipPosition="top"
+                                  class="p-button-rounded p-button-text p-button-secondary bg-surface-a/70 hover:bg-surface-b/90">
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        }
+                        <!-- Added mb-3 -->
+                        @if (report.description) {
+                          <p class="m-0 text-sm leading-normal"> <!-- Adjusted text size/leading -->
+                            {{ report.description }}
+                          </p>
+                        }
+                        @if (!report.description) {
+                          <p class="m-0 text-sm text-color-secondary italic">
+                            No description provided.
+                          </p>
+                        }
+                      </div>
+                    </ng-template>
+                    <ng-template pTemplate="footer">
+                      <div class="flex justify-between pt-2 border-t surface-border">
+                        <p-button type="button" label="Comments" icon="pi pi-comments"
+                          styleClass="p-button-text p-button-sm p-button-secondary"
+                        (click)="openCommentsDialog(report)"></p-button>
+                        <div class="flex gap-2 justify-end"> <!-- Added border-t and pt-2 -->
+                          <p-button type="button" label="Update Status" icon="pi pi-check-circle"
+                            styleClass="p-button-text p-button-sm"
+                          (click)="openUpdateStatusDialog(report)"></p-button>
+                          <p-button type="button" label="Mark as closed" icon="pi pi-times-circle"
+                            styleClass="p-button-text p-button-sm p-button-danger"
+                          (click)="markAsClosedDialog(report)"></p-button>
+                        </div>
+                      </div>
+                    </ng-template>
+                  </p-card>
+                }
+              </div>
+            } @else {
+              <p class="text-center text-color-secondary p-4">No {{ groupName }} reports.</p>
+            }
+            <!-- Updated "no reports" message -->
+          </p-accordion-content>
+        </p-accordion-panel>
+      }
+    </p-accordion>
+  </div>
+}
 
 <!-- Update Status Dialog -->
 <p-dialog header="Update Report Status" [(visible)]="displayUpdateStatusDialog" [modal]="true"
-          [style]="{width: '400px'}" (onHide)="hideUpdateStatusDialog()">
+  [style]="{width: '400px'}" (onHide)="hideUpdateStatusDialog()">
   <ng-template pTemplate="content">
-    <div *ngIf="reportToUpdate" class="p-fluid">
-      <p class="mb-2">Select new status for report: <strong>{{ reportToUpdate.title }}</strong></p>
-      <div class="field p-fluid">
-        <p-dropdown
-          id="statusDropdown"
-          [options]="statusOptions"
-          [(ngModel)]="selectedStatus"
-          placeholder="Select a Status"
-          optionLabel="label"
-          optionValue="value"
-          appendTo="body"
-          class="w-full"> <!-- Important for positioning -->
-        </p-dropdown>
+    @if (reportToUpdate) {
+      <div class="p-fluid">
+        <p class="mb-2">Select new status for report: <strong>{{ reportToUpdate.title }}</strong></p>
+        <div class="field p-fluid">
+          <p-dropdown
+            id="statusDropdown"
+            [options]="statusOptions"
+            [(ngModel)]="selectedStatus"
+            placeholder="Select a Status"
+            optionLabel="label"
+            optionValue="value"
+            appendTo="body"
+            class="w-full"> <!-- Important for positioning -->
+          </p-dropdown>
+        </div>
       </div>
-    </div>
+    }
   </ng-template>
 
   <ng-template pTemplate="footer">
     <p-button pRipple label="Cancel" icon="pi pi-times" styleClass="p-button-text p-button-danger"
-              (click)="hideUpdateStatusDialog()"></p-button>
+    (click)="hideUpdateStatusDialog()"></p-button>
     <p-button pRipple label="Save Status" icon="pi pi-check" (click)="saveReportStatus()" [loading]="isUpdatingStatus()"
-              [disabled]="selectedStatus === reportToUpdate?.status || selectedStatus === null"></p-button>
+    [disabled]="selectedStatus === reportToUpdate?.status || selectedStatus === null"></p-button>
   </ng-template>
 </p-dialog>
 
 <!-- Comments Dialog -->
 <p-dialog header="Comments for: {{ reportForComments?.title }}" [(visible)]="displayCommentsDialog" [modal]="true"
-          [style]="{width: '600px'}" (onHide)="hideCommentsDialog()">
+  [style]="{width: '600px'}" (onHide)="hideCommentsDialog()">
   <ng-template pTemplate="content">
     <!-- New Comment Input -->
     <div class="field mb-4 flex flex-col">
       <label for="newComment">Add Comment</label>
       <textarea id="newComment" pTextarea [(ngModel)]="newCommentText" rows="3"
-                placeholder="Enter your comment..."></textarea>
+      placeholder="Enter your comment..."></textarea>
       <div class="flex justify-end mt-2">
         <p-button label="Post Comment" icon="pi pi-send" (click)="addComment()"
-                  [loading]="isAddingComment()"></p-button>
+        [loading]="isAddingComment()"></p-button>
       </div>
     </div>
 
@@ -158,28 +183,35 @@
 
     <!-- Comment List -->
     <h4 class="font-semibold mb-2">Existing Comments</h4>
-    <div *ngIf="isLoadingComments()" class="flex flex-col gap-3">
-      <!-- Skeleton Loader -->
-      <p-skeleton height="4rem" styleClass="mb-2"></p-skeleton>
-      <p-skeleton height="4rem" styleClass="mb-2"></p-skeleton>
-      <p-skeleton height="4rem"></p-skeleton>
-    </div>
-    <div *ngIf="!isLoadingComments()">
-      <div *ngIf="comments().length > 0; else noComments"
-           class="comments-container flex flex-col gap-3 max-h-96 overflow-y-auto pr-2"> <!-- Scrollable -->
-        <div *ngFor="let comment of comments()" class="comment p-3 border rounded surface-section">
-          <div class="flex justify-between items-center mb-1">
-            <span class="font-semibold text-sm">{{ getCommentUsername(comment.userId) }}</span>
-            <span class="text-xs text-color-secondary">{{ comment.createdAt | date:'MMM d, y, h:mm a' }}</span>
-          </div>
-          <p class="m-0 text-sm">{{ comment.commentText }}</p>
-          <!-- Add reply button/logic here if needed -->
-        </div>
+    @if (isLoadingComments()) {
+      <div class="flex flex-col gap-3">
+        <!-- Skeleton Loader -->
+        <p-skeleton height="4rem" styleClass="mb-2"></p-skeleton>
+        <p-skeleton height="4rem" styleClass="mb-2"></p-skeleton>
+        <p-skeleton height="4rem"></p-skeleton>
       </div>
-      <ng-template #noComments>
-        <p class="text-center text-color-secondary p-4">No comments yet.</p>
-      </ng-template>
-    </div>
+    }
+    @if (!isLoadingComments()) {
+      <div>
+        @if (comments().length > 0) {
+          <div
+            class="comments-container flex flex-col gap-3 max-h-96 overflow-y-auto pr-2"> <!-- Scrollable -->
+            @for (comment of comments(); track comment) {
+              <div class="comment p-3 border rounded surface-section">
+                <div class="flex justify-between items-center mb-1">
+                  <span class="font-semibold text-sm">{{ getCommentUsername(comment.userId) }}</span>
+                  <span class="text-xs text-color-secondary">{{ comment.createdAt | date:'MMM d, y, h:mm a' }}</span>
+                </div>
+                <p class="m-0 text-sm">{{ comment.commentText }}</p>
+                <!-- Add reply button/logic here if needed -->
+              </div>
+            }
+          </div>
+        } @else {
+          <p class="text-center text-color-secondary p-4">No comments yet.</p>
+        }
+      </div>
+    }
   </ng-template>
   <ng-template pTemplate="footer">
     <p-button pRipple label="Close" icon="pi pi-times" class="p-button-text" (click)="hideCommentsDialog()"></p-button>

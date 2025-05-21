@@ -1,85 +1,99 @@
 <!-- task-monitor-board.component.html -->
 <p-card>
-<!--  <div class="absolute right-0 top-0 p-2">-->
-<!--    <button pButton label="Add Task" icon="pi pi-plus" size="small" class="p-button-primary"-->
+  <!--  <div class="absolute right-0 top-0 p-2">-->
+  <!--    <button pButton label="Add Task" icon="pi pi-plus" size="small" class="p-button-primary"-->
 <!--            (click)="router.navigate(['/dashboard/tasks/create'])"></button>-->
 <!--  </div>-->
-  <ng-template pTemplate="header">
-    <div class="flex justify-between items-center px-3 pt-5 h-14">
-      <h3 class="text-xl font-medium ml-2 mr-4">Task Monitor</h3>
-      <button pButton label="Add Task" icon="pi pi-plus" class="p-button-primary"
-              (click)="openNew()"></button>
-    </div>
-  </ng-template>
-  <ng-template pTemplate="content">
-    <!-- Loading Spinner -->
-    <div *ngIf="loading()" class="flex justify-center items-center h-[43rem]"> <!-- Center spinner -->
+<ng-template pTemplate="header">
+  <div class="flex justify-between items-center px-3 pt-5 h-14">
+    <h3 class="text-xl font-medium ml-2 mr-4">Task Monitor</h3>
+    <button pButton label="Add Task" icon="pi pi-plus" class="p-button-primary"
+    (click)="openNew()"></button>
+  </div>
+</ng-template>
+<ng-template pTemplate="content">
+  <!-- Loading Spinner -->
+  @if (loading()) {
+    <div class="flex justify-center items-center h-[49rem]"> <!-- Center spinner -->
       <p-progress-spinner></p-progress-spinner>
     </div>
+  }
 
-    <!-- Task Board Content (Show only when not loading) -->
-    <p-scroll-panel *ngIf="!loading()" styleClass="h-[49rem] w-full">
+  <!-- Task Board Content (Show only when not loading) -->
+  @if (!loading()) {
+    <p-scroll-panel styleClass="h-[49rem] w-full">
       <div class="flex w-full relative overflow-x-auto">  <!-- Horizontal scrolling container -->
-        <div *ngFor="let status of taskStatuses" class="flex-shrink-0 w-1/3"> <!-- Fixed width columns -->
-          <div class="rounded-xl p-2 mx-2" [ngClass]="getStatusColor(status)"> <!-- Task status column -->
-            <div class="flex justify-between items-center p-2">
-              <h3 class="text-lg font-bold">{{ status }}</h3>
-              <p class="text-sm text-gray-500">{{ getTasksByStatus(status).length }}</p>
-            </div>
-            <div class="flex flex-col gap-2">
-              <p-card *ngFor="let task of getTasksByStatus(status)">
-                <!-- Individual task card -->
-                <div class="flex justify-between items-center">
-                  <div class="flex items-center gap-2">
-                    <i [class]="getPriorityIcon(task.priority)"></i>
-                    <span class="font-bold">{{ task.title }}</span>
-                  </div>
-                  <span class="material-symbols-rounded">{{getCategoryIcon(task.categoryName ?? '')}}</span>
-                </div>
-
-                <div class="flex flex-col gap-2 my-6">
-                  <div class="flex flex-row gap-2">
-                    <i class="pi pi-user"></i>
-                    <p class="text-sm">{{ task.assignedUserNames }}</p>
-                  </div>
-                  <div class="flex flex-row gap-2 items-center">
-                    <i class="pi pi-calendar-clock"></i>
-                    <p class="text-sm" *ngIf="task.dueDate != null && task.dueDate?.length != 0">Due
-                      at {{ task.dueDate | date: 'HH:mm, dd.MM.yyyy' }}</p>
-                    <p class="text-sm" *ngIf="task.dueDate == null || task.dueDate?.length == 0">No due date</p>
-                  </div>
-                  <div class="flex flex-row gap-2 items-center"
-                       *ngIf="task.fieldName != null && task.dueDate?.length != 0">
-                    <i class="pi pi-map-marker"></i>
-                    <p class="text-sm">{{ task.fieldName }}</p>
-                  </div>
-                </div>
-
-                <div class="flex flex-row justify-between">
-                  <div class="flex items-center gap-2 text-sm">
-                    <i class="pi pi-comments"></i>
-                    <span>{{ task.commentsCount }}</span>
-                  </div>
-                  <p class="text-sm text-gray-500">{{ task.createdAt | date: 'HH:mm, dd.MM.yyyy' }}</p>
-                </div>
-              </p-card>
+        @for (status of taskStatuses; track status) {
+          <div class="flex-shrink-0 w-1/3"> <!-- Fixed width columns -->
+            <div class="rounded-xl p-2 mx-2" [ngClass]="getStatusColor(status)"> <!-- Task status column -->
+              <div class="flex justify-between items-center p-2">
+                <h3 class="text-lg font-bold">{{ status }}</h3>
+                <p class="text-sm text-gray-500">{{ getTasksByStatus(status).length }}</p>
+              </div>
+              <div class="flex flex-col gap-2">
+                @for (task of getTasksByStatus(status); track task) {
+                  <p-card>
+                    <!-- Individual task card -->
+                    <div class="flex justify-between items-center">
+                      <div class="flex items-center gap-2">
+                        <i [class]="getPriorityIcon(task.priority)"></i>
+                        <span class="font-bold">{{ task.title }}</span>
+                      </div>
+                      <span class="material-symbols-rounded">{{getCategoryIcon(task.categoryName ?? '')}}</span>
+                    </div>
+                    <div class="flex flex-col gap-2 my-6">
+                      <div class="flex flex-row gap-2">
+                        <i class="pi pi-user"></i>
+                        <p class="text-sm">{{ task.assignedUserNames }}</p>
+                      </div>
+                      <div class="flex flex-row gap-2 items-center">
+                        <i class="pi pi-calendar-clock"></i>
+                        @if (task.dueDate != null && task.dueDate.length != 0) {
+                          <p class="text-sm">Due
+                          at {{ task.dueDate | date: 'HH:mm, dd.MM.yyyy' }}</p>
+                        }
+                        @if (task.dueDate == null || task.dueDate.length == 0) {
+                          <p class="text-sm">No due date</p>
+                        }
+                      </div>
+                      @if (task.fieldName != null && task.dueDate?.length != 0) {
+                        <div class="flex flex-row gap-2 items-center"
+                          >
+                          <i class="pi pi-map-marker"></i>
+                          <p class="text-sm">{{ task.fieldName }}</p>
+                        </div>
+                      }
+                    </div>
+                    <div class="flex flex-row justify-between">
+                      <div class="flex items-center gap-2 text-sm">
+                        <i class="pi pi-comments"></i>
+                        <span>{{ task.commentsCount }}</span>
+                      </div>
+                      <p class="text-sm text-gray-500">{{ task.createdAt | date: 'HH:mm, dd.MM.yyyy' }}</p>
+                    </div>
+                  </p-card>
+                }
+              </div>
             </div>
           </div>
-        </div>
+        }
       </div>
     </p-scroll-panel>
-  </ng-template>
+  }
+</ng-template>
 
-  <p-dialog
-    [header]="selectedTask() ? 'Edit Task' : 'Add Task'"
-    [visible]="displayModal()"
-    [modal]="true"
-    [style]="{width: '512px'}"
-    (onHide)="onCancel()"
-    closeIcon="null"
-    styleClass="p-fluid">
-    <app-task-form *ngIf="displayModal()" [task]="selectedTask()"
-                   [categories]="categories()" [workers]="workers()" [fields]="fields()"
-                   (save)="onSave($event)" (cancel)="onCancel()"></app-task-form>
-  </p-dialog>
+<p-dialog
+  [header]="selectedTask() ? 'Edit Task' : 'Add Task'"
+  [visible]="displayModal()"
+  [modal]="true"
+  [style]="{width: '512px'}"
+  (onHide)="onCancel()"
+  closeIcon="null"
+  styleClass="p-fluid">
+  @if (displayModal()) {
+    <app-task-form [task]="selectedTask()"
+      [categories]="categories()" [workers]="workers()" [fields]="fields()"
+    (save)="onSave($event)" (cancel)="onCancel()"></app-task-form>
+  }
+</p-dialog>
 </p-card>

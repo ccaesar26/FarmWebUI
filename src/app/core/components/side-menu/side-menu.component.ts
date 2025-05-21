@@ -7,15 +7,19 @@ import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { UserProfileService } from '../../services/user-profile.service';
 import { StyleClass } from 'primeng/styleclass';
 import { SidebarModule } from 'primeng/sidebar';
-import { CommonModule } from '@angular/common';
+
 
 @Component({
   selector: 'app-side-menu',
   standalone: true,
   imports: [
-    CommonModule, Ripple, Avatar, RouterLink,
-    RouterLinkActive, StyleClass, SidebarModule
-  ],
+    Ripple,
+    Avatar,
+    RouterLink,
+    RouterLinkActive,
+    StyleClass,
+    SidebarModule
+],
   templateUrl: './side-menu.component.html',
   styleUrls: ['./side-menu.component.scss']
 })
@@ -47,13 +51,13 @@ export class SideMenuComponent implements OnChanges { // Implement OnChanges
 
   constructor(
     protected router: Router,
-    protected authService: AuthService,
-    private userProfileService: UserProfileService
+    // protected authService: AuthService,
+    // private userProfileService: UserProfileService
   ) {
-    this.userProfileService.getManagerProfile().subscribe((userProfile) => {
-      this.name = userProfile?.name;
-      this.initial = userProfile?.name?.charAt(0).toUpperCase();
-    });
+    // this.userProfileService.getManagerProfile().subscribe((userProfile) => {
+    //   this.name = userProfile?.name;
+    //   this.initial = userProfile?.name?.charAt(0).toUpperCase();
+    // });
   }
 
   // Use OnChanges to detect external changes if needed, though the setter handles opening
@@ -65,11 +69,11 @@ export class SideMenuComponent implements OnChanges { // Implement OnChanges
     }
   }
 
-  logout() {
-    this.authService.logout();
-    this.router.navigate(['/login']);
-    this.closeSidebar(); // Close sidebar on logout
-  }
+  // logout() {
+  //   this.authService.logout();
+  //   this.router.navigate(['/login']);
+  //   this.closeSidebar(); // Close sidebar on logout
+  // }
 
   // Internal method to close the sidebar
   closeSidebar() {

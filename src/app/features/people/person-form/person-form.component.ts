@@ -14,7 +14,7 @@ import { InputGroupAddon } from 'primeng/inputgroupaddon';
 import { InputText } from 'primeng/inputtext';
 import { Message } from 'primeng/message';
 import { MultiSelect } from 'primeng/multiselect';
-import { NgIf } from '@angular/common';
+
 import { PasswordDirective } from 'primeng/password';
 import { Select } from 'primeng/select';
 import { Tooltip } from 'primeng/tooltip';
@@ -35,11 +35,10 @@ import { Tooltip } from 'primeng/tooltip';
     InputText,
     Message,
     MultiSelect,
-    NgIf,
     PasswordDirective,
     Select,
-    Tooltip,
-  ],
+    Tooltip
+],
   templateUrl: './person-form.component.html',
   styleUrl: './person-form.component.scss'
 })

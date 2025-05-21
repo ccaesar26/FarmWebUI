@@ -26,33 +26,41 @@
       </p-inputgroup-addon>
       <p-floatlabel variant="on" class="block w-full">
         <input pPassword type="password" id="register-password" [formControl]="registerForm.controls.password"
-               [showPassword]="showPassword"/>
-        <label for="register-password">Password</label>
-      </p-floatlabel>
-      <p-inputgroup-addon class="cursor-pointer" (click)="showPassword = !showPassword">
-        <i *ngIf="showPassword" class="pi pi-eye-slash"></i>
-        <i *ngIf="!showPassword" class="pi pi-eye"></i>
-      </p-inputgroup-addon>
-    </p-inputgroup>
+          [showPassword]="showPassword"/>
+          <label for="register-password">Password</label>
+        </p-floatlabel>
+        <p-inputgroup-addon class="cursor-pointer" (click)="showPassword = !showPassword">
+          @if (showPassword) {
+            <i class="pi pi-eye-slash"></i>
+          }
+          @if (!showPassword) {
+            <i class="pi pi-eye"></i>
+          }
+        </p-inputgroup-addon>
+      </p-inputgroup>
 
-    <p-inputgroup>
-      <p-inputgroup-addon>
-        <i class="pi pi-lock"></i>
-      </p-inputgroup-addon>
-      <p-floatlabel variant="on" class="block w-full">
-        <input pPassword type="password" id="confirm-password" [formControl]="registerForm.controls.confirmPassword"
-               [feedback]="false" [showPassword]="showPassword"/>
-        <label for="confirm-password">Repeat Password</label>
-      </p-floatlabel>
-      <p-inputgroup-addon class="cursor-pointer" (click)="showPassword = !showPassword">
-        <i *ngIf="showPassword" class="pi pi-eye-slash"></i>
-        <i *ngIf="!showPassword" class="pi pi-eye"></i>
-      </p-inputgroup-addon>
-    </p-inputgroup>
+      <p-inputgroup>
+        <p-inputgroup-addon>
+          <i class="pi pi-lock"></i>
+        </p-inputgroup-addon>
+        <p-floatlabel variant="on" class="block w-full">
+          <input pPassword type="password" id="confirm-password" [formControl]="registerForm.controls.confirmPassword"
+            [feedback]="false" [showPassword]="showPassword"/>
+            <label for="confirm-password">Repeat Password</label>
+          </p-floatlabel>
+          <p-inputgroup-addon class="cursor-pointer" (click)="showPassword = !showPassword">
+            @if (showPassword) {
+              <i class="pi pi-eye-slash"></i>
+            }
+            @if (!showPassword) {
+              <i class="pi pi-eye"></i>
+            }
+          </p-inputgroup-addon>
+        </p-inputgroup>
 
-    <div class="block w-full">
-      <p-button icon="pi pi-user-plus" iconPos="left" [loading]="isRegistering" label="Register" type="submit"
-                class="py-2"></p-button>
-    </div>
-  </form>
-</p-fluid>
+        <div class="block w-full">
+          <p-button icon="pi pi-user-plus" iconPos="left" [loading]="isRegistering" label="Register" type="submit"
+          class="py-2"></p-button>
+        </div>
+      </form>
+    </p-fluid>

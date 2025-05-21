@@ -14,137 +14,142 @@
     dataKey="id"
     currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
     [showCurrentPageReport]="true"
-  >
+    >
     <ng-template #caption>
       <p-toolbar styleClass="">
         <ng-template #start>
           <p-iconfield style="width:24rem">
             <p-inputicon styleClass="pi pi-search"/>
             <input pInputText type="text" (input)="dt.filterGlobal($any($event.target).value, 'contains')"
-                   placeholder="Search..." style="width: 100%"/>
-          </p-iconfield>
-        </ng-template>
-        <ng-template #end>
-          <p-button label="New" icon="pi pi-plus" class="mr-2" (onClick)="openNew()"/>
-          <p-button severity="danger" label="Delete" icon="pi pi-trash" outlined (onClick)="deleteSelectedPeople()"
-                    [disabled]="!selectedWorkers || !selectedWorkers.length"/>
-        </ng-template>
-      </p-toolbar>
-    </ng-template>
-    <ng-template #header>
-      <tr>
-        <th style="width: 3rem">
-          <p-tableHeaderCheckbox/>
-        </th>
-        <th pSortableColumn="username" style="width:16rem">
-          Username
-          <p-sortIcon field="username"/>
-        </th>
-        <th pSortableColumn="name" style="width:16rem">
-          Name
-          <p-sortIcon field="name"/>
-        </th>
-        <th pSortableColumn="email" style="width:16rem">
-          Email
-          <p-sortIcon field="email"/>
-        </th>
-        <!-- Attributes Column Header -->
-        <th pSortableColumn="attributes">
-          Attributes
-          <p-columnFilter
-            #attributeFilter
-            field="attributes"
-            matchMode="customAttributeFilter"
-            display="menu"
-            [showMatchModes]="false"
-            [showOperator]="false"
-            [showAddButton]="false"
-            [showApplyButton]="false"
-            [showClearButton]="true">
-            <ng-template pTemplate="filter" let-value let-filter="filterCallback">
-              <div class="flex flex-col gap-2"> <!-- Container for filter elements -->
-                <!-- Mode Selector -->
-                <p-selectButton
-                  [options]="attributeFilterModeOptions"
-                  [(ngModel)]="attributeMatchMode"
-                  optionLabel="label"
-                  optionValue="value"
-                  (onChange)="filter(value)"
-
-                />
-
-                <!-- Attribute MultiSelect -->
-                <p-multiSelect
-                  [ngModel]="value"
-                  [options]="availableAttributes()"
-                  [group]="true"
-                  placeholder="Filter by Attributes"
-                  (onChange)="filter($event.value)"
-                  optionLabel="label"
-                  optionValue="value"
-                  styleClass="p-column-filter"
-                  appendTo="body"
-                  [maxSelectedLabels]="3"
-                  display="chip"
-                  [showClear]="true"
-                  [showToggleAll]="false"
-                  filterPlaceHolder="Search">
-                  <ng-template let-group pTemplate="group">
-                    <div class="flex items-center">
-                      <span>{{ group.label }}</span>
-                    </div>
-                  </ng-template>
-                  <ng-template let-it pTemplate="item">
-                    <div class="flex items-center gap-2">
-                      <div>{{ it.label }}</div>
-                    </div>
-                  </ng-template>
-                  <ng-template pTemplate="header">
-                    <div class="font-medium px-4 pt-4 pb-2">Available Attributes</div>
-                  </ng-template>
-                </p-multiSelect>
-              </div>
-            </ng-template>
-          </p-columnFilter>
-        </th>
-        <th style="width:8rem"></th>
-      </tr>
-    </ng-template>
-    <ng-template #body let-worker>
-      <tr>
-        <td>
-          <p-tableCheckbox [value]="worker"/>
-        </td>
-        <td>{{ worker.username }}</td>
-        <td>{{ worker.name }}</td>
-        <td>{{ worker.email }}</td>
-        <td>
-        <span *ngIf="worker.attributes && worker.attributes.length > 0; else noAttributes">
-           <span *ngFor="let attr of worker.attributes"> <!-- Removed last check for simplicity, tags handle spacing -->
-              <p-tag [value]="attr" styleClass="m-1"></p-tag>
-           </span>
-        </span>
-          <ng-template #noAttributes>
-            <span class="text-gray-500">None</span>
+              placeholder="Search..." style="width: 100%"/>
+            </p-iconfield>
           </ng-template>
-        </td>
-        <td>
-          <p-button icon="pi pi-pencil" class="mr-2" [rounded]="true" [outlined]="true"
-                    (click)="openEditWorker(worker)"/>
-          <p-button icon="pi pi-trash" severity="danger" [rounded]="true" [outlined]="true"
-                    (click)="deleteWorker(worker)"/>
-        </td>
-      </tr>
-    </ng-template>
-  </p-table>
+          <ng-template #end>
+            <p-button label="New" icon="pi pi-plus" class="mr-2" (onClick)="openNew()"/>
+            <p-button severity="danger" label="Delete" icon="pi pi-trash" outlined (onClick)="deleteSelectedPeople()"
+              [disabled]="!selectedWorkers || !selectedWorkers.length"/>
+            </ng-template>
+          </p-toolbar>
+        </ng-template>
+        <ng-template #header>
+          <tr>
+            <th style="width: 3rem">
+              <p-tableHeaderCheckbox/>
+            </th>
+            <th pSortableColumn="username" style="width:16rem">
+              Username
+              <p-sortIcon field="username"/>
+            </th>
+            <th pSortableColumn="name" style="width:16rem">
+              Name
+              <p-sortIcon field="name"/>
+            </th>
+            <th pSortableColumn="email" style="width:16rem">
+              Email
+              <p-sortIcon field="email"/>
+            </th>
+            <!-- Attributes Column Header -->
+            <th pSortableColumn="attributes">
+              Attributes
+              <p-columnFilter
+                #attributeFilter
+                field="attributes"
+                matchMode="customAttributeFilter"
+                display="menu"
+                [showMatchModes]="false"
+                [showOperator]="false"
+                [showAddButton]="false"
+                [showApplyButton]="false"
+                [showClearButton]="true">
+                <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+                  <div class="flex flex-col gap-2"> <!-- Container for filter elements -->
+                    <!-- Mode Selector -->
+                    <p-selectButton
+                      [options]="attributeFilterModeOptions"
+                      [(ngModel)]="attributeMatchMode"
+                      optionLabel="label"
+                      optionValue="value"
+                      (onChange)="filter(value)"
 
-  <p-dialog
-    [header]="selectedWorker() ? 'Edit Worker' : 'Add Worker'"
-    [(visible)]="displayModal"
-    [modal]="true"
-    [style]="{width: '512px'}"
-    styleClass="p-fluid">
-    <app-person-form *ngIf="displayModal" [person]="selectedWorker()" (save)="onSave($event)"
-                     (cancel)="onCancel()"></app-person-form>
-  </p-dialog>
-</p-card>
+                      />
+
+                      <!-- Attribute MultiSelect -->
+                      <p-multiSelect
+                        [ngModel]="value"
+                        [options]="availableAttributes()"
+                        [group]="true"
+                        placeholder="Filter by Attributes"
+                        (onChange)="filter($event.value)"
+                        optionLabel="label"
+                        optionValue="value"
+                        styleClass="p-column-filter"
+                        appendTo="body"
+                        [maxSelectedLabels]="3"
+                        display="chip"
+                        [showClear]="true"
+                        [showToggleAll]="false"
+                        filterPlaceHolder="Search">
+                        <ng-template let-group pTemplate="group">
+                          <div class="flex items-center">
+                            <span>{{ group.label }}</span>
+                          </div>
+                        </ng-template>
+                        <ng-template let-it pTemplate="item">
+                          <div class="flex items-center gap-2">
+                            <div>{{ it.label }}</div>
+                          </div>
+                        </ng-template>
+                        <ng-template pTemplate="header">
+                          <div class="font-medium px-4 pt-4 pb-2">Available Attributes</div>
+                        </ng-template>
+                      </p-multiSelect>
+                    </div>
+                  </ng-template>
+                </p-columnFilter>
+              </th>
+              <th style="width:8rem"></th>
+            </tr>
+          </ng-template>
+          <ng-template #body let-worker>
+            <tr>
+              <td>
+                <p-tableCheckbox [value]="worker"/>
+              </td>
+              <td>{{ worker.username }}</td>
+              <td>{{ worker.name }}</td>
+              <td>{{ worker.email }}</td>
+              <td>
+                @if (worker.attributes && worker.attributes.length > 0) {
+                  <span>
+                    @for (attr of worker.attributes; track attr) {
+                      <span> <!-- Removed last check for simplicity, tags handle spacing -->
+                        <p-tag [value]="attr" styleClass="m-1"></p-tag>
+                      </span>
+                    }
+                  </span>
+                } @else {
+                  <span class="text-gray-500">None</span>
+                }
+              </td>
+              <td>
+                <p-button icon="pi pi-pencil" class="mr-2" [rounded]="true" [outlined]="true"
+                  (click)="openEditWorker(worker)"/>
+                  <p-button icon="pi pi-trash" severity="danger" [rounded]="true" [outlined]="true"
+                    (click)="deleteWorker(worker)"/>
+                  </td>
+                </tr>
+              </ng-template>
+            </p-table>
+
+            <p-dialog
+              [header]="selectedWorker() ? 'Edit Worker' : 'Add Worker'"
+              [(visible)]="displayModal"
+              [modal]="true"
+              [style]="{width: '512px'}"
+              styleClass="p-fluid">
+              @if (displayModal) {
+                <app-person-form [person]="selectedWorker()" (save)="onSave($event)"
+                (cancel)="onCancel()"></app-person-form>
+              }
+            </p-dialog>
+          </p-card>

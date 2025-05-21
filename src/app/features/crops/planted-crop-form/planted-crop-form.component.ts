@@ -9,7 +9,7 @@ import { FloatLabel } from 'primeng/floatlabel';
 import { Select } from 'primeng/select';
 import { InputText } from 'primeng/inputtext';
 import { Message } from 'primeng/message';
-import { NgIf } from '@angular/common';
+
 import { Calendar } from 'primeng/calendar';
 import { CalculateArea, Field } from '../../../core/models/field.model';
 import { FieldService } from '../../../core/services/field.service';
@@ -29,11 +29,10 @@ import { CropDto } from '../../../core/models/planted-crop.model';
     Select,
     InputText,
     Message,
-    NgIf,
     Calendar,
     Panel,
     InputNumber
-  ],
+],
   templateUrl: './planted-crop-form.component.html',
   styleUrl: './planted-crop-form.component.scss'
 })
@@ -75,14 +74,14 @@ export class PlantedCropFormComponent implements OnInit {
       }
     );
 
-    this.fieldService.getFields().subscribe(
-      (entries) => {
+    this.fieldService.getFields().subscribe({
+      next: (entries) => {
         this.fieldsEntries.set(entries.sort((a, b) => a.name.localeCompare(b.name)));
       },
-      (error) => {
+      error: (error) => {
         console.error('Error fetching field entries:', error);
       }
-    );
+    });
 
     // Subscribe to changes in plantingDate to calculate harvest dates
     this.cropForm.controls.plantingDate.valueChanges.subscribe(plantingDate => {

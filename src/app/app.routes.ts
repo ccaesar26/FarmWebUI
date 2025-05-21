@@ -16,6 +16,8 @@ import { CropCatalogComponent } from './features/crops/crop-catalog/crop-catalog
 import { PlantedCropsComponent } from './features/crops/planted-crops/planted-crops.component';
 import { TasksManagementComponent } from './features/tasks/tasks-management/tasks-management.component';
 import { ReportsManagementComponent } from './features/reports/reports-management/reports-management.component';
+import { CropHealthComponent } from './features/crops/crop-health/crop-health.component';
+import { ProfileComponent } from './features/profile/profile/profile.component';
 
 export const routes: Routes = [
   {
@@ -76,9 +78,11 @@ export const routes: Routes = [
       { path: 'fields', component: FieldsManagementComponent, canActivate: [ dashboardGuardFn ] },
       { path: 'crop-catalog', component: CropCatalogComponent, canActivate: [ dashboardGuardFn ] },
       { path: 'planted-crops', component: PlantedCropsComponent, canActivate: [ dashboardGuardFn ] },
+      { path: 'crop-health', component: CropHealthComponent, canActivate: [ dashboardGuardFn ] },
       { path: 'tasks', component: TasksManagementComponent, canActivate: [ dashboardGuardFn ] },
       { path: 'reports', component: ReportsManagementComponent, canActivate: [ dashboardGuardFn ] },
       { path: 'people', component: PeopleManagementComponent, canActivate: [ dashboardGuardFn ] },
+      { path: 'profile', component: ProfileComponent, canActivate: [ dashboardGuardFn ] },
     ]
   },
   { path: '**', redirectTo: '', pathMatch: 'full' }

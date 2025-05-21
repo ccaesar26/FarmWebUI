@@ -14,7 +14,7 @@ import { FloatLabel } from 'primeng/floatlabel';
 import { InputText } from 'primeng/inputtext';
 import { Tooltip } from 'primeng/tooltip';
 import { Message } from 'primeng/message';
-import { NgIf } from '@angular/common';
+
 import { Textarea } from 'primeng/textarea';
 import { Calendar } from 'primeng/calendar';
 import { DropdownModule } from 'primeng/dropdown';
@@ -41,14 +41,13 @@ import { ButtonDirective } from 'primeng/button';
     InputText,
     Tooltip,
     Message,
-    NgIf,
     Textarea,
     Calendar,
     DropdownModule,
     Select,
     MultiSelect,
     ButtonDirective
-  ],
+],
   templateUrl: './task-form.component.html',
   styleUrl: './task-form.component.scss'
 })

@@ -11,7 +11,7 @@ import { InputGroup } from 'primeng/inputgroup';
 import { InputGroupAddon } from 'primeng/inputgroupaddon';
 import { AuthService } from '../../../core/services/auth.service';
 import { Router } from '@angular/router';
-import { NgIf } from '@angular/common';
+
 import { finalize } from 'rxjs';
 import { Toast } from 'primeng/toast';
 
@@ -27,9 +27,8 @@ import { Toast } from 'primeng/toast';
     InputIconModule,
     InputGroup,
     InputGroupAddon,
-    PasswordDirective,
-    NgIf
-  ],
+    PasswordDirective
+],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss'
 })

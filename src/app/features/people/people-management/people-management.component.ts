@@ -2,7 +2,7 @@ import { Component, OnInit, signal, ViewChild, WritableSignal } from '@angular/c
 import { FilterService, MenuItem, SelectItem } from 'primeng/api';
 import { UserProfileService } from '../../../core/services/user-profile.service';
 import { UserService } from '../../../core/services/user.service';
-import { CommonModule } from '@angular/common';
+
 import { catchError, forkJoin, map, of, Subscription, switchMap } from 'rxjs';
 import { Toolbar } from 'primeng/toolbar';
 import { Button } from 'primeng/button';
@@ -43,7 +43,6 @@ type AttributeMatchMode = 'containsAnyAttribute' | 'containsAllAttributes';
 @Component({
   selector: 'app-people-management',
   imports: [
-    CommonModule,
     Toolbar,
     Button,
     TableModule,
@@ -57,7 +56,7 @@ type AttributeMatchMode = 'containsAnyAttribute' | 'containsAllAttributes';
     MultiSelect,
     FormsModule,
     SelectButton
-  ],
+],
   templateUrl: './people-management.component.html',
   styleUrl: './people-management.component.scss'
 })

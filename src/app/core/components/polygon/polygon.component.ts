@@ -1,7 +1,7 @@
 import { Component, HostListener, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import mapboxgl from 'mapbox-gl';
 import MapboxDraw from '@mapbox/mapbox-gl-draw';
-import { NgClass, NgForOf, NgIf } from '@angular/common';
+import { NgClass } from '@angular/common';
 import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { Button, ButtonDirective } from 'primeng/button';
 import { Dialog } from 'primeng/dialog';
@@ -23,7 +23,7 @@ import { Card } from 'primeng/card';
 @Component({
   selector: 'app-polygon',
   standalone: true,
-  imports: [ NgIf, FormsModule, Button, Dialog, TableModule, NgForOf, ButtonDirective, Ripple, InputText, Tooltip, NgClass, IconField, InputIcon, Listbox, Card ],
+  imports: [FormsModule, Button, Dialog, TableModule, ButtonDirective, Ripple, InputText, Tooltip, NgClass, IconField, InputIcon, Listbox, Card],
   templateUrl: './polygon.component.html',
   styleUrls: [ './polygon.component.scss' ],
   providers: [

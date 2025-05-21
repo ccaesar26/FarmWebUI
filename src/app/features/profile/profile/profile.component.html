@@ -1,0 +1,131 @@
+@if (this.isLoading()) {
+  <div class="flex justify-center items-center h-64">
+    <p-progressSpinner ariaLabel="Loading profile data"></p-progressSpinner>
+  </div>
+} @else if (this.isError()) {
+  <p-message severity="error" summary="Error" text="We couldn't load your profile data. Please try again later."
+             styleClass="w-full"></p-message>
+} @else if (this.user()) {
+  <!-- Main Profile Card -->
+  <p-card styleClass="shadow-lg rounded-lg">
+    <ng-template pTemplate="title">
+      <div class="flex flex-col sm:flex-row items-center gap-4 mb-4">
+        <p-avatar [label]="this.userInitials()" size="xlarge" shape="square"
+                  styleClass="bg-primary text-primary-contrast"></p-avatar>
+        <div>
+          <h1 class="text-3xl font-bold text-surface-800 dark:text-surface-100">
+            {{ profile()?.name || this.user()?.username }}
+          </h1>
+          <p class="text-md text-surface-600 dark:text-surface-300">{{ this.user()?.email }}</p>
+        </div>
+      </div>
+    </ng-template>
+
+    <ng-template pTemplate="subtitle">
+      <span class="text-sm font-medium text-primary-500 dark:text-primary-400 uppercase tracking-wider">
+        {{ this.user()?.roleName }}
+      </span>
+    </ng-template>
+
+    <ng-template pTemplate="content">
+      <div class="space-y-6">
+        <!-- Personal Information Section -->
+        @if(profile(); as prof) {
+          <div>
+            <h3 class="text-xl font-semibold mb-3 text-surface-700 dark:text-surface-200 border-b pb-2 border-surface-200 dark:border-surface-700">
+              Personal Details
+            </h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4 text-surface-700 dark:text-surface-300">
+              <div class="flex items-center">
+                <i class="pi pi-id-card mr-3 text-xl text-primary-500 dark:text-primary-400"></i>
+                <div>
+                  <span class="font-medium block">Full Name</span>
+                  <span>{{ prof.name }}</span>
+                </div>
+              </div>
+              <div class="flex items-center">
+                <i class="pi pi-calendar mr-3 text-xl text-primary-500 dark:text-primary-400"></i>
+                <div>
+                  <span class="font-medium block">Date of Birth</span>
+                  <span>{{ prof.dateOfBirth | date: 'longDate' }}</span>
+                </div>
+              </div>
+              <div class="flex items-center">
+                <i class="pi pi-users mr-3 text-xl text-primary-500 dark:text-primary-400"></i>
+                <!-- Using pi-users as a generic icon for gender, you might want a more specific one -->
+                <div>
+                  <span class="font-medium block">Gender</span>
+                  <span>{{ prof.gender || 'N/A' }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        }
+
+        <!-- Account Information Section -->
+        <div>
+          <h3 class="text-xl font-semibold mb-3 text-surface-700 dark:text-surface-200 border-b pb-2 border-surface-200 dark:border-surface-700">
+            Account Information
+          </h3>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4 text-surface-700 dark:text-surface-300">
+            <div class="flex items-center">
+              <i class="pi pi-user mr-3 text-xl text-primary-500 dark:text-primary-400"></i>
+              <div>
+                <span class="font-medium block">Username</span>
+                <span>{{ this.user()?.username }}</span>
+              </div>
+            </div>
+            <div class="flex items-center">
+              <i class="pi pi-at mr-3 text-xl text-primary-500 dark:text-primary-400"></i>
+              <div>
+                <span class="font-medium block">Email Address</span>
+                <span>{{ this.user()?.email }}</span>
+              </div>
+            </div>
+            <div class="flex items-center">
+              <i class="pi pi-shield mr-3 text-xl text-primary-500 dark:text-primary-400"></i>
+              <div>
+                <span class="font-medium block">User Role</span>
+                <span>{{ this.user()?.roleName }}</span>
+              </div>
+            </div>
+<!--            <div class="flex items-center">-->
+<!--              <i class="pi pi-key mr-3 text-xl text-primary-500 dark:text-primary-400"></i>-->
+<!--              <div>-->
+<!--                <span class="font-medium block">User ID</span>-->
+<!--                <span class="text-xs">{{ user.id }}</span>-->
+<!--              </div>-->
+<!--            </div>-->
+          </div>
+        </div>
+
+        <!-- Attributes Section -->
+        @if (profile()?.attributeNames && profile()!.attributeNames.length > 0) {
+          <div>
+            <p-divider layout="horizontal" styleClass="my-6"></p-divider>
+            <h3 class="text-xl font-semibold mb-4 text-surface-700 dark:text-surface-200">
+              Key Attributes
+            </h3>
+            <div class="flex flex-wrap gap-2">
+              @for(attribute of profile()?.attributeNames; track attribute) {
+                <p-chip [label]="attribute" icon="pi pi-check-circle"
+                        styleClass="bg-primary-50 text-primary-700 dark:bg-primary-800 dark:text-primary-200"></p-chip>
+              }
+            </div>
+          </div>
+        }
+      </div>
+    </ng-template>
+
+<!--    <ng-template pTemplate="footer">-->
+<!--      <div class="flex flex-col sm:flex-row justify-end gap-2 mt-4">-->
+<!--        <button pButton pRipple type="button" label="Edit Profile" icon="pi pi-user-edit"-->
+<!--                class="p-button-outlined" (click)="editProfile()"></button>-->
+<!--        <button pButton pRipple type="button" label="Change Password" icon="pi pi-lock"-->
+<!--                class="p-button-secondary p-button-outlined" (click)="changePassword()"></button>-->
+<!--      </div>-->
+<!--    </ng-template>-->
+  </p-card>
+} @else {
+  <p-message severity="info" summary="No Data" text="User data is not available." styleClass="w-full"></p-message>
+}

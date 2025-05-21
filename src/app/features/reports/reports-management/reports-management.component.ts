@@ -28,7 +28,8 @@ import { Ripple } from 'primeng/ripple';
 import { FormsModule } from '@angular/forms';
 import { Skeleton } from 'primeng/skeleton';
 import { Textarea } from 'primeng/textarea';
-import { Tooltip } from 'primeng/tooltip'; // Keep User model for fetchWorkers if needed elsewhere
+import { Tooltip } from 'primeng/tooltip';
+import { Image } from 'primeng/image'; // Keep User model for fetchWorkers if needed elsewhere
 
 // Define the new grouping structure
 type GroupedReports = {
@@ -43,7 +44,7 @@ type Severity = 'success' | 'info' | 'danger' | 'secondary' | 'contrast' | 'warn
   standalone: true,
   imports: [
     CommonModule, AccordionModule, CardModule, TagModule, ButtonModule,
-    ProgressSpinnerModule, ToastModule, Dialog, DropdownModule, Ripple, FormsModule, Skeleton, Textarea, Tooltip
+    ProgressSpinnerModule, ToastModule, Dialog, DropdownModule, Ripple, FormsModule, Skeleton, Textarea, Tooltip, Image
   ],
   providers: [ MessageService ],
   templateUrl: './reports-management.component.html',

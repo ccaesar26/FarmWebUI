@@ -3,132 +3,151 @@
     <p-card header="Authentication">
       <p-floatlabel variant="on" class="block w-full mt-2">
         <input id="register-username" pInputText [formControl]="personForm.controls.username" class="w-full"
-               pTooltip="Enter a unique username (alphanumeric and underscores only)." tooltipPosition="top"/>
-        <label for="register-username">Username</label>
-      </p-floatlabel>
-      <div class="my-4">
-        <p-message severity="error"
-                   *ngIf="personForm.controls.username.errors?.['required'] && (personForm.controls.username.dirty || personForm.controls.username.touched || submitted)"
-                   text="Username is required"></p-message>
-        <p-message severity="error"
-                   *ngIf="personForm.controls.username.errors?.['minlength'] && (personForm.controls.username.dirty || personForm.controls.username.touched || submitted)"
-                   text="Username must be at least 3 characters"></p-message>
-        <p-message severity="error"
-                   *ngIf="personForm.controls.username.errors?.['maxlength'] && (personForm.controls.username.dirty || personForm.controls.username.touched || submitted)"
-                   text="Username cannot exceed 20 characters"></p-message>
-        <p-message severity="error"
-                   *ngIf="personForm.controls.username.errors?.['pattern'] && (personForm.controls.username.dirty || personForm.controls.username.touched || submitted)"
-                   text="Use only alphanumeric and _"></p-message>
-      </div>
-
-      <p-floatlabel variant="on" class="block w-full">
-        <input id="register-email" pInputText type="email" [formControl]="personForm.controls.email" class="w-full"
-               pTooltip="Enter a valid email address." tooltipPosition="top"/>
-        <label for="register-email">Email</label>
-      </p-floatlabel>
-      <div class="mt-4"
-           *ngIf="(personForm.controls.email.errors?.['required'] || personForm.controls.email.errors?.['email']) && (personForm.controls.email.dirty || personForm.controls.email.touched || submitted)">
-        <p-message severity="error" text="Email is required"
-                   *ngIf="personForm.controls.email.errors?.['required'] && (personForm.controls.email.dirty || personForm.controls.email.touched || submitted)"></p-message>
-        <p-message severity="error"
-                   *ngIf="personForm.controls.email.errors?.['email'] && (personForm.controls.email.dirty || personForm.controls.email.touched || submitted)"
-                   text="Invalid email format"></p-message>
-      </div>
-
-      <div *ngIf="isAddMode()">
-        <p-inputgroup class="mt-4">
-          <p-floatlabel variant="on" class="block w-full">
-            <input pPassword type="password" id="register-password" [formControl]="personForm.controls.password"
-                   [showPassword]="showPassword" pTooltip="Enter a strong password (at least 8 characters)."
-                   tooltipPosition="top"/>
-            <label for="register-password">Password</label>
-          </p-floatlabel>
-          <!--        <p-inputgroup-addon class="cursor-pointer" (click)="showPassword = !showPassword">-->
-          <!--          <i *ngIf="showPassword" class="pi pi-eye-slash"></i>-->
-          <!--          <i *ngIf="!showPassword" class="pi pi-eye"></i>-->
-          <!--        </p-inputgroup-addon>-->
-          <p-inputgroup-addon>
-            <p-button type="button" icon="pi pi-bolt" severity="secondary"></p-button>
-          </p-inputgroup-addon>
-        </p-inputgroup>
-        <div class="mt-4"
-             *ngIf="(personForm.controls.password.errors?.['required'] || personForm.controls.password.errors?.['minlength']) && (personForm.controls.password.dirty || personForm.controls.password.touched || submitted)">
-          <p-message severity="error" text="Password is required"
-                     *ngIf="personForm.controls.password.errors?.['required'] && (personForm.controls.password.dirty || personForm.controls.password.touched || submitted)"></p-message>
-          <p-message severity="error"
-                     *ngIf="personForm.controls.password.errors?.['minlength'] && (personForm.controls.password.dirty || personForm.controls.password.touched || submitted)"
-                     text="Password must be at least 8 characters"></p-message>
+          pTooltip="Enter a unique username (alphanumeric and underscores only)." tooltipPosition="top"/>
+          <label for="register-username">Username</label>
+        </p-floatlabel>
+        <div class="my-4">
+          @if (personForm.controls.username.errors?.['required'] && (personForm.controls.username.dirty || personForm.controls.username.touched || submitted)) {
+            <p-message severity="error"
+            text="Username is required"></p-message>
+          }
+          @if (personForm.controls.username.errors?.['minlength'] && (personForm.controls.username.dirty || personForm.controls.username.touched || submitted)) {
+            <p-message severity="error"
+            text="Username must be at least 3 characters"></p-message>
+          }
+          @if (personForm.controls.username.errors?.['maxlength'] && (personForm.controls.username.dirty || personForm.controls.username.touched || submitted)) {
+            <p-message severity="error"
+            text="Username cannot exceed 20 characters"></p-message>
+          }
+          @if (personForm.controls.username.errors?.['pattern'] && (personForm.controls.username.dirty || personForm.controls.username.touched || submitted)) {
+            <p-message severity="error"
+            text="Use only alphanumeric and _"></p-message>
+          }
         </div>
-      </div>
-    </p-card>
 
-    <p-card header="Personal Information" class="m-4">
-      <p-floatlabel variant="on" class="block w-full mt-2">
-        <input id="name" pInputText [formControl]="personForm.controls.name" class="w-full"
-               pTooltip="Enter the person's name." tooltipPosition="top"/>
-        <label for="name">Name</label>
-      </p-floatlabel>
-      <div class="my-4">
-        <p-message severity="error" text="Full Name is required"
-                   *ngIf="personForm.controls.name.errors?.['required'] && (personForm.controls.name.dirty || personForm.controls.name.touched || submitted)"></p-message>
-        <p-message severity="error"
-                   *ngIf="personForm.controls.name.errors?.['maxlength'] && (personForm.controls.name.dirty || personForm.controls.name.touched || submitted)"
-                   text="Full Name cannot exceed 100 characters"></p-message>
-      </div>
-
-
-      <p-floatlabel variant="on" class="block w-full">
-        <p-calendar id="dateOfBirth" [formControl]="personForm.controls.dateOfBirth" dateFormat="yy-mm-dd"
-                    [showIcon]="true"
-                    pTooltip="Select the person's date of birth." tooltipPosition="top"></p-calendar>
-        <label for="dateOfBirth">Date of Birth</label>
-      </p-floatlabel>
-
-
-      <p-floatlabel variant="on" class="block w-full mt-4">
-        <p-select id="gender" [formControl]="personForm.controls.gender" [options]="genders" optionLabel="label"
-                  optionValue="value"
-                  pTooltip="Select the person's gender."
-                  tooltipPosition="top"></p-select>
-        <label for="gender">Gender</label>
-      </p-floatlabel>
-    </p-card>
-
-    <p-card header="Attributes">
-      <p-floatlabel variant="on" class="block w-full mt-2">
-        <p-multiSelect id="attributes" [options]="availableAttributes" [group]="true" filterPlaceHolder="Search"
-                       [formControl]="personForm.controls.attributes" display="chip"
-                       showToggleAll="false" showClear="true">
-          <ng-template let-group #group>
-            <div class="flex items-center">
-              <span>{{ group.label }}</span>
+        <p-floatlabel variant="on" class="block w-full">
+          <input id="register-email" pInputText type="email" [formControl]="personForm.controls.email" class="w-full"
+            pTooltip="Enter a valid email address." tooltipPosition="top"/>
+            <label for="register-email">Email</label>
+          </p-floatlabel>
+          @if ((personForm.controls.email.errors?.['required'] || personForm.controls.email.errors?.['email']) && (personForm.controls.email.dirty || personForm.controls.email.touched || submitted)) {
+            <div class="mt-4"
+              >
+              @if (personForm.controls.email.errors?.['required'] && (personForm.controls.email.dirty || personForm.controls.email.touched || submitted)) {
+                <p-message severity="error" text="Email is required"
+                ></p-message>
+              }
+              @if (personForm.controls.email.errors?.['email'] && (personForm.controls.email.dirty || personForm.controls.email.touched || submitted)) {
+                <p-message severity="error"
+                text="Invalid email format"></p-message>
+              }
             </div>
-          </ng-template>
-          <ng-template let-it #item>
-            <div class="flex items-center gap-2">
-              <div>{{ it.label }}</div>
-            </div>
-          </ng-template>
-          <ng-template #header>
-            <div class="font-medium px-4 pt-4 pb-2">Available Attributes</div>
-          </ng-template>
-          <ng-template #footer>
-            <div class="p-3 flex justify-between">
-              <p-button label="Add New" severity="secondary" text size="small" icon="pi pi-plus"/>
-              <p-button label="Reset" severity="danger" text size="small" icon="pi pi-times"
-                        (onClick)="personForm.controls.attributes.reset()"/>
-            </div>
-          </ng-template>
-        </p-multiSelect>
-        <label for="attributes">Attributes</label>
-      </p-floatlabel>
-    </p-card>
-    <div class="flex justify-content-end">
-      <button pButton type="button" label="Cancel" (click)="onCancel()" class="p-button-text mr-2"></button>
-      <button pButton type="submit" label="Save" [disabled]="!personForm.valid" [loading]="submitting"></button>
-    </div>
-  </form>
+          }
 
-</p-fluid>
+          @if (isAddMode()) {
+            <div>
+              <p-inputgroup class="mt-4">
+                <p-floatlabel variant="on" class="block w-full">
+                  <input pPassword type="password" id="register-password" [formControl]="personForm.controls.password"
+                    [showPassword]="showPassword" pTooltip="Enter a strong password (at least 8 characters)."
+                    tooltipPosition="top"/>
+                    <label for="register-password">Password</label>
+                  </p-floatlabel>
+                  <!--        <p-inputgroup-addon class="cursor-pointer" (click)="showPassword = !showPassword">-->
+                  <!--          <i *ngIf="showPassword" class="pi pi-eye-slash"></i>-->
+                  <!--          <i *ngIf="!showPassword" class="pi pi-eye"></i>-->
+                <!--        </p-inputgroup-addon>-->
+                <p-inputgroup-addon>
+                  <p-button type="button" icon="pi pi-bolt" severity="secondary"></p-button>
+                </p-inputgroup-addon>
+              </p-inputgroup>
+              @if ((personForm.controls.password.errors?.['required'] || personForm.controls.password.errors?.['minlength']) && (personForm.controls.password.dirty || personForm.controls.password.touched || submitted)) {
+                <div class="mt-4"
+                  >
+                  @if (personForm.controls.password.errors?.['required'] && (personForm.controls.password.dirty || personForm.controls.password.touched || submitted)) {
+                    <p-message severity="error" text="Password is required"
+                    ></p-message>
+                  }
+                  @if (personForm.controls.password.errors?.['minlength'] && (personForm.controls.password.dirty || personForm.controls.password.touched || submitted)) {
+                    <p-message severity="error"
+                    text="Password must be at least 8 characters"></p-message>
+                  }
+                </div>
+              }
+            </div>
+          }
+        </p-card>
 
-<!--</p-dialog>-->
+        <p-card header="Personal Information" class="m-4">
+          <p-floatlabel variant="on" class="block w-full mt-2">
+            <input id="name" pInputText [formControl]="personForm.controls.name" class="w-full"
+              pTooltip="Enter the person's name." tooltipPosition="top"/>
+              <label for="name">Name</label>
+            </p-floatlabel>
+            <div class="my-4">
+              @if (personForm.controls.name.errors?.['required'] && (personForm.controls.name.dirty || personForm.controls.name.touched || submitted)) {
+                <p-message severity="error" text="Full Name is required"
+                ></p-message>
+              }
+              @if (personForm.controls.name.errors?.['maxlength'] && (personForm.controls.name.dirty || personForm.controls.name.touched || submitted)) {
+                <p-message severity="error"
+                text="Full Name cannot exceed 100 characters"></p-message>
+              }
+            </div>
+
+
+            <p-floatlabel variant="on" class="block w-full">
+              <p-calendar id="dateOfBirth" [formControl]="personForm.controls.dateOfBirth" dateFormat="yy-mm-dd"
+                [showIcon]="true"
+              pTooltip="Select the person's date of birth." tooltipPosition="top"></p-calendar>
+              <label for="dateOfBirth">Date of Birth</label>
+            </p-floatlabel>
+
+
+            <p-floatlabel variant="on" class="block w-full mt-4">
+              <p-select id="gender" [formControl]="personForm.controls.gender" [options]="genders" optionLabel="label"
+                optionValue="value"
+                pTooltip="Select the person's gender."
+              tooltipPosition="top"></p-select>
+              <label for="gender">Gender</label>
+            </p-floatlabel>
+          </p-card>
+
+          <p-card header="Attributes">
+            <p-floatlabel variant="on" class="block w-full mt-2">
+              <p-multiSelect id="attributes" [options]="availableAttributes" [group]="true" filterPlaceHolder="Search"
+                [formControl]="personForm.controls.attributes" display="chip"
+                showToggleAll="false" showClear="true">
+                <ng-template let-group #group>
+                  <div class="flex items-center">
+                    <span>{{ group.label }}</span>
+                  </div>
+                </ng-template>
+                <ng-template let-it #item>
+                  <div class="flex items-center gap-2">
+                    <div>{{ it.label }}</div>
+                  </div>
+                </ng-template>
+                <ng-template #header>
+                  <div class="font-medium px-4 pt-4 pb-2">Available Attributes</div>
+                </ng-template>
+                <ng-template #footer>
+                  <div class="p-3 flex justify-between">
+                    <p-button label="Add New" severity="secondary" text size="small" icon="pi pi-plus"/>
+                    <p-button label="Reset" severity="danger" text size="small" icon="pi pi-times"
+                      (onClick)="personForm.controls.attributes.reset()"/>
+                    </div>
+                  </ng-template>
+                </p-multiSelect>
+                <label for="attributes">Attributes</label>
+              </p-floatlabel>
+            </p-card>
+            <div class="flex justify-content-end">
+              <button pButton type="button" label="Cancel" (click)="onCancel()" class="p-button-text mr-2"></button>
+              <button pButton type="submit" label="Save" [disabled]="!personForm.valid" [loading]="submitting"></button>
+            </div>
+          </form>
+
+        </p-fluid>
+
+      <!--</p-dialog>-->

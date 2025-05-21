@@ -1,0 +1,38 @@
+<p-fluid>
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" class="max-w-xl mx-auto my-auto space-y-4 h-full flex flex-col">
+    <p-floatlabel variant="on" class="block w-full mt-2">
+      <input id="name" pInputText formControlName="name" class="w-full"/>
+      <label for="name">Identification request name</label>
+    </p-floatlabel>
+
+    <p-floatlabel variant="on" class="block w-full mt-4">
+      <p-select id="field" [options]="fieldsEntries()" formControlName="selectedField" optionLabel="name"
+      [filter]="true" filterBy="name" appendTo="body"></p-select>
+      <label for="field">Field</label>
+    </p-floatlabel>
+
+    <p-floatlabel variant="on" class="block w-full mt-4">
+      <p-fileupload name="file[]" mode="advanced" [maxFileSize]="10000000" [multiple]="false" [auto]="true"
+        accept="image/*" (onSelect)="onUpload($event)">
+        <ng-template #empty>
+          <div class="flex items-center justify-center flex-col">
+            <i class="pi pi-cloud-upload !border-2 !rounded-full !p-8 !text-4xl !text-muted-color"></i>
+            <p class="mt-6 mb-0">Drag and drop image here to upload.</p>
+          </div>
+        </ng-template>
+        <ng-template #content>
+          @if (uploadedFile) {
+            <ul>
+                <li>{{ uploadedFile.name }} - {{ uploadedFile.size }} bytes</li>
+            </ul>
+          }
+        </ng-template>
+      </p-fileupload>
+    </p-floatlabel>
+
+    <div class="w-full flex justify-content-end">
+      <button pButton type="button" (click)="onCancel()" class="p-button-text mr-2">Cancel</button>
+      <button pButton type="submit" [disabled]="!isValid()" [loading]="submitting()">Submit</button>
+    </div>
+  </form>
+</p-fluid>

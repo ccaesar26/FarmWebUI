@@ -1,79 +1,107 @@
 <h2 class="text-3xl font-bold my-4 ml-4">Crop Catalog</h2>
 
 <p-card>
-  <div *ngIf="isLoading()" class="flex justify-content-center align-items-center" style="min-height: 200px;">
-    <p-progressSpinner></p-progressSpinner>
-  </div>
-  <div *ngIf="!isLoading()" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
-    <div *ngFor="let crop of cropEntries()" class="col">
-      <p-card styleClass="mb-2 cursor-pointer" (click)="openDialog(crop)">
-        <ng-template pTemplate="header">
-          <div class="w-full h-48 overflow-hidden rounded-t-xl">
-            <img
-              src="{{ crop.imageLink }}" alt="{{ crop.name }}"
-              class="w-full h-full object-cover block"
-              onerror="this.src='https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/No_image_available.svg/1024px-No_image_available.svg.png';"
-            />
+  @if (isLoading()) {
+    <div class="flex justify-content-center align-items-center" style="min-height: 200px;">
+      <p-progressSpinner></p-progressSpinner>
+    </div>
+  }
+  @if (!isLoading()) {
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
+      @for (crop of cropEntries(); track crop) {
+        <div class="col">
+          <p-card styleClass="mb-2 cursor-pointer" (click)="openDialog(crop)">
+            <ng-template pTemplate="header">
+              <div class="w-full h-48 overflow-hidden rounded-t-xl">
+                <img
+                  src="{{ crop.imageLink }}" alt="{{ crop.name }}"
+                  class="w-full h-full object-cover block"
+                  onerror="this.src='https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/No_image_available.svg/1024px-No_image_available.svg.png';"
+                  />
+                </div>
+              </ng-template>
+              <ng-template pTemplate="title">
+                {{ crop.name }}
+              </ng-template>
+              <ng-template pTemplate="subtitle">
+                {{ crop.binomialName }}
+              </ng-template>
+            </p-card>
           </div>
-        </ng-template>
-        <ng-template pTemplate="title">
-          {{ crop.name }}
-        </ng-template>
-        <ng-template pTemplate="subtitle">
-          {{ crop.binomialName }}
-        </ng-template>
-      </p-card>
-    </div>
-  </div>
-  <div *ngIf="!isLoading() && cropEntries().length === 0" class="text-center p-4">
-    <p>No crops found in the catalog.</p>
-  </div>
-
-  <p-paginator
-    *ngIf="!isLoading() && totalRecords() > rowsPerPage()"
-    [first]="first()"
-    [rows]="rowsPerPage()"
-    [totalRecords]="totalRecords()"
-    (onPageChange)="onPageChange($event)"
-    [rowsPerPageOptions]="[10,25,50]"
-    styleClass="mt-4"
-  ></p-paginator>
-</p-card>
-
-<p-dialog [visible]="dialogVisible()" [header]="selectedCrop()?.name || 'Crop Details'" [modal]="true"
-          [style]="{width: '25vw'}" [draggable]="false" [resizable]="false" (close)="closeDialog()" closable="false">
-  <ng-template pTemplate="content">
-    <div *ngIf="selectedCrop()">
-      <div class="mb-4">
-        <img *ngIf="selectedCrop()?.imageLink" src="{{selectedCrop()?.imageLink}}" alt="{{selectedCrop()?.name}}"
-             class="w-full h-auto max-h-96 object-contain mb-2"
-             onerror="this.src='https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/No_image_available.svg/1024px-No_image_available.svg.png';">
-        <img *ngIf="!selectedCrop()?.imageLink"
-             src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/No_image_available.svg/1024px-No_image_available.svg.png"
-             alt="No Image Available" class="w-full h-auto max-h-96 object-contain mb-2">
+        }
       </div>
+    }
+    @if (!isLoading() && cropEntries().length === 0) {
+      <div class="text-center p-4">
+        <p>No crops found in the catalog.</p>
+      </div>
+    }
 
-      <p><strong>Binomial Name:</strong> {{ selectedCrop()?.binomialName }}</p>
-      <p *ngIf="selectedCrop()?.description"><strong>Description:</strong> {{ selectedCrop()?.description }}</p>
-      <p><strong>Perennial:</strong> {{ selectedCrop()?.isPerennial ? 'Yes' : 'No' }}</p>
-      <p *ngIf="selectedCrop()?.daysToFirstHarvest"><strong>Days to First
-        Harvest:</strong> {{ selectedCrop()?.daysToFirstHarvest }}</p>
-      <p *ngIf="selectedCrop()?.daysToLastHarvest"><strong>Days to Last
-        Harvest:</strong> {{ selectedCrop()?.daysToLastHarvest }}</p>
-      <p *ngIf="selectedCrop()?.harvestSeasonStart || selectedCrop()?.harvestSeasonEnd">
-        <strong>Harvest Season:</strong> {{ selectedCrop()?.harvestSeasonStart }}
-        - {{ selectedCrop()?.harvestSeasonEnd }}
-      </p>
-      <p *ngIf="selectedCrop()?.sunRequirements"><strong>Sun
-        Requirements:</strong> {{ selectedCrop()?.sunRequirements }}</p>
-      <p *ngIf="selectedCrop()?.sowingMethod"><strong>Sowing Method:</strong> {{ selectedCrop()?.sowingMethod }}</p>
-      <p *ngIf="selectedCrop()?.wikipediaLink">
-        <strong>Wikipedia: </strong> <a href="{{ selectedCrop()?.wikipediaLink }}" target="_blank"
-                                        class="text-blue-500 hover:underline">Learn More</a>
-      </p>
-    </div>
-  </ng-template>
-  <ng-template pTemplate="footer">
-    <p-button icon="pi pi-times" label="Close" (click)="closeDialog()" styleClass="p-button-secondary"></p-button>
-  </ng-template>
-</p-dialog>
+    @if (!isLoading() && totalRecords() > rowsPerPage()) {
+      <p-paginator
+        [first]="first()"
+        [rows]="rowsPerPage()"
+        [totalRecords]="totalRecords()"
+        (onPageChange)="onPageChange($event)"
+        [rowsPerPageOptions]="[10,25,50]"
+        styleClass="mt-4"
+      ></p-paginator>
+    }
+  </p-card>
+
+  <p-dialog [visible]="dialogVisible()" [header]="selectedCrop()?.name || 'Crop Details'" [modal]="true"
+    [style]="{width: '25vw'}" [draggable]="false" [resizable]="false" (close)="closeDialog()" closable="false">
+    <ng-template pTemplate="content">
+      @if (selectedCrop()) {
+        <div>
+          <div class="mb-4">
+            @if (selectedCrop()?.imageLink) {
+              <img src="{{selectedCrop()?.imageLink}}" alt="{{selectedCrop()?.name}}"
+                class="w-full h-auto max-h-96 object-contain mb-2"
+                onerror="this.src='https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/No_image_available.svg/1024px-No_image_available.svg.png';">
+              }
+              @if (!selectedCrop()?.imageLink) {
+                <img
+                  src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/No_image_available.svg/1024px-No_image_available.svg.png"
+                  alt="No Image Available" class="w-full h-auto max-h-96 object-contain mb-2">
+              }
+            </div>
+            <p><strong>Binomial Name:</strong> {{ selectedCrop()?.binomialName }}</p>
+            @if (selectedCrop()?.description) {
+              <p><strong>Description:</strong> {{ selectedCrop()?.description }}</p>
+            }
+            <p><strong>Perennial:</strong> {{ selectedCrop()?.isPerennial ? 'Yes' : 'No' }}</p>
+            @if (selectedCrop()?.daysToFirstHarvest) {
+              <p><strong>Days to First
+              Harvest:</strong> {{ selectedCrop()?.daysToFirstHarvest }}</p>
+            }
+            @if (selectedCrop()?.daysToLastHarvest) {
+              <p><strong>Days to Last
+              Harvest:</strong> {{ selectedCrop()?.daysToLastHarvest }}</p>
+            }
+            @if (selectedCrop()?.harvestSeasonStart || selectedCrop()?.harvestSeasonEnd) {
+              <p>
+                <strong>Harvest Season:</strong> {{ selectedCrop()?.harvestSeasonStart }}
+                - {{ selectedCrop()?.harvestSeasonEnd }}
+              </p>
+            }
+            @if (selectedCrop()?.sunRequirements) {
+              <p><strong>Sun
+              Requirements:</strong> {{ selectedCrop()?.sunRequirements }}</p>
+            }
+            @if (selectedCrop()?.sowingMethod) {
+              <p><strong>Sowing Method:</strong> {{ selectedCrop()?.sowingMethod }}</p>
+            }
+            @if (selectedCrop()?.wikipediaLink) {
+              <p>
+                <strong>Wikipedia: </strong> <a href="{{ selectedCrop()?.wikipediaLink }}" target="_blank"
+              class="text-blue-500 hover:underline">Learn More</a>
+            </p>
+          }
+        </div>
+      }
+    </ng-template>
+    <ng-template pTemplate="footer">
+      <p-button icon="pi pi-times" label="Close" (click)="closeDialog()" styleClass="p-button-secondary"></p-button>
+    </ng-template>
+  </p-dialog>

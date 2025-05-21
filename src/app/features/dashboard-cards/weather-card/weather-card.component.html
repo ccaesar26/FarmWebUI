@@ -20,55 +20,61 @@
   <ng-template pTemplate="content">
     <p-scroll-panel  styleClass="w-full h-[27.56rem]" class="flex flex-col h-full">
       <!-- Loading Spinner -->
-      <div *ngIf="loading()" class="text-center">
-        <p-progressSpinner></p-progressSpinner>
-      </div>
+      @if (loading()) {
+        <div class="text-center">
+          <p-progressSpinner></p-progressSpinner>
+        </div>
+      }
 
       <!-- Weather Content -->
-      <div *ngIf="weatherData() && !loading()" class="flex flex-wrap items-center justify-center gap-8 p-4 flex-grow">
-        <!-- Weather Animation (Left) -->
-        <div class="w-32 h-32 flex-shrink-0">
-          <ng-lottie [options]="currentWeatherAnimationOptions" class="w-full h-full"></ng-lottie>
+      @if (weatherData() && !loading()) {
+        <div class="flex flex-wrap items-center justify-center gap-8 p-4 flex-grow">
+          <!-- Weather Animation (Left) -->
+          <div class="w-32 h-32 flex-shrink-0">
+            <ng-lottie [options]="currentWeatherAnimationOptions" class="w-full h-full"></ng-lottie>
+          </div>
+          <!-- Weather Details (Right) - Stacks below animation on small screens -->
+          <div class="flex flex-col text-left sm:w-auto w-full">
+            <!-- Large Temperature -->
+            <p class="text-6xl font-extrabold leading-tight">
+              {{ weatherData()?.temperature | number: '1.0-0' }}°C
+            </p>
+            <!-- Weather Description -->
+            <p class="text-2xl font-medium my-2">
+              {{ weatherData()?.description }}
+            </p>
+            <!-- Additional Weather Data -->
+            <p><strong>Humidity:</strong> {{ weatherData()?.humidity }}%</p>
+            <p><strong>Pressure:</strong> {{ weatherData()?.pressure }} hPa</p>
+            <p><strong>Wind:</strong> {{ weatherData()?.windSpeed }} km/h</p>
+          </div>
+          <!--    Horizontal scrollable with forecast for 16 days    -->
         </div>
-
-        <!-- Weather Details (Right) - Stacks below animation on small screens -->
-        <div class="flex flex-col text-left sm:w-auto w-full">
-          <!-- Large Temperature -->
-          <p class="text-6xl font-extrabold leading-tight">
-            {{ weatherData()?.temperature | number: '1.0-0' }}°C
-          </p>
-
-          <!-- Weather Description -->
-          <p class="text-2xl font-medium my-2">
-            {{ weatherData()?.description }}
-          </p>
-
-          <!-- Additional Weather Data -->
-          <p><strong>Humidity:</strong> {{ weatherData()?.humidity }}%</p>
-          <p><strong>Pressure:</strong> {{ weatherData()?.pressure }} hPa</p>
-          <p><strong>Wind:</strong> {{ weatherData()?.windSpeed }} km/h</p>
-        </div>
-
-        <!--    Horizontal scrollable with forecast for 16 days    -->
-      </div>
-        <p-scroll-panel *ngIf="dailyForecast() && dailyForecast().length > 0 && !loading()">
+      }
+      @if (dailyForecast() && dailyForecast().length > 0 && !loading()) {
+        <p-scroll-panel>
           <div class="flex flex-row w-fit mt-2">
-            <div *ngFor="let forecast of dailyForecast(); let i = index" [className]="getForecastClass()">
-              <p class="text-sm font-medium">{{ forecast.date }}</p>
-              <div class="size-16 p-2">
-                <ng-lottie [options]="dailyForecastAnimationOptions()[i]" class="w-full h-full"></ng-lottie>
+            @for (forecast of dailyForecast(); track forecast; let i = $index) {
+              <div [className]="getForecastClass()">
+                <p class="text-sm font-medium">{{ forecast.date }}</p>
+                <div class="size-16 p-2">
+                  <ng-lottie [options]="dailyForecastAnimationOptions()[i]" class="w-full h-full"></ng-lottie>
+                </div>
+                <p class="text-lg font-medium">{{ forecast.dayTemperature | number: '1.0-0' }}°C</p>
+                <p class="text-xs text-gray-600">Min: {{ forecast.minTemperature | number: '1.0-0' }}°C</p>
+                <p class="text-xs text-gray-600">Max: {{ forecast.maxTemperature | number: '1.0-0' }}°C</p>
               </div>
-              <p class="text-lg font-medium">{{ forecast.dayTemperature | number: '1.0-0' }}°C</p>
-              <p class="text-xs text-gray-600">Min: {{ forecast.minTemperature | number: '1.0-0' }}°C</p>
-              <p class="text-xs text-gray-600">Max: {{ forecast.maxTemperature | number: '1.0-0' }}°C</p>
-            </div>
+            }
           </div>
         </p-scroll-panel>
+      }
 
       <!-- Placeholder Text -->
-      <div *ngIf="!loading() && !weatherData()" class="text-center text-gray-500">
-        <p>Select a city to view the weather</p>
-      </div>
+      @if (!loading() && !weatherData()) {
+        <div class="text-center text-gray-500">
+          <p>Select a city to view the weather</p>
+        </div>
+      }
     </p-scroll-panel>
   </ng-template>
 

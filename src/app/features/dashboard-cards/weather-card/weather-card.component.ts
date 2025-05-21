@@ -3,7 +3,7 @@ import { WeatherService } from '../../../core/services/weather.service';
 import { FieldService } from '../../../core/services/field.service';
 import { DailyForecastWithAnimationResponse, WeatherResponse } from '../../../core/models/weather.model';
 import { CityOption, GetFieldCoordinatesResponse, GetFieldsCitiesResponse } from '../../../core/models/field.model';
-import { DatePipe, DecimalPipe, NgForOf, NgIf } from '@angular/common';
+import { DatePipe, DecimalPipe } from '@angular/common';
 import { AnimationOptions, LottieComponent } from 'ngx-lottie';
 import { FormsModule } from '@angular/forms';
 import { DropdownModule } from 'primeng/dropdown';
@@ -20,13 +20,11 @@ import { Select } from 'primeng/select';
     DropdownModule,
     FormsModule,
     ProgressSpinner,
-    NgIf,
     LottieComponent,
     ScrollPanel,
     DecimalPipe,
-    Select,
-    NgForOf
-  ]
+    Select
+]
 })
 export class WeatherCardComponent implements OnInit {
   cities = signal<CityOption[]>([]);
@@ -104,7 +102,7 @@ export class WeatherCardComponent implements OnInit {
   }
 
   fetchForecast(lat: number, lon: number): void {
-    this.weatherService.getDailyForecast(lat, lon, 16).subscribe({
+    this.weatherService.getDailyForecast(lat, lon, 30).subscribe({
       next: (forecastData) => {
         this.dailyForecast.set(forecastData);
         this.dailyForecastAnimationOptions.set(

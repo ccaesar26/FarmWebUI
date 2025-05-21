@@ -3,14 +3,15 @@
     <p-card header="Crop Details">
       <p-floatlabel variant="on" class="block w-full mt-2">
         <p-select id="name" [options]="cropEntries()" formControlName="selectedCrop" optionLabel="name"
-                  [filter]="true" filterBy="name" appendTo="body"></p-select>
+        [filter]="true" filterBy="name" appendTo="body"></p-select>
         <label for="name">Crop Name</label>
       </p-floatlabel>
 
       <div class="my-4">
-        <p-message severity="error"
-                   *ngIf="cropForm.controls.selectedCrop.errors?.['required'] && (cropForm.controls.selectedCrop.dirty || cropForm.controls.selectedCrop.touched || submitted())"
-                   text="Crop name is required"></p-message>
+        @if (cropForm.controls.selectedCrop.errors?.['required'] && (cropForm.controls.selectedCrop.dirty || cropForm.controls.selectedCrop.touched || submitted())) {
+          <p-message severity="error"
+          text="Crop name is required"></p-message>
+        }
       </div>
 
       <p-floatlabel variant="on" class="block w-full">
@@ -22,48 +23,56 @@
     <p-card header="Planting Details" class="mt-4">
       <p-floatlabel variant="on" class="block w-full mt-2">
         <p-calendar id="plantingDate" [formControl]="cropForm.controls.plantingDate" dateFormat="yy-mm-dd"
-                    [showIcon]="true" appendTo="body"></p-calendar>
+        [showIcon]="true" appendTo="body"></p-calendar>
         <label for="plantingDate">Planting Date</label>
       </p-floatlabel>
 
-      <p-floatlabel *ngIf="cropForm.controls.selectedCrop.value && !cropForm.controls.selectedCrop.value.isPerennial"
-                    variant="on" class="block w-full mt-4">
-        <p-panel showHeader="false" id="expectedHarvestDatesNp">
-          <div #calendarContainer1 class="flex flex-row w-full gap-2 mt-4">
-            <p-calendar [formControl]="cropForm.controls.expectedHarvestPeriod" selectionMode="range"
-                        dateFormat="yy-mm-dd" [showIcon]="true" class="z-10 w-full" appendTo="calendarContainer1"
-                        placeholder="Harvest period"></p-calendar>
-            <label for="expectedHarvestDatesNp" *ngIf="cropForm.controls.selectedCrop.value">Expected Harvest
-              Period</label>
-          </div>
-        </p-panel>
-      </p-floatlabel>
+      @if (cropForm.controls.selectedCrop.value && !cropForm.controls.selectedCrop.value.isPerennial) {
+        <p-floatlabel
+          variant="on" class="block w-full mt-4">
+          <p-panel showHeader="false" id="expectedHarvestDatesNp">
+            <div #calendarContainer1 class="flex flex-row w-full gap-2 mt-4">
+              <p-calendar [formControl]="cropForm.controls.expectedHarvestPeriod" selectionMode="range"
+                dateFormat="yy-mm-dd" [showIcon]="true" class="z-10 w-full" appendTo="calendarContainer1"
+              placeholder="Harvest period"></p-calendar>
+              @if (cropForm.controls.selectedCrop.value) {
+                <label for="expectedHarvestDatesNp">Expected Harvest
+                Period</label>
+              }
+            </div>
+          </p-panel>
+        </p-floatlabel>
+      }
 
-      <p-floatlabel *ngIf="cropForm.controls.selectedCrop.value && cropForm.controls.selectedCrop.value.isPerennial"
-                    variant="on" class="block w-full mt-4">
-        <p-panel showHeader="false" id="expectedHarvestDatesP" class="z-10">
-          <div class="flex flex-col w-full gap-4 mt-1">
-            <p-floatlabel variant="on" class="block w-full mt-4">
-              <p-calendar [formControl]="cropForm.controls.expectedEarlyHarvestPeriod" selectionMode="range"
-                          dateFormat="yy-mm-dd" [showIcon]="true" class="z-20 w-full" appendTo="body"
-                          placeholder="Harvest period" id="early"></p-calendar>
-              <label for="early">Early Harvest</label>
-            </p-floatlabel>
-            <p-floatlabel variant="on" class="block w-full">
-              <p-calendar [formControl]="cropForm.controls.expectedLateHarvestPeriod" selectionMode="range"
-                          dateFormat="yy-mm-dd" [showIcon]="true" class="z-20 w-full" appendTo="body"
-                          placeholder="Harvest period" id="late"></p-calendar>
-              <label for="late">Late Harvest</label>
-            </p-floatlabel>
-            <label for="expectedHarvestDatesP" *ngIf="cropForm.controls.selectedCrop.value">Expected Harvest
-              Period</label>
-          </div>
-        </p-panel>
-      </p-floatlabel>
+      @if (cropForm.controls.selectedCrop.value && cropForm.controls.selectedCrop.value.isPerennial) {
+        <p-floatlabel
+          variant="on" class="block w-full mt-4">
+          <p-panel showHeader="false" id="expectedHarvestDatesP" class="z-10">
+            <div class="flex flex-col w-full gap-4 mt-1">
+              <p-floatlabel variant="on" class="block w-full mt-4">
+                <p-calendar [formControl]="cropForm.controls.expectedEarlyHarvestPeriod" selectionMode="range"
+                  dateFormat="yy-mm-dd" [showIcon]="true" class="z-20 w-full" appendTo="body"
+                placeholder="Harvest period" id="early"></p-calendar>
+                <label for="early">Early Harvest</label>
+              </p-floatlabel>
+              <p-floatlabel variant="on" class="block w-full">
+                <p-calendar [formControl]="cropForm.controls.expectedLateHarvestPeriod" selectionMode="range"
+                  dateFormat="yy-mm-dd" [showIcon]="true" class="z-20 w-full" appendTo="body"
+                placeholder="Harvest period" id="late"></p-calendar>
+                <label for="late">Late Harvest</label>
+              </p-floatlabel>
+              @if (cropForm.controls.selectedCrop.value) {
+                <label for="expectedHarvestDatesP">Expected Harvest
+                Period</label>
+              }
+            </div>
+          </p-panel>
+        </p-floatlabel>
+      }
 
       <p-floatlabel variant="on" class="block w-full mt-4">
         <p-select id="field" [options]="fieldsEntries()" formControlName="field" optionLabel="name"
-                  [filter]="true" filterBy="name" appendTo="body"></p-select>
+        [filter]="true" filterBy="name" appendTo="body"></p-select>
         <label for="field">Field</label>
       </p-floatlabel>
 

@@ -8,7 +8,7 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { PasswordDirective } from 'primeng/password';
 import { Button } from 'primeng/button';
 import { Router } from '@angular/router';
-import { NgIf } from '@angular/common';
+
 import { AuthService } from '../../../core/services/auth.service';
 import { finalize } from 'rxjs';
 
@@ -22,9 +22,8 @@ import { finalize } from 'rxjs';
     InputText,
     ReactiveFormsModule,
     PasswordDirective,
-    Button,
-    NgIf
-  ],
+    Button
+],
   templateUrl: './register.component.html',
   styleUrl: './register.component.scss'
 })

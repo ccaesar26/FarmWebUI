@@ -1,58 +1,61 @@
 <h2 class="text-3xl font-bold my-4 ml-4">Planted Crops</h2>
 
-<div *ngIf="isLoading()" class="flex justify-content-center align-items-center w-full h-full">
-  <div style="min-height: 200px;">
-    <p-progressSpinner></p-progressSpinner>
+@if (isLoading()) {
+  <div class="flex justify-content-center align-items-center w-full h-full">
+    <div style="min-height: 200px;">
+      <p-progressSpinner></p-progressSpinner>
+    </div>
   </div>
-</div>
+}
 
-<p-card *ngIf="!isLoading()">
-        <p-button label="New" icon="pi pi-plus" class="mr-2" (onClick)="openNew()"/>
-  <p-table [value]="crops">
-    <ng-template #caption>
-      <ng-template #end>
-<!--        <p-button severity="danger" label="Delete" icon="pi pi-trash" outlined (onClick)="deleteSelectedPeople()"-->
-<!--                  [disabled]="!selectedWorkers || !selectedWorkers.length"/>-->
+@if (!isLoading()) {
+  <p-card>
+    <p-button label="New" icon="pi pi-plus" class="mr-2" (onClick)="openNew()"/>
+    <p-table [value]="crops">
+      <ng-template #caption>
+        <ng-template #end>
+          <!--        <p-button severity="danger" label="Delete" icon="pi pi-trash" outlined (onClick)="deleteSelectedPeople()"-->
+          <!--                  [disabled]="!selectedWorkers || !selectedWorkers.length"/>-->
+        </ng-template>
       </ng-template>
-    </ng-template>
-    <ng-template #header>
-      <tr>
-        <th style="width: 3rem">
-          <p-tableHeaderCheckbox/>
-        </th>
-        <th pSortableColumn="cropName" style="width:16rem">
-          Crop Name
-          <p-sortIcon field="cropName"/>
-        </th>
-        <th pSortableColumn="cultivatedVariety" style="width:16rem">
-          Cultivated Variety
-          <p-sortIcon field="cultivatedVariety"/>
-        </th>
-        <th pSortableColumn="plantingDate" style="width:16rem">
-          Planting Date
-          <p-sortIcon field="plantingDate"/>
-        </th>
-      </tr>
-    </ng-template>
-    <ng-template pTemplate="body" let-crop>
-      <tr>
-        <td>
-          <p-tableCheckbox [value]="crop"/>
-        </td>
-        <td>{{ crop.name }}</td>
-        <td>{{ crop.cultivatedVariety }}</td>
-        <td>{{ crop.plantingDate | date: 'longDate' }}</td>
-      </tr>
-    </ng-template>
-  </p-table>
-
-  <p-dialog
-    header="Register new planting"
-    [visible]="displayModal()"
-    [modal]="true"
-    [style]="{width: '512px'}"
-    closable="false"
-    styleClass="p-fluid">
-    <app-planted-crop-form (cancel)="hideDialog()" (save)="createCrop($event)"></app-planted-crop-form>
-  </p-dialog>
-</p-card>
+      <ng-template #header>
+        <tr>
+          <th style="width: 3rem">
+            <p-tableHeaderCheckbox/>
+          </th>
+          <th pSortableColumn="cropName" style="width:16rem">
+            Crop Name
+            <p-sortIcon field="cropName"/>
+          </th>
+          <th pSortableColumn="cultivatedVariety" style="width:16rem">
+            Cultivated Variety
+            <p-sortIcon field="cultivatedVariety"/>
+          </th>
+          <th pSortableColumn="plantingDate" style="width:16rem">
+            Planting Date
+            <p-sortIcon field="plantingDate"/>
+          </th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-crop>
+        <tr>
+          <td>
+            <p-tableCheckbox [value]="crop"/>
+          </td>
+          <td>{{ crop.name }}</td>
+          <td>{{ crop.cultivatedVariety }}</td>
+          <td>{{ crop.plantingDate | date: 'longDate' }}</td>
+        </tr>
+      </ng-template>
+    </p-table>
+    <p-dialog
+      header="Register new planting"
+      [visible]="displayModal()"
+      [modal]="true"
+      [style]="{width: '512px'}"
+      closable="false"
+      styleClass="p-fluid">
+      <app-planted-crop-form (cancel)="hideDialog()" (save)="createCrop($event)"></app-planted-crop-form>
+    </p-dialog>
+  </p-card>
+}

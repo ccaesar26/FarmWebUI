@@ -51,3 +51,15 @@ export function CalculateArea(field: Field) {
     return null; // Or handle the error as needed
   }
 }
+
+export function GetFieldCenterCoordinates(field: Field): {lon: number, lat: number} {
+  try {
+    const coordinates = field.boundary.coordinates[0];
+    const centerIndex = Math.floor(coordinates.length / 2);
+    const centerCoordinate = coordinates[centerIndex];
+    return { lon: centerCoordinate[0], lat: centerCoordinate[1] };
+  } catch (error) {
+    console.error('Error getting field center coordinates:', error);
+    return { lon: 0, lat: 0 }; // Or handle the error as needed
+  }
+}

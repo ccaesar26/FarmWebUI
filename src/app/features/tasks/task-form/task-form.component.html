@@ -4,116 +4,129 @@
     <p-card header="Task Details">
       <p-floatlabel variant="on" class="block w-full mt-2">
         <input id="task-title" pInputText [formControl]="form.controls.title" class="w-full"
-               pTooltip="Enter a title for the task." tooltipPosition="top"/>
-        <label for="task-title">Title</label>
-      </p-floatlabel>
-      <div class="my-4">
-        <p-message severity="error"
-                   *ngIf="form.controls.title.errors?.['required'] && (form.controls.title.dirty || form.controls.title.touched || submitted)"
-                   text="Title is required"></p-message>
-        <p-message severity="error"
-                   *ngIf="form.controls.title.errors?.['minlength'] && (form.controls.title.dirty || form.controls.title.touched || submitted)"
-                   text="Title must be at least 3 characters"></p-message>
-        <p-message severity="error"
-                   *ngIf="form.controls.title.errors?.['maxlength'] && (form.controls.title.dirty || form.controls.title.touched || submitted)"
-                   text="Title cannot exceed 50 characters"></p-message>
-      </div>
-
-      <p-floatlabel variant="on" class="block w-full">
-        <p-select id="task-category" [options]="categoryNames()" [formControl]="form.controls.category" class="w-full"
-                  pTooltip="Select a category for the task." tooltipPosition="top"></p-select>
-        <label for="task-category">Category</label>
-      </p-floatlabel>
-      <div class="my-4"></div>
-
-      <p-floatlabel variant="on" class="block w-full">
-        <textarea id="task-description" pTextarea rows="2" [formControl]="form.controls.description" class="w-full"
-                  pTooltip="Enter a description for the task." tooltipPosition="top"></textarea>
-        <label for="task-description">Description</label>
-      </p-floatlabel>
-      <div class="mt-2.5">
-        <div class="mb-4"
-             *ngIf="form.controls.description.errors?.['maxlength'] && (form.controls.description.dirty || form.controls.description.touched || submitted)">
-          <p-message severity="error" text="Description cannot exceed 5000 characters"></p-message>
-        </div>
-      </div>
-
-      <p-floatlabel variant="on" class="block w-full">
-        <p-select id="task-priority" [options]="priorities" [formControl]="form.controls.priority" class="w-full"
-                  pTooltip="Select a priority for the task." tooltipPosition="top"></p-select>
-        <label for="task-priority">Priority</label>
-      </p-floatlabel>
-      <div>
-        <div class="mt-4"
-             *ngIf="form.controls.priority.errors?.['required'] && (form.controls.priority.dirty || form.controls.priority.touched || submitted)">
-          <p-message severity="error" text="Priority is required"></p-message>
-        </div>
-      </div>
-    </p-card>
-
-    <p-card header="Schedule">
-      <p-floatlabel variant="on" class="block w-full mt-2">
-        <p-calendar id="task-due-date" [formControl]="form.controls.dueDate" dateFormat="yy-mm-dd"
-                    [showIcon]="true"
-                    pTooltip="Enter a due date for the task." tooltipPosition="top"/>
-        <label for="task-due-date">Due Date</label>
-      </p-floatlabel>
-      <div class="my-4"></div>
-
-      <p-floatlabel variant="on" class="block w-full">
-        <p-select id="task-recurrence-type" [options]="recurrenceTypes" [formControl]="form.controls.recurrenceType"
-                  class="w-full"
-                  pTooltip="Select a recurrence type for the task." tooltipPosition="top"></p-select>
-        <label for="task-recurrence-type">Recurrence Type</label>
-      </p-floatlabel>
-      <div>
-        <p-message severity="error" class="my-4"
-                   *ngIf="form.controls.recurrenceType.errors?.['required'] && (form.controls.recurrenceType.dirty || form.controls.recurrenceType.touched || submitted)"
-                   text="Recurrence Type is required"></p-message>
-      </div>
-
-      <div *ngIf="isRecurring()" class="mt-2">
-        <p-floatlabel variant="on" class="block w-full">
-          <p-calendar id="recurrence-end-date" [formControl]="form.controls.recurrenceEndDate" dateFormat="yy-mm-dd"
-                      [showIcon]="true"
-                      pTooltip="Enter a recurrence end date for the task." tooltipPosition="top"/>
-          <label for="recurrence-end-date">Recurrence End Date</label>
+          pTooltip="Enter a title for the task." tooltipPosition="top"/>
+          <label for="task-title">Title</label>
         </p-floatlabel>
-      </div>
-    </p-card>
-
-    <p-card header="Assignees">
-      <p-floatlabel variant="on" class="block w-full mt-2">
-        <p-multiSelect id="task-assignees" [options]="workerNames()" [formControl]="form.controls.assignees"
-                       filterPlaceHolder="Search" class="w-full" display="chip"
-                       pTooltip="Select assignees for the task." tooltipPosition="top"></p-multiSelect>
-        <label for="task-assignees">Assignees</label>
-      </p-floatlabel>
-      <div>
-        <p-message severity="error" class="my-4"
-                   *ngIf="form.controls.assignees.errors?.['required'] && (form.controls.assignees.dirty || form.controls.assignees.touched || submitted)"
-                   text="Assignees are required"></p-message>
-      </div>
-    </p-card>
-
-    <p-card header="Location">
-      <p-floatlabel variant="on" class="block w-full mt-2">
-        <p-select id="task-location" [options]="locationNames()" [formControl]="form.controls.location" class="w-full"
-                  pTooltip="Select a location for the task." tooltipPosition="top"></p-select>
-        <label for="task-location">Location</label>
-      </p-floatlabel>
-      <div>
-        <div class="mt-4"
-             *ngIf="form.controls.location.errors?.['required'] && (form.controls.location.dirty || form.controls.location.touched || submitted)">
-          <p-message severity="error" text="Location is required"></p-message>
+        <div class="my-4">
+          @if (form.controls.title.errors?.['required'] && (form.controls.title.dirty || form.controls.title.touched || submitted)) {
+            <p-message severity="error"
+            text="Title is required"></p-message>
+          }
+          @if (form.controls.title.errors?.['minlength'] && (form.controls.title.dirty || form.controls.title.touched || submitted)) {
+            <p-message severity="error"
+            text="Title must be at least 3 characters"></p-message>
+          }
+          @if (form.controls.title.errors?.['maxlength'] && (form.controls.title.dirty || form.controls.title.touched || submitted)) {
+            <p-message severity="error"
+            text="Title cannot exceed 50 characters"></p-message>
+          }
         </div>
-      </div>
-    </p-card>
 
-    <div class="flex justify-content-end">
-      <button pButton type="button" label="Cancel" (click)="onCancel()" class="p-button-text mr-2"></button>
-      <button pButton type="submit" label="Save" [disabled]="!form.valid" [loading]="submitting"></button>
-    </div>
-  </form>
+        <p-floatlabel variant="on" class="block w-full">
+          <p-select id="task-category" [options]="categoryNames()" [formControl]="form.controls.category" class="w-full"
+          pTooltip="Select a category for the task." tooltipPosition="top"></p-select>
+          <label for="task-category">Category</label>
+        </p-floatlabel>
+        <div class="my-4"></div>
 
-</p-fluid>
+        <p-floatlabel variant="on" class="block w-full">
+          <textarea id="task-description" pTextarea rows="2" [formControl]="form.controls.description" class="w-full"
+          pTooltip="Enter a description for the task." tooltipPosition="top"></textarea>
+          <label for="task-description">Description</label>
+        </p-floatlabel>
+        <div class="mt-2.5">
+          @if (form.controls.description.errors?.['maxlength'] && (form.controls.description.dirty || form.controls.description.touched || submitted)) {
+            <div class="mb-4"
+              >
+              <p-message severity="error" text="Description cannot exceed 5000 characters"></p-message>
+            </div>
+          }
+        </div>
+
+        <p-floatlabel variant="on" class="block w-full">
+          <p-select id="task-priority" [options]="priorities" [formControl]="form.controls.priority" class="w-full"
+          pTooltip="Select a priority for the task." tooltipPosition="top"></p-select>
+          <label for="task-priority">Priority</label>
+        </p-floatlabel>
+        <div>
+          @if (form.controls.priority.errors?.['required'] && (form.controls.priority.dirty || form.controls.priority.touched || submitted)) {
+            <div class="mt-4"
+              >
+              <p-message severity="error" text="Priority is required"></p-message>
+            </div>
+          }
+        </div>
+      </p-card>
+
+      <p-card header="Schedule">
+        <p-floatlabel variant="on" class="block w-full mt-2">
+          <p-calendar id="task-due-date" [formControl]="form.controls.dueDate" dateFormat="yy-mm-dd"
+            [showIcon]="true"
+            pTooltip="Enter a due date for the task." tooltipPosition="top"/>
+            <label for="task-due-date">Due Date</label>
+          </p-floatlabel>
+          <div class="my-4"></div>
+
+          <p-floatlabel variant="on" class="block w-full">
+            <p-select id="task-recurrence-type" [options]="recurrenceTypes" [formControl]="form.controls.recurrenceType"
+              class="w-full"
+            pTooltip="Select a recurrence type for the task." tooltipPosition="top"></p-select>
+            <label for="task-recurrence-type">Recurrence Type</label>
+          </p-floatlabel>
+          <div>
+            @if (form.controls.recurrenceType.errors?.['required'] && (form.controls.recurrenceType.dirty || form.controls.recurrenceType.touched || submitted)) {
+              <p-message severity="error" class="my-4"
+              text="Recurrence Type is required"></p-message>
+            }
+          </div>
+
+          @if (isRecurring()) {
+            <div class="mt-2">
+              <p-floatlabel variant="on" class="block w-full">
+                <p-calendar id="recurrence-end-date" [formControl]="form.controls.recurrenceEndDate" dateFormat="yy-mm-dd"
+                  [showIcon]="true"
+                  pTooltip="Enter a recurrence end date for the task." tooltipPosition="top"/>
+                  <label for="recurrence-end-date">Recurrence End Date</label>
+                </p-floatlabel>
+              </div>
+            }
+          </p-card>
+
+          <p-card header="Assignees">
+            <p-floatlabel variant="on" class="block w-full mt-2">
+              <p-multiSelect id="task-assignees" [options]="workerNames()" [formControl]="form.controls.assignees"
+                filterPlaceHolder="Search" class="w-full" display="chip"
+              pTooltip="Select assignees for the task." tooltipPosition="top"></p-multiSelect>
+              <label for="task-assignees">Assignees</label>
+            </p-floatlabel>
+            <div>
+              @if (form.controls.assignees.errors?.['required'] && (form.controls.assignees.dirty || form.controls.assignees.touched || submitted)) {
+                <p-message severity="error" class="my-4"
+                text="Assignees are required"></p-message>
+              }
+            </div>
+          </p-card>
+
+          <p-card header="Location">
+            <p-floatlabel variant="on" class="block w-full mt-2">
+              <p-select id="task-location" [options]="locationNames()" [formControl]="form.controls.location" class="w-full"
+              pTooltip="Select a location for the task." tooltipPosition="top"></p-select>
+              <label for="task-location">Location</label>
+            </p-floatlabel>
+            <div>
+              @if (form.controls.location.errors?.['required'] && (form.controls.location.dirty || form.controls.location.touched || submitted)) {
+                <div class="mt-4"
+                  >
+                  <p-message severity="error" text="Location is required"></p-message>
+                </div>
+              }
+            </div>
+          </p-card>
+
+          <div class="flex justify-content-end">
+            <button pButton type="button" label="Cancel" (click)="onCancel()" class="p-button-text mr-2"></button>
+            <button pButton type="submit" label="Save" [disabled]="!form.valid" [loading]="submitting"></button>
+          </div>
+        </form>
+
+      </p-fluid>

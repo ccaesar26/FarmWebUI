@@ -1,0 +1,59 @@
+<div class="flex flex-col h-[60vh] md:h-[70vh]"> <!-- Adjust height as needed -->
+  @if (isLoading()) {
+    <div class="flex-grow flex items-center justify-center">
+      <p-progressSpinner ariaLabel="Loading comments"></p-progressSpinner>
+    </div>
+  } @else {
+    <!-- Comments Area -->
+    <div #scrollMe class="flex-grow overflow-y-auto p-3 space-y-4 mb-3 custom-scrollbar">
+      @if (comments().length === 0) {
+        <div class="text-center text-surface-500 dark:text-surface-400 py-8">
+          <i class="pi pi-comments text-4xl mb-2"></i>
+          <p>No comments yet. Be the first to add one!</p>
+        </div>
+      }
+      @for (comment of comments(); track comment.id) {
+        <div class="flex gap-3" [ngClass]="{'justify-end': comment.userId === currentUserId()}">
+          @if (comment.userId !== currentUserId()) { <!-- Avatar for others -->
+            <p-avatar [label]="getInitials(getUserById(comment.userId)?.username)"
+                      shape="circle"
+                      styleClass="mt-1 flex-shrink-0"></p-avatar>
+          }
+          <div class="max-w-[75%]">
+            <div class="p-3 rounded-lg break-words"
+                 [ngClass]="comment.userId === currentUserId() ? 'bg-primary-500 text-primary-contrast' : 'bg-surface-100 dark:bg-surface-700 text-surface-800 dark:text-surface-100'">
+              <p class="text-sm">{{ comment.comment }}</p>
+            </div>
+            <div class="text-xs mt-1" [ngClass]="comment.userId === currentUserId() ? 'text-right text-surface-500 dark:text-surface-400' : 'text-left text-surface-500 dark:text-surface-400'">
+              @if(comment.userId !== currentUserId()){
+                <span class="font-medium">{{ getUserById(comment.userId)?.username || 'User' }} • </span>
+              }
+              <span>{{ comment.createdAt | date:'shortTime' }}</span>
+              <span class="mx-1">•</span>
+              <span>{{ comment.createdAt | date:'shortDate' }}</span>
+            </div>
+          </div>
+          @if (comment.userId === currentUserId()) { <!-- Avatar for current user on the right -->
+            <p-avatar [label]="getInitials(getUserById(comment.userId)?.username)"
+                      shape="circle"
+                      styleClass="mt-1 flex-shrink-0 bg-primary-400 text-primary-contrast"></p-avatar>
+          }
+        </div>
+      }
+    </div>
+
+    <!-- New Comment Input Area -->
+    <div class="p-3 border-t border-surface-200 dark:border-surface-700 flex items-center gap-2 flex-shrink-0">
+      <textarea pInputTextarea [(ngModel)]="newCommentText"
+                placeholder="Type your comment..."
+                rows="1" [autoResize]="true"
+                class="flex-grow text-sm"
+                (keydown.enter)="submitComment(); $event.preventDefault()"></textarea>
+      <button pButton icon="pi pi-send"
+              (click)="submitComment()"
+              [disabled]="newCommentText().trim() === '' || isSubmitting()"
+              [loading]="isSubmitting()"
+              aria-label="Send Comment"></button>
+    </div>
+  }
+</div>

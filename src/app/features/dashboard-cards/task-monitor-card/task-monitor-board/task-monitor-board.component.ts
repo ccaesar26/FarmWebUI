@@ -24,11 +24,13 @@ import { TaskFormComponent } from '../../../tasks/task-form/task-form.component'
 import { UserProfileDto } from '../../../../core/models/user-profile.model';
 import { Field } from '../../../../core/models/field.model';
 import { UserService } from '../../../../core/services/user.service';
+import { TaskCommentsComponent } from '../../../tasks/task-comments/task-comments.component';
+import { Tooltip } from 'primeng/tooltip';
 
 @Component({
   selector: 'app-task-monitor-board',
   standalone: true,
-  imports: [ CommonModule, CardModule, TagModule, ScrollPanelModule, ButtonDirective, ProgressSpinner, Dialog, TaskFormComponent ], // Add ScrollPanelModule
+  imports: [ CommonModule, CardModule, TagModule, ScrollPanelModule, ButtonDirective, ProgressSpinner, Dialog, TaskFormComponent, TaskCommentsComponent, Tooltip ], // Add ScrollPanelModule
   templateUrl: './task-monitor-board.component.html',
   styleUrls: [ './task-monitor-board.component.scss' ]
 })
@@ -49,6 +51,9 @@ export class TaskMonitorBoardComponent implements OnInit {
   categories: WritableSignal<TaskCategoryDto[]> = signal([]);
   workers: WritableSignal<UserProfileDto[]> = signal([]);
   fields: WritableSignal<Field[]> = signal([]);
+
+  displayCommentsModal: WritableSignal<boolean> = signal(false);
+  selectedTaskForComments = signal<Task | null>(null);
 
   constructor(
     private taskService: FarmerTasksService,
@@ -298,5 +303,21 @@ export class TaskMonitorBoardComponent implements OnInit {
   }
 
   updateTaskInFarm(task: Task) {
+  }
+
+  openComments(task: Task): void {
+    this.selectedTaskForComments.set(task);
+    this.displayCommentsModal.set(true);
+  }
+
+  onCloseCommentsModal(): void {
+    this.displayCommentsModal.set(false);
+    this.selectedTaskForComments.set(null);
+    // IMPORTANT: After closing comments, the commentsCount on the task card might be stale.
+    // If SignalR for tasks doesn't automatically update the specific task item,
+    // you might need to refetch the specific task or the whole list.
+    // For now, we assume the task list refresh via SignalR (onTasksUpdate) will handle it.
+    // Or, the TaskCommentsComponent could emit an event on new comment.
+    this.loadTasks(); // Force reload tasks to update comment counts
   }
 }

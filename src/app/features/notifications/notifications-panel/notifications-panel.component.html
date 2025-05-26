@@ -1,0 +1,127 @@
+<!-- Toast for real-time notifications -->
+<!--<p-toast></p-toast>-->
+
+<div class="notifications-container p-3 h-full flex flex-col">
+  <!-- Header can be added here if needed, e.g., title "Notifications" -->
+  <!--
+  <div class="flex justify-between items-center mb-3">
+    <h2 class="text-xl font-semibold">Notifications</h2>
+    <p class="text-sm text-surface-500">Status: {{ connectionStatus() }}</p>
+  </div>
+  -->
+
+  @if (connectionStatus() === 'connecting') {
+    <div class="flex-grow flex items-center justify-center">
+      <p class="text-surface-500">Connecting to notification service...</p>
+      <!-- Or a p-progressSpinner -->
+    </div>
+  } @else if (connectionStatus() === 'error') {
+    <div class="flex-grow flex items-center justify-center">
+      <p class="text-red-500">Error connecting to notification service.</p>
+      <!-- Add a retry button if desired -->
+    </div>
+  } @else {
+    <p-accordion [activeIndex]="0" class="flex-grow overflow-hidden flex flex-col">
+      <!-- Unread Notifications Section -->
+      <p-accordionTab>
+        <ng-template pTemplate="header">
+          <div class="flex align-items-center gap-2 w-full justify-between">
+            <span class="font-bold white-space-nowrap">Unread</span>
+            @if (unreadNotifications().length > 0) {
+              <p-badge [value]="unreadNotifications().length" severity="danger"></p-badge>
+            }
+          </div>
+        </ng-template>
+        <ng-template pTemplate="content">
+          @if (unreadNotifications().length === 0) {
+            <div class="text-center p-4 text-surface-500">
+              <i class="pi pi-check-circle text-3xl mb-2"></i>
+              <p>No unread notifications. All caught up!</p>
+            </div>
+          } @else {
+            <div class="flex justify-end mb-2">
+              <button pButton type="button" label="Mark all as read" icon="pi pi-check-square"
+                      class="p-button-sm p-button-text" (click)="markAllAsRead()"></button>
+            </div>
+            <div class="notification-list max-h-[calc(100vh-300px)] overflow-y-auto p-1"> <!-- Adjust max-h as needed -->
+              @for (notification of unreadNotifications(); track notification.id) {
+                <p-card styleClass="notification-card shadow-md hover:shadow-lg transition-shadow duration-200 mt-2">
+                  <ng-template pTemplate="header">
+                    <!-- Optional: Image or icon related to notification type -->
+                  </ng-template>
+                  <ng-template pTemplate="title">
+                    <div class="flex items-center justify-between">
+                      <span class="text-lg font-semibold text-primary-600 dark:text-primary-400">{{ notification.title }}</span>
+                      <button pButton pRipple type="button" icon="pi pi-check"
+                              pTooltip="Mark as read" tooltipPosition="top"
+                              class="p-button-rounded p-button-text p-button-sm"
+                              (click)="markAsRead(notification)"></button>
+                    </div>
+                  </ng-template>
+                  <ng-template pTemplate="subtitle">
+                    <div class="flex items-center text-xs text-surface-500 dark:text-surface-400 gap-2">
+                      <p-avatar [label]="getInitials(notification.userName)" shape="circle"></p-avatar>
+                      <span>{{ notification.userName }}</span>
+                      <span>•</span>
+                      <span>{{ notification.timestamp | date:'short' }}</span>
+                    </div>
+                  </ng-template>
+                  <p class="text-sm text-surface-700 dark:text-surface-300">
+                    {{ notification.message }}
+                  </p>
+                  <!-- Optional: Add a footer for actions like "View Details" -->
+                  <!--
+                  <ng-template pTemplate="footer">
+                    <p-button label="View Details" styleClass="p-button-link p-button-sm"></p-button>
+                  </ng-template>
+                  -->
+                </p-card>
+              }
+            </div>
+          }
+        </ng-template>
+      </p-accordionTab>
+
+      <!-- Read Notifications Section -->
+      <p-accordionTab>
+        <ng-template pTemplate="header">
+          <div class="flex align-items-center gap-2 w-full justify-between">
+            <span class="font-bold white-space-nowrap">Read</span>
+          </div>
+        </ng-template>
+        <ng-template pTemplate="content">
+          @if (readNotifications().length === 0) {
+            <div class="text-center p-4 text-surface-500">
+              <i class="pi pi-history text-3xl mb-2"></i>
+              <p>No previously read notifications.</p>
+            </div>
+          } @else {
+            <div class="notification-list max-h-[calc(100vh-300px)] overflow-y-auto p-1"> <!-- Adjust max-h as needed -->
+              @for (notification of readNotifications(); track notification.id) {
+                <p-card styleClass="notification-card shadow-sm opacity-80 mt-2">
+                  <ng-template pTemplate="title">
+                    <div class="flex items-center justify-between">
+                      <span class="text-lg font-semibold text-surface-700 dark:text-surface-300">{{ notification.title }}</span>
+                      <!-- No action button for read notifications, or maybe a "delete" -->
+                    </div>
+                  </ng-template>
+                  <ng-template pTemplate="subtitle">
+                    <div class="flex items-center text-xs text-surface-500 dark:text-surface-400 gap-2">
+                      <p-avatar [label]="getInitials(notification.userName)" shape="circle"></p-avatar>
+                      <span>{{ notification.userName }}</span>
+                      <span>•</span>
+                      <span>{{ notification.timestamp | date:'short' }}</span>
+                    </div>
+                  </ng-template>
+                  <p class="text-sm text-surface-600 dark:text-surface-400">
+                    {{ notification.message }}
+                  </p>
+                </p-card>
+              }
+            </div>
+          }
+        </ng-template>
+      </p-accordionTab>
+    </p-accordion>
+  }
+</div>

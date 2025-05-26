@@ -4,14 +4,16 @@ import { SideMenuComponent } from '../../components/side-menu/side-menu.componen
 import { Button, ButtonDirective } from 'primeng/button';
 import { NgClass } from '@angular/common';
 import { Ripple } from 'primeng/ripple';
-import { Badge } from 'primeng/badge';
-import { OverlayBadge } from 'primeng/overlaybadge';
+import { BadgeDirective } from 'primeng/badge';
 import { Drawer } from 'primeng/drawer';
 import { Avatar } from 'primeng/avatar';
 import { Menu } from 'primeng/menu';
 import { AuthService } from '../../services/auth.service';
 import { UserProfileService } from '../../services/user-profile.service';
 import { MenuItem } from 'primeng/api';
+import {
+  NotificationsPanelComponent
+} from '../../../features/notifications/notifications-panel/notifications-panel.component';
 
 @Component({
   selector: 'app-main-layout',
@@ -21,11 +23,12 @@ import { MenuItem } from 'primeng/api';
     Button,
     NgClass,
     Ripple,
-    OverlayBadge,
     Drawer,
     Avatar,
     Menu,
-    ButtonDirective
+    ButtonDirective,
+    NotificationsPanelComponent,
+    BadgeDirective
   ],
   templateUrl: './main-layout.component.html',
   styleUrl: './main-layout.component.scss'
@@ -72,5 +75,9 @@ export class MainLayoutComponent implements OnInit {
   logout() {
     this.authService.logout();
     this.router.navigate([ '/login' ]);
+  }
+
+  onNotificationCountChanged(newCount: number) {
+    this.notificationCount.set(newCount);
   }
 }

@@ -6,30 +6,35 @@ import { RegisterRequest, RegisterResponse } from '../models/auth.model';
 import { UpdateUserRequest, UpdateUserResponse, User, UserDto } from '../models/user.model';
 
 @Injectable(
-  {providedIn: 'root'}
+  { providedIn: 'root' }
 )
 export class UserService {
-  private apiUrl = `${ environment.apiUrl }/users`;
+  private apiUrl = `${environment.apiUrl}/users`;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) {
+  }
 
   getCurrentUser(): Observable<UserDto> {
-    return this.http.get<UserDto>(`${ this.apiUrl }/user`);
+    return this.http.get<UserDto>(`${this.apiUrl}/user`);
   }
 
   createUser(request: RegisterRequest): Observable<RegisterResponse> {
-    return this.http.post<RegisterResponse>(`${ this.apiUrl }/create`, request);
+    return this.http.post<RegisterResponse>(`${this.apiUrl}/create`, request);
   }
 
   updateUser(request: UpdateUserRequest): Observable<UpdateUserResponse> {
-    return this.http.put<UpdateUserResponse>(`${ this.apiUrl }/update`, request);
+    return this.http.put<UpdateUserResponse>(`${this.apiUrl}/update`, request);
   }
 
   getWorkerUsers(): Observable<User[]> {
-    return this.http.get<User[]>(`${ this.apiUrl }/workers`);
+    return this.http.get<User[]>(`${this.apiUrl}/workers`);
   }
 
   deleteUser(id: string) {
-    return this.http.delete(`${ this.apiUrl }/${ id }`);
+    return this.http.delete(`${this.apiUrl}/${id}`);
+  }
+
+  getUserById(userId: string): Observable<UserDto> {
+    return this.http.get<UserDto>(`${this.apiUrl}/${userId}`);
   }
 }

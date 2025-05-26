@@ -15,20 +15,7 @@ export const authInterceptorFn: HttpInterceptorFn = (req: HttpRequest<any>, next
   const router = inject(Router);
 
   const handleRequest = (request: HttpRequest<any>) => {
-    // if (request.url.includes(environment.apiUrl) && authService.isAuthenticated()) {
-      // const authToken = authService.getAccessToken();
-      // if (authToken) {
-        request = request.clone({
-          // setHeaders: {
-          //   'Authorization': `Bearer ${authToken}`
-          // },
-          withCredentials: true // Keep this for cookie forwarding if needed
-        });
-      // } else {
-      //   request = request.clone({ withCredentials: true });
-      // }
-    // } else
-      if (request.url.includes(environment.apiUrl)) {
+    if (request.url.includes(environment.apiUrl || environment.baseUrl)) {
       request = request.clone({ withCredentials: true });
     }
     return next(request);
@@ -58,7 +45,7 @@ function handle401Error(req: HttpRequest<any>, next: HttpHandlerFn, authService:
       catchError((err) => {
         isRefreshing = false;
         authService.logout();
-        router.navigate(['/login']);
+        router.navigate([ '/login' ]);
         return throwError(() => err);
       })
     );

@@ -1,0 +1,24 @@
+.custom-scrollbar {
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: var(--surface-ground); // Or a lighter/darker shade of your bg
+    border-radius: 10px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: var(--surface-400); // Or your primary color
+    border-radius: 10px;
+    border: 2px solid var(--surface-ground); // Creates padding around thumb
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background-color: var(--surface-500); // Darken on hover
+  }
+
+  /* For Firefox */
+  scrollbar-width: thin;
+  scrollbar-color: var(--surface-400) var(--surface-ground);
+}

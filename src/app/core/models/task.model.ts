@@ -142,13 +142,6 @@ export interface UpdateTaskDto {
   recurrenceEndDate?: string | null;
 }
 
-//Create Task comment
-
-export interface CreateTaskCommentDto {
-  taskId: string;
-  comment: string;
-}
-
 // DTOs for filtering tasks
 export interface TaskFilterDto {
   status?: TaskStatus;
@@ -160,10 +153,16 @@ export interface TaskFilterDto {
   title?: string
 }
 
+//Create Task comment
+export interface CreateTaskCommentDto {
+  taskId: string;
+  comment: string;
+}
+
 export interface TaskCommentDto {
   id: string;
   taskId: string;
-  comment: string;
+  userId: string;
   createdAt: string;
-  createdBy: string;
+  comment: string;
 }

@@ -17,10 +17,11 @@
     <!-- Right side of header: Notifications and Profile -->
     <div class="flex items-center gap-3">
       <!-- Notification Bell -->
-      <p-overlay-badge [badgeDisabled]="notificationCount() === 0">
-        <p-button pRipple icon="pi pi-bell" severity="secondary" [rounded]="true" [text]="true"
-                  (onClick)="this.notificationVisible.set(true)"></p-button>
-      </p-overlay-badge>
+        <p-button pRipple severity="secondary" [rounded]="true" [text]="true" size="large"
+                  (onClick)="this.notificationVisible.set(true)">
+          <i class="pi pi-bell" pBadge [value]="notificationCount()" badgeSize="small"
+             [badgeDisabled]="notificationCount() === 0"></i>
+        </p-button>
 
       <!-- Profile Dropdown -->
       <div class="relative"> <!-- Wrapper for menu positioning -->
@@ -43,7 +44,7 @@
     <!-- Sidebar Container (Controls visibility and width) -->
     <!-- Use ngClass for conditional width/visibility -->
     <div class="flex-shrink-0 transition-all duration-300 ease-in-out overflow-y-auto"
-      [ngClass]="expanded() ? 'w-64' : 'w-0'"> <!-- Adjust w-64 as needed -->
+         [ngClass]="expanded() ? 'w-64' : 'w-0'"> <!-- Adjust w-64 as needed -->
       <!-- The actual SideMenu component -->
       <app-side-menu class="h-full block"></app-side-menu> <!-- Side menu takes full height of its container -->
     </div>
@@ -57,20 +58,19 @@
 </div>
 
 <p-drawer header="Notifications" [visible]="notificationVisible()" position="right"
-  styleClass="!w-full md:!w-80 lg:!w-[30rem]" (onHide)="this.notificationVisible.set(false)">
-  @if (notificationCount() == 0) {
-    <div class="flex flex-col items-center justify-center h-full">
-      <p class="text-gray-500">No notifications</p>
-    </div>
-  }
-  <div class="flex flex-col gap-4">
-    <!--    <p-card *ngFor="let notification of notifications" class="w-full">-->
-    <!--      <div class="flex flex-row items-center justify-between">-->
-    <!--        <h3 class="text-lg font-bold">{{ notification.title }}</h3>-->
-    <!--        <p-button icon="pi pi-times" severity="secondary" (click)="removeNotification(notification)"></p-button>-->
+          styleClass="!w-full md:!w-80 lg:!w-[30rem]" (onHide)="this.notificationVisible.set(false)">
+
+    <app-notifications-panel (countChanged)="onNotificationCountChanged($event)"></app-notifications-panel>
+
+
+  <!--  <div class="flex flex-col gap-4">-->
+  <!--    <p-card *ngFor="let notification of notifications" class="w-full">-->
+  <!--      <div class="flex flex-row items-center justify-between">-->
+  <!--        <h3 class="text-lg font-bold">{{ notification.title }}</h3>-->
+  <!--        <p-button icon="pi pi-times" severity="secondary" (click)="removeNotification(notification)"></p-button>-->
   <!--      </div>-->
   <!--      <p>{{ notification.message }}</p>-->
-<!--    </p-card>-->
-</div>
+  <!--    </p-card>-->
+  <!--  </div>-->
 
 </p-drawer>

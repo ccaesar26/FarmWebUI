@@ -9,7 +9,7 @@ import {
   TaskStatus,
   UpdateTaskDto
 } from '../models/task.model';
-import { catchError, Observable, throwError } from 'rxjs';
+import { catchError, Observable, Subject, throwError } from 'rxjs';
 import * as signalR from '@microsoft/signalr';
 
 @Injectable({
@@ -20,6 +20,7 @@ export class FarmerTasksService {
   private hubConnection!: signalR.HubConnection;
 
   public onTasksUpdate: (() => void) | null = null;
+  public onCommentAddedToTaskStream = new Subject<{taskId: string, comment: TaskCommentDto}>();
 
   constructor(private http: HttpClient) { }
 
@@ -46,6 +47,15 @@ export class FarmerTasksService {
     this.hubConnection.on('TaskUpdated', () => {
       console.log('Task updated event received.');
 
+      if (this.onTasksUpdate) {
+        this.onTasksUpdate();
+      }
+    });
+
+    this.hubConnection.on('CommentAddedToTask', (taskId: string, comment: TaskCommentDto) => { // Assume server sends this
+      console.log(`Comment added to task ${taskId} event received.`, comment);
+      this.onCommentAddedToTaskStream.next({taskId, comment});
+      // Also trigger general task update if commentsCount changes on the task object itself
       if (this.onTasksUpdate) {
         this.onTasksUpdate();
       }
@@ -135,10 +145,8 @@ export class FarmerTasksService {
     );
   }
 
-  addComment(dto: CreateTaskCommentDto): Observable<string> { //returns comment id
-    return this.http.post<string>(`${this.apiUrl}/${dto.taskId}/comments`, dto).pipe(
-      catchError(this.handleError)
-    );
+  addComment(dto: CreateTaskCommentDto): Observable<string> {
+    return this.http.post<string>(`${this.apiUrl}/comment`, dto);
   }
 
   getComments(taskId: string): Observable<TaskCommentDto[]> { // Replace 'any[]' with a proper interface

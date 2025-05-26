@@ -11,8 +11,6 @@ import { Divider } from 'primeng/divider';
 import { DatePipe } from '@angular/common';
 import { Avatar } from 'primeng/avatar';
 import { PrimeTemplate } from 'primeng/api';
-import { ButtonDirective } from 'primeng/button';
-import { Ripple } from 'primeng/ripple';
 
 @Component({
   selector: 'app-profile',
@@ -25,8 +23,6 @@ import { Ripple } from 'primeng/ripple';
     DatePipe,
     Avatar,
     PrimeTemplate,
-    ButtonDirective,
-    Ripple
   ],
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.scss'

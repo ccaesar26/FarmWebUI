@@ -1,10 +1,7 @@
 // side-menu.component.ts
 import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
 import { Ripple } from 'primeng/ripple';
-import { Avatar } from 'primeng/avatar';
-import { AuthService } from '../../services/auth.service';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
-import { UserProfileService } from '../../services/user-profile.service';
 import { StyleClass } from 'primeng/styleclass';
 import { SidebarModule } from 'primeng/sidebar';
 
@@ -14,7 +11,6 @@ import { SidebarModule } from 'primeng/sidebar';
   standalone: true,
   imports: [
     Ripple,
-    Avatar,
     RouterLink,
     RouterLinkActive,
     StyleClass,

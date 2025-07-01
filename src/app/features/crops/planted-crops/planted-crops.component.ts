@@ -59,6 +59,8 @@ export class PlantedCropsComponent implements OnInit {
   }
 
   createCrop(crop: CropDto) {
+    this.hideDialog();
+
     const cropCreateDto: CropCreateDto = {
       name: crop.name,
       binomialName: crop.binomialName,
@@ -80,7 +82,6 @@ export class PlantedCropsComponent implements OnInit {
     this.plantedCropService.createCrop(cropCreateDto).subscribe(
       (newCrop) => {
         this.crops.push(newCrop);
-        this.hideDialog();
       },
       (error) => {
         console.error('Error creating crop:', error);

@@ -1,4 +1,4 @@
-export type NotificationType = "NewReport" | "NewReportComment" | "CommentAdded" ;
+export type NotificationType = "NewReport" | "NewReportComment" | "CommentAdded" | "NewTask";
 
 export interface NotificationDto {
   id: string;
@@ -35,7 +35,12 @@ export function ToNotificationEntry(dto: NotificationDto, userName: string): Not
       message = "User " + userName + " commented on a report";
       break;
     case "CommentAdded":
-      message = "Comment added";
+      title = "Comment Added";
+      message = "User " + userName + " added a comment";
+      break;
+    case "NewTask":
+      title = "New Task Assigned";
+      message = "The new task was successfully assigned";
       break;
     default:
       message = "Unknown notification type";

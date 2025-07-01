@@ -11,7 +11,6 @@ import { NotificationService } from '../../../core/services/notification.service
 import { DatePipe } from '@angular/common';
 import { UserService } from '../../../core/services/user.service';
 import { User } from '../../../core/models/user.model';
-import { Toast } from 'primeng/toast';
 import { MessageService, PrimeTemplate } from 'primeng/api';
 import { Accordion, AccordionTab } from 'primeng/accordion';
 import { Badge } from 'primeng/badge';
@@ -43,7 +42,6 @@ export class NotificationsPanelComponent implements OnInit {
   @Output() countChanged: EventEmitter<number> = new EventEmitter();
 
   connectionStatus: Signal<'disconnected' | 'connecting' | 'connected' | 'error'>;
-  // notifications: WritableSignal<NotificationEntry[]> = signal([]);
   unreadNotifications: WritableSignal<NotificationEntry[]> = signal([]);
   readNotifications: WritableSignal<NotificationEntry[]> = signal([]);
 

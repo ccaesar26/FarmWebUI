@@ -180,21 +180,21 @@ export class TaskCommentsComponent implements OnInit, AfterViewChecked, OnDestro
       next: (commentId) => { // Assuming addComment returns the new comment's ID
         // To display immediately, we need the full TaskCommentDto
         // Option 1: Refetch all comments (simple but can be slow)
-        // this.loadComments();
+        this.loadComments();
 
         // Option 2: Construct a temporary comment or fetch the new one by ID
         // For simplicity, let's assume we need to reflect it somehow.
         // The BEST way is if addComment returned the full TaskCommentDto
         // Or if SignalR pushes the new comment.
-        const newComment: TaskCommentDto = {
-          id: commentId, // This is what we get back
-          taskId: this.taskId,
-          comment: commentText,
-          createdAt: new Date().toISOString(), // Client-side timestamp (server should override)
-          userId: this.currentUserId() || 'unknown' // Use current user's ID
-        };
-        this.addCommentToView(newComment);
-
+        // const newComment: TaskCommentDto = {
+        //   id: commentId, // This is what we get back
+        //   taskId: this.taskId,
+        //   comment: commentText,
+        //   createdAt: new Date().toISOString(), // Client-side timestamp (server should override)
+        //   userId: this.currentUserId() || 'unknown' // Use current user's ID
+        // };
+        // this.addCommentToView(newComment);
+        //
         this.newCommentText.set('');
         this.isSubmitting.set(false);
         this.scrollToBottom = true;

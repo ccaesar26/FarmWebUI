@@ -69,8 +69,8 @@ export class PolygonComponent implements OnInit, OnChanges, ControlValueAccessor
       this.map = new mapboxgl.Map({
         container: 'map',
         style: 'mapbox://styles/mapbox/satellite-streets-v12',
-        center: [ 25.60, 45.66 ],
-        zoom: 11
+        center: [ 27.667, 46.653 ],
+        zoom: 15
       });
 
       this.draw = new MapboxDraw({

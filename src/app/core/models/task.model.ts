@@ -120,7 +120,7 @@ export interface TaskCategoryDto {
 export interface CreateTaskDto {
   title: string;
   description?: string | null;
-  dueDate?: string | null;      // Use Date or string, depending on API
+  dueDate?: string | null;
   priority: number;
   status: number;
   assignedUserId?: string | null;

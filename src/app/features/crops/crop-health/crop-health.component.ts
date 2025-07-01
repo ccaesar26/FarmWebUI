@@ -123,7 +123,7 @@ export class CropHealthComponent implements OnInit, OnDestroy {
   }
 
   createIdRequest(request: IdRequestDto): void {
-    alert('Creating ID request: ' + JSON.stringify(request));
+    // alert('Creating ID request: ' + JSON.stringify(request));
     console.log('Received request from form:', request);
     this.isLoading.set(true); // Show loader while processing
     this.displayModal.set(false); // Close form dialog

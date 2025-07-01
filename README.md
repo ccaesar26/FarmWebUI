@@ -1,59 +1,49 @@
-# FarmWebUI
+# FarmInsight - Frontend (Angular Web App)
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.1.2.
+This repository contains the frontend web application for the **FarmInsight** platform, developed as part of my Bachelor's Thesis. The application is built with Angular and is designed for farm managers.
 
-## Development server
+## Overview
 
-To start a local development server, run:
+The FarmInsight web app provides a comprehensive dashboard and a suite of tools for the strategic and operational management of a farm. It allows managers to get a clear overview of all activities, plan for the future, and interact with data in a modern, user-friendly interface.
 
-```bash
-ng serve
-```
+### Key Features
+*   **Interactive Dashboard:** A central hub showing weather forecasts, drought alerts, and a summary of ongoing tasks.
+*   **Field Management:** An interactive map (using Mapbox) where managers can draw, edit, and manage farm plots.
+*   **Crop Management:** A detailed crop catalog and a system for tracking currently planted crops, their lifecycle, and history.
+*   **Task Management:** A Kanban-style board for creating, assigning, monitoring, and commenting on tasks.
+*   **AI Disease Identification:** An interface to upload plant images and receive AI-powered disease diagnostics from the backend.
+*   **User Management:** Tools for adding and managing farm employees.
+*   **Real-time Notifications:** A notification panel that updates in real-time with system events via SignalR.
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+### Technology Stack
 
-## Code scaffolding
+*   **Angular v19** (with Standalone Components)
+*   **TypeScript**
+*   **RxJS** for reactive programming and state management.
+*   **Angular Signals** for fine-grained reactivity.
+*   **PrimeNG** Component Library for a rich set of UI components.
+*   **SignalR Client** for real-time communication.
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+## Getting Started
 
-```bash
-ng generate component component-name
-```
+### Prerequisites
+*   Node.js (LTS version)
+*   Angular CLI (`npm install -g @angular/cli`)
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
-
-```bash
-ng generate --help
-```
-
-## Building
-
-To build the project run:
-
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+### Installation & Running
+1.  **Clone the repository:**
+    ```sh
+    git clone https://github.com/ccaesar26/FarmWebUI
+    cd FarmWebUI
+    ```
+2.  **Install dependencies:**
+    ```sh
+    npm install
+    ```
+3.  **Configure API endpoint:**
+    The application is configured to communicate with the backend API Gateway. Ensure the proxy configuration in `proxy.conf.json` points to the correct address where your backend is running.
+4.  **Run the development server:**
+    ```sh
+    ng serve
+    ```
+    Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
